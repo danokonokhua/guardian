@@ -1,6 +1,6 @@
 import packageJson from "@/package.json";
 
-import { appConfig } from "@/config/env";
+import { appConfig } from "@/config/server";
 import { jsonResponse, withRoute, type RouteContext } from "@/lib/api";
 
 /**

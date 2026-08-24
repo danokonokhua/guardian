@@ -3,7 +3,7 @@
  * eslint config enforces `no-console` everywhere else. Swap this module's
  * sink for an external provider later without touching call sites.
  */
-import { appConfig, type LogLevel } from "@/config/env";
+import { appConfig, type LogLevel } from "@/config/server";
 
 export type LogContext = Record<string, unknown>;
 
