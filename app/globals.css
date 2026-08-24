@@ -1,0 +1,5 @@
+/**
+ * Minimal Tailwind v4 entrypoint. Design tokens and the real Guardian design
+ * system arrive in later phases — this only proves the pipeline works.
+ */
+@import "tailwindcss";
