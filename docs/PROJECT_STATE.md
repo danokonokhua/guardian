@@ -1,10 +1,24 @@
 # Guardian — Project State
 
-**Last updated:** 2026-08-24 (Phase 1B-03 database foundation)
+**Last updated:** 2026-08-24 (Phase 1B-04 domain database schema)
 
 ## Current phase
 
-**1B-03 — Database Foundation: COMPLETE (PostgreSQL + Prisma infrastructure; domain models deferred to 1B-04 per plan).** See `docs/DATABASE.md`.
+**1B-04 — Domain Database Schema: COMPLETE.** Core tenant chain implemented
+(User, Organization, OrganizationMember, Business, Website, Monitor→monitoring_checks,
+Issue) with Phase 1A field specs, enums, unique constraints, indexes, and
+cascade/soft-delete behavior. First migration `20260824140000_init_domain`
+created offline (deterministic; no credentials). **Live migration execution
+BLOCKED: no database configured in the sandbox** — apply later via
+`npm run db:deploy`. Tests: 68 passing (17 new schema tests). Build/lint/
+typecheck/validate all PASS. Deferred to later phases: monitoring_results,
+issue_events, health_scores, recommendations, notifications, audit_logs.
+
+## Next approved phase
+
+PHASE 1B-05 (not started).
+
+## History
 
 ## Phase 1B-03 summary
 

@@ -3,10 +3,22 @@
 // Technology (approved Phase 1A architecture, ADR-001/ADR-002):
 //   PostgreSQL (Supabase-hosted) + Prisma + Prisma Migrate.
 //
-// Phase 1B-03 establishes the schema FOUNDATION only: datasource, generator,
-// and migration workflow. Domain models (organizations, businesses, websites,
-// monitoring, issues, ...) arrive in Phase 1B-04 per the approved MVP schema —
-// they are deliberately NOT invented here.
+// Phase 1B-04 implements the APPROVED MVP DOMAIN MODEL (Phase 1A §6, ERD §7,
+// required chain of Phase 1B-04):
+//
+//   Organization ─┬─ User (identity mirror) via OrganizationMember
+//                 ├─ Business ── Website ─┬─ Monitor (table: monitoring_checks)
+//                 │                       └─ Issue
+//                 └─ (tenant root: organizationId on every tenant-owned row)
+//
+// DEFERRED by design (arrive with their engine phases per Phase 1A staging):
+//   monitoring_results, issue_events, health_scores, health_score_components,
+//   recommendations, notifications, notification_preferences, audit_logs.
+//
+// Tenancy: every tenant-owned table carries a required organizationId FK
+// (defense-in-depth alongside future RLS). Cross-parent consistency
+// (e.g. Website.business belongs to the same Organization) is enforced at the
+// application layer and later by row-level security.
 //
 // Credentials: connection strings are referenced via env() and resolved from
 // the environment at runtime — never hardcoded, never committed.
@@ -21,4 +33,292 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+}
+
+// ---------------------------------------------------------------------------
+// Enums — vocabulary from the approved Phase 1A architecture. Do not invent.
+// ---------------------------------------------------------------------------
+
+/// Phase 1A §6.1: users.status (active|suspended|deleted). No auth secrets —
+/// authentication is Supabase Auth (later phase); this table is an identity
+/// mirror/reference only.
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+/// Phase 1A §6.1: organizations.plan ("free|pro…, code-config").
+enum Plan {
+  FREE
+  PRO
+}
+
+/// Phase 1A §10 RBAC: OWNER | ADMIN | MEMBER | VIEWER.
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+/// Phase 1A §6.1: organization_members.status (active|invited|revoked).
+enum MemberStatus {
+  ACTIVE
+  INVITED
+  REVOKED
+}
+
+/// Phase 1A §6.2: websites.status (pending|active|paused|failed).
+enum WebsiteStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  FAILED
+}
+
+/// Phase 1A §6.2: websites.verify_status. Values inferred from the documented
+/// verification flow (pending → verified | failed) — flagged in the phase report.
+enum WebsiteVerifyStatus {
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+/// Phase 1A §6.3: monitoring_checks.type
+/// (uptime|ssl|seo|content|links|performance|form).
+enum MonitorType {
+  UPTIME
+  SSL
+  SEO
+  CONTENT
+  LINKS
+  PERFORMANCE
+  FORM
+}
+
+/// Phase 1A §15.2: CRITICAL | HIGH | MEDIUM | LOW | INFO.
+enum IssueSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+/// Phase 1A §15.1 lifecycle: OPEN → ACKNOWLEDGED → IN_PROGRESS → RESOLVED,
+/// plus IGNORED (and system-driven reopen back to OPEN).
+enum IssueStatus {
+  OPEN
+  ACKNOWLEDGED
+  IN_PROGRESS
+  RESOLVED
+  IGNORED
+}
+
+/// Phase 1A §6.4: issues.resolved_by (user|system).
+enum IssueResolvedBy {
+  USER
+  SYSTEM
+}
+
+// ---------------------------------------------------------------------------
+// Identity & tenancy
+// ---------------------------------------------------------------------------
+
+/// Phase 1A §6.1: mirror of the auth provider's user (id = auth user id).
+/// Deletion strategy: anonymize (keep row for FK integrity).
+model User {
+  id              String     @id @default(uuid())
+  email           String     @unique @db.Citext
+  name            String?
+  avatarUrl       String?
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  status          UserStatus @default(ACTIVE)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  ownedOrganizations Organization[]       @relation("OrganizationOwner")
+  memberships        OrganizationMember[]
+  invitedMemberships OrganizationMember[] @relation("MembershipInviter")
+  addedWebsites      Website[]
+  assignedIssues     Issue[]              @relation("IssueAssignee")
+  resolvedIssues     Issue[]              @relation("IssueResolver")
+
+  @@map("users")
+}
+
+/// Phase 1A §6.1: THE TENANT ROOT. Soft delete (deletedAt), purge after 30d.
+model Organization {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  ownerId   String
+  owner     User      @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  plan      Plan      @default(FREE)
+  settings  Json      @default("{}")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  members    OrganizationMember[]
+  businesses Business[]
+  websites   Website[]
+  monitors   Monitor[]
+  issues     Issue[]
+
+  @@index([ownerId])
+  @@map("organizations")
+}
+
+/// Phase 1A §6.1: joins users ↔ organizations with the RBAC role.
+/// Unique per (organization, user). Hard delete on revocation.
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           MemberRole
+  status         MemberStatus @default(ACTIVE)
+  invitedById    String?
+  invitedBy      User?        @relation("MembershipInviter", fields: [invitedById], references: [id], onDelete: SetNull)
+  joinedAt       DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("organization_members")
+}
+
+// ---------------------------------------------------------------------------
+// Business presence
+// ---------------------------------------------------------------------------
+
+/// Phase 1A §6.2: customer business profile. Soft delete. No CRM/billing here.
+model Business {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  industry       String?
+  timezone       String?
+  currency       String?
+  profile        Json         @default("{}")
+  deletedAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  websites Website[]
+
+  @@index([organizationId])
+  @@map("businesses")
+}
+
+/// Phase 1A §6.2: monitored website. organizationId is the denormalized tenant
+/// key (required, direct FK) — the primary isolation anchor.
+/// Unique per (organization, hostname). Soft delete; monitors/issues cascade
+/// on purge.
+model Website {
+  id                    String              @id @default(uuid())
+  organizationId        String
+  organization          Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  businessId            String
+  business              Business            @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  addedById             String?
+  addedBy               User?               @relation(fields: [addedById], references: [id], onDelete: SetNull)
+  normalizedUrl         String
+  hostname              String
+  label                 String?
+  status                WebsiteStatus       @default(PENDING)
+  verifyStatus          WebsiteVerifyStatus @default(PENDING)
+  verifyMethod          String?
+  verifyToken           String?
+  checkFrequencyMinutes Int                 @default(5)
+  settings              Json                @default("{}")
+  lastCheckedAt         DateTime?
+  deletedAt             DateTime?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  monitors Monitor[]
+  issues   Issue[]
+
+  @@unique([organizationId, hostname])
+  @@index([organizationId])
+  @@index([businessId])
+  @@map("websites")
+}
+
+// ---------------------------------------------------------------------------
+// Monitoring & issues
+// ---------------------------------------------------------------------------
+
+/// Phase 1A §6.3 monitoring_checks: a scheduled check of one type on one
+/// website. Model name "Monitor" per Phase 1B-04 vocabulary; table name
+/// preserved from Phase 1A. Unique per (website, type). Scheduler reads
+/// nextRunAt for due enabled monitors.
+model Monitor {
+  id                  String       @id @default(uuid())
+  organizationId      String
+  organization        Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  websiteId           String
+  website             Website      @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  type                MonitorType
+  enabled             Boolean      @default(true)
+  frequencyMinutes    Int          @default(5)
+  nextRunAt           DateTime?
+  lastRunAt           DateTime?
+  config              Json         @default("{}")
+  consecutiveFailures Int          @default(0)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  detectedIssues Issue[]
+
+  @@unique([websiteId, type])
+  @@index([organizationId])
+  @@index([nextRunAt])
+  @@map("monitoring_checks")
+}
+
+/// Phase 1A §6.4: deduplicated, lifecycle-managed problem.
+/// fingerprint = hash(rule_id + website_id + subject_key) — one row per
+/// finding subject; recurrence updates lastSeenAt, recovery auto-resolves.
+model Issue {
+  id                String           @id @default(uuid())
+  organizationId    String
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  websiteId         String
+  website           Website          @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  monitorId         String?
+  monitor           Monitor?         @relation(fields: [monitorId], references: [id], onDelete: SetNull)
+  ruleId            String
+  fingerprint       String           @unique
+  severity          IssueSeverity
+  status            IssueStatus      @default(OPEN)
+  title             String
+  summary           String
+  technicalEvidence Json             @default("{}")
+  businessImpact    String?
+  impactConfidence  Float?
+  metadata          Json             @default("{}")
+  firstSeenAt       DateTime         @default(now())
+  lastSeenAt        DateTime         @default(now())
+  resolvedAt        DateTime?
+  resolvedById      String?
+  resolvedByUser    User?            @relation("IssueResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+  resolvedBy        IssueResolvedBy?
+  assignedToId      String?
+  assignedTo        User?            @relation("IssueAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([organizationId, status, severity])
+  @@index([websiteId])
+  @@index([lastSeenAt])
+  @@map("issues")
 }

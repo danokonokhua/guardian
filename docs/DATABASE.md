@@ -1,9 +1,33 @@
-# Guardian — Database Foundation (Phase 1B-03)
+# Guardian — Database Foundation (Phase 1B-03) + Domain Schema (Phase 1B-04)
 
 Approved architecture: **PostgreSQL (Supabase-hosted) + Prisma + Prisma Migrate**
-(Phase 1A, ADR-001/ADR-002). This phase establishes infrastructure only; domain
-models (organizations, businesses, websites, monitoring, issues, …) arrive in
-Phase 1B-04 per the approved MVP schema and are deliberately not invented here.
+(Phase 1A, ADR-001/ADR-002).
+
+## Domain models (Phase 1B-04)
+
+Approved tenant chain implemented with Phase 1A field specifications:
+
+```
+User (identity mirror, no auth secrets)
+Organization (tenant root) ── OrganizationMember (OWNER|ADMIN|MEMBER|VIEWER)
+  └─ Business ── Website ──┬─ Monitor  (table: monitoring_checks; one per type/website)
+                           └─ Issue    (fingerprint-deduped lifecycle)
+```
+
+Deferred to their engine phases (per Phase 1A staging): monitoring_results,
+issue_events, health_scores(+components), recommendations, notifications,
+audit_logs.
+
+## Migrations
+
+- `20260824140000_init_domain` — initial domain schema (7 tables, 17 indexes,
+  citext extension for the case-insensitive unique email). Created OFFLINE via
+  the documented `prisma migrate diff --from-empty --to-schema-datamodel`
+  workflow and verified deterministic across regenerations.
+- **Live execution status:** BLOCKED in the development sandbox — no
+  PostgreSQL/Supabase database is configured there (none was fabricated).
+  Apply against the real database with `npm run db:deploy` once DATABASE_URL /
+  DIRECT_URL are configured.
 
 ## Layout
 
