@@ -31,18 +31,21 @@ See [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) for the authoritative state
 
 ## 3. Technology stack
 
-| Layer      | Choice                                        | Version (pinned) |
-| ---------- | --------------------------------------------- | ---------------- |
-| Framework  | Next.js (App Router, no Pages Router)         | 16.3.2           |
-| UI         | React                                         | 19.2.8           |
-| Language   | TypeScript (strict)                           | 6.0.3            |
-| Styling    | Tailwind CSS v4 (via `@tailwindcss/postcss`)  | 4.3.3            |
-| Linting    | ESLint 9 (flat config) + `eslint-config-next` | 9.39.5           |
-| Formatting | Prettier                                      | 3.9.6            |
-| Testing    | Vitest                                        | 4.1.11           |
+| Layer      | Choice                                             | Version (pinned)                      |
+| ---------- | -------------------------------------------------- | ------------------------------------- |
+| Framework  | Next.js (App Router, no Pages Router)              | 16.3.2                                |
+| UI         | React                                              | 19.2.8                                |
+| Language   | TypeScript (strict)                                | 6.0.3                                 |
+| Styling    | Tailwind CSS v4 (via `@tailwindcss/postcss`)       | 4.3.3                                 |
+| Linting    | ESLint 9 (flat config) + `eslint-config-next`      | 9.39.5                                |
+| Formatting | Prettier                                           | 3.9.6                                 |
+| Testing    | Vitest                                             | 4.1.11                                |
+| Database   | PostgreSQL + Prisma (client runtime; CLI dev-only) | @prisma/client 6.19.2 / prisma 6.19.2 |
 
-Planned by the approved architecture (not yet installed): PostgreSQL + Prisma, Supabase
-Auth, pg-boss. **No dependency is added before the phase that consumes it.**
+Database foundation (PostgreSQL + Prisma) is installed — see
+[`docs/DATABASE.md`](docs/DATABASE.md) for the schema/migration workflow.
+Planned by the approved architecture (not yet installed): Supabase Auth, pg-boss.
+**No dependency is added before the phase that consumes it.**
 
 ## 4. Requirements
 
@@ -79,16 +82,17 @@ gitignored; `.env.example` is the only tracked template.
 
 ## 7. Commands
 
-| Command                                   | Purpose                                         |
-| ----------------------------------------- | ----------------------------------------------- |
-| `npm run dev`                             | Development server (`next dev`, Turbopack)      |
-| `npm run build`                           | Production build — see the memory note below    |
-| `npm run start`                           | Serve the production build (`next build` first) |
-| `npm run lint`                            | ESLint across the repository                    |
-| `npm run typecheck`                       | `tsc --noEmit` under strict settings            |
-| `npm test`                                | Vitest (single run, CI-friendly)                |
-| `npm run test:watch`                      | Vitest in watch mode                            |
-| `npm run format` / `npm run format:check` | Prettier write / verify                         |
+| Command                                                          | Purpose                                                                                  |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `npm run dev`                                                    | Development server (`next dev`, Turbopack)                                               |
+| `npm run build`                                                  | Production build — see the memory note below                                             |
+| `npm run start`                                                  | Serve the production build (`next build` first)                                          |
+| `npm run lint`                                                   | ESLint across the repository                                                             |
+| `npm run typecheck`                                              | `tsc --noEmit` under strict settings                                                     |
+| `npm test`                                                       | Vitest (single run, CI-friendly)                                                         |
+| `npm run test:watch`                                             | Vitest in watch mode                                                                     |
+| `npm run format` / `npm run format:check`                        | Prettier write / verify                                                                  |
+| `npm run db:generate` / `db:migrate` / `db:deploy` / `db:status` | Prisma client generation & migration workflow (see [docs/DATABASE.md](docs/DATABASE.md)) |
 
 ### Production builds on low-memory machines (≤ 2 GB RAM)
 

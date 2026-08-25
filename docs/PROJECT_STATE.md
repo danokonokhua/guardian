@@ -1,10 +1,31 @@
 # Guardian — Project State
 
-**Last updated:** 2026-08-24 (Phase 1B-01 verification)
+**Last updated:** 2026-08-24 (Phase 1B-03 database foundation)
 
 ## Current phase
 
-**1B-01 — Project Repository & Application Foundation: COMPLETE (awaiting human review).**
+**1B-03 — Database Foundation: COMPLETE (PostgreSQL + Prisma infrastructure; domain models deferred to 1B-04 per plan).** See `docs/DATABASE.md`.
+
+## Phase 1B-03 summary
+
+- Prisma 6.19.2 pair (`@prisma/client` runtime / `prisma` dev-only). Prisma 7
+  was evaluated and set aside: it removes schema-level connection config and
+  mandates driver adapters — a larger footprint than the approved 1A pattern.
+- `db/schema.prisma` (datasource + generator only — NO domain models invented;
+  they arrive in Phase 1B-04), `db/client.ts` (server-only, lazy, hot-reload
+  safe), `db/health.ts` (time-boxed sanitized probe), `GET /api/health/ready`
+  (application + database readiness; 503 only when a configured DB is down).
+- Scripts: `db:generate` / `db:migrate` / `db:deploy` / `db:status` +
+  `postinstall` generate (offline, CI-safe). Workflow documented in
+  `docs/DATABASE.md`.
+- Environment fix: npm cache moved `/tmp` → `/var/tmp` (tmpfs cache caused
+  npm-ci OOM on the 2 GB sandbox; disk-backed cache fixed it — full `npm ci`
+  now passes in ~21 s including client generation).
+- Tests: 51 (40 preserved + 11 database-foundation tests), no live DB required.
+
+## History
+
+**1B-01 — Project Repository & Application Foundation: COMPLETE.**
 
 No later-phase work (auth, database, RBAC, pg-boss, monitoring, dashboard, AI) has been
 started, per the phase gate.

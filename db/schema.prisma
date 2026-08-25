@@ -1,0 +1,24 @@
+// Guardian database schema — the single source of truth for the database.
+//
+// Technology (approved Phase 1A architecture, ADR-001/ADR-002):
+//   PostgreSQL (Supabase-hosted) + Prisma + Prisma Migrate.
+//
+// Phase 1B-03 establishes the schema FOUNDATION only: datasource, generator,
+// and migration workflow. Domain models (organizations, businesses, websites,
+// monitoring, issues, ...) arrive in Phase 1B-04 per the approved MVP schema —
+// they are deliberately NOT invented here.
+//
+// Credentials: connection strings are referenced via env() and resolved from
+// the environment at runtime — never hardcoded, never committed.
+//   DATABASE_URL  — pooled connection (runtime queries; Supabase pooler)
+//   DIRECT_URL    — direct connection (migrations/administrative operations)
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
