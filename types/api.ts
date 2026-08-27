@@ -2,7 +2,26 @@ import type { ApiErrorBody, ApiErrorCode } from "@/lib/errors";
 
 export type { ApiErrorBody, ApiErrorCode };
 
-/** Response body of `GET /api/health` (application liveness only). */
+/** /api/v1 success envelope. */
+export interface V1SuccessBody<TData> {
+  data: TData;
+  requestId: string;
+}
+
+/** /api/v1 health payload (`GET /api/v1/health`). */
+export interface V1HealthData {
+  status: "ok";
+  service: string;
+  version: string;
+  environment: string;
+  timestamp: string;
+}
+
+/** /api/v1 organization context payload (architectural test endpoint). */
+export interface V1OrganizationContextData {
+  organization: { id: string };
+  member: { userId: string; email: string; role: string };
+}
 export interface HealthResponse {
   status: "ok";
   service: string;

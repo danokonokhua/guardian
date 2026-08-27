@@ -1,23 +1,26 @@
 # Guardian — Project State
 
-**Last updated:** 2026-08-24 (Phase 1B-05 identity/auth foundation)
+**Last updated:** 2026-08-27 (Phase 1B-06 API foundation)
 
 ## Current phase
 
-**1B-05 — Authentication & Authorization Foundation: COMPLETE.** Identity
-abstraction, auth-adapter boundary (anonymous fail-closed default; Supabase
-wiring deferred), deny-by-default role checks (OWNER>ADMIN>MEMBER>VIEWER),
-tenant context (frozen, mismatch-proof), and Prisma identity/membership
-lookups. See `docs/AUTH.md`. No database/schema changes, no new dependencies.
-Decision semantics: 401 unauthenticated, 404 non-member (existence masking),
-403 insufficient role, 500 tenant-context invariant.
+**1B-06 — API Foundation: COMPLETE.** `/api/v1` boundary (`withApiRoute`):
+validated client request-ID propagation (safe charset/length, else server
+UUID; `x-request-id` on every response), success envelope `{data, requestId}`,
+existing canonical error envelope, zod validation boundary (`parseWith`,
+sanitized details), identity/tenant integration strictly via Phase 1B-05
+`lib/auth/context.ts`. Architectural test endpoint
+`GET /api/v1/organizations/{id}/context` (+ `GET /api/v1/health`). New
+dependency: zod 4.4.3 (the validation library designated by the approved
+architecture for this phase). No schema/DB changes. See `docs/API.md`.
 
 ## Next approved phase
 
-PHASE 1B-06 (not started) — recommended: API foundation / request wiring of
-the identity context, per the approved 1A sequence.
+PHASE 1B-07 (not started).
 
 ## History
+
+**1B-05 — Auth/Authz Foundation: COMPLETE** (commit fe3ae48; see docs/AUTH.md).
 
 **1B-04 — Domain Database Schema: COMPLETE** (commit 8f8c3a4; 7 tables, 17
 indexes, migration `20260824140000_init_domain` created offline; live DB
