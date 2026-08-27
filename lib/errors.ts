@@ -49,6 +49,20 @@ export class ValidationError extends AppError {
   }
 }
 
+/** Request is not authenticated (no session / stale / inactive identity). */
+export class UnauthorizedError extends AppError {
+  constructor(message = "Authentication is required.") {
+    super({ code: "UNAUTHORIZED", status: 401, message });
+  }
+}
+
+/** Authenticated but not allowed to perform this action. */
+export class ForbiddenError extends AppError {
+  constructor(message = "You do not have permission to perform this action.") {
+    super({ code: "FORBIDDEN", status: 403, message });
+  }
+}
+
 /** Requested resource does not exist (or belongs to another tenant). */
 export class NotFoundError extends AppError {
   constructor(resource = "Resource") {
