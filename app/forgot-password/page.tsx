@@ -30,7 +30,14 @@ export default function ForgotPasswordPage() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (resetError !== null) {
-      setError("Unable to send a password reset email.");
+      const providerMessage = resetError.message.toLowerCase();
+      setError(
+        providerMessage.includes("redirect")
+          ? "Supabase rejected the reset redirect. Add http://localhost:3000/reset-password to Supabase Auth redirect URLs."
+          : providerMessage.includes("rate")
+            ? "Too many reset requests. Wait a few minutes and try again."
+            : "Unable to send a password reset email. Check the Supabase email provider settings.",
+      );
     } else {
       setMessage("If an account exists for that email, a reset link has been sent.");
     }
