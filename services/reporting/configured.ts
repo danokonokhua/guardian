@@ -1,6 +1,4 @@
-import "server-only";
-
-import { serverConfig } from "@/config/server";
+import { loadConfig } from "@/config/env";
 import {
   createWebhookReportingDestination,
   type ReportingDestination,
@@ -8,8 +6,9 @@ import {
 
 /** Returns the configured webhook destination, or undefined when not enabled. */
 export function getConfiguredReportingDestination(): ReportingDestination | undefined {
-  const url = serverConfig.server.reportingWebhookUrl;
-  const secret = serverConfig.server.reportingWebhookSecret;
+  const config = loadConfig();
+  const url = config.server.reportingWebhookUrl;
+  const secret = config.server.reportingWebhookSecret;
   if (url === undefined || secret === undefined) return undefined;
   return createWebhookReportingDestination({ url, signingSecret: secret });
 }

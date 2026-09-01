@@ -1,5 +1,3 @@
-import "server-only";
-
 import { createHmac } from "node:crypto";
 
 export interface AnalyticsReport {
