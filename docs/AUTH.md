@@ -46,7 +46,9 @@ the adapter's identity plus the repository's membership relationship decide.
   adapter remains anonymous and all protected access fails closed.
 - `/login` provides the initial password sign-in flow, while `proxy.ts`
   refreshes the provider session cookie before protected dashboard/API requests.
-- Signup, recovery, MFA, and provider-specific account flows remain later work.
+- Signup and MFA remain later work. Password recovery is implemented through
+  `/forgot-password` and `/reset-password`; the Supabase redirect URL must be
+  allowlisted for each deployment environment.
 - Permission-matrix helpers, RLS, and route-level guards arrive with the API.
 - Live-database integration tests for the Prisma repository are deferred until
   a real database is configured (documented boundary; unit tests cover logic).
