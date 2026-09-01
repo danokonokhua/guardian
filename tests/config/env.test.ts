@@ -44,4 +44,19 @@ describe("loadConfig", () => {
       expect((error as EnvironmentConfigError).message).toContain("debug, info, warn, error");
     }
   });
+
+  it("parses the optional reporting webhook configuration without exposing the secret", () => {
+    const config = loadConfig({
+      REPORTING_WEBHOOK_URL: "https://reports.example.test/guardian",
+      REPORTING_WEBHOOK_SECRET: "test-secret",
+    });
+    expect(config.server.reportingWebhookUrl).toBe("https://reports.example.test/guardian");
+    expect(config.server.reportingWebhookSecret).toBe("test-secret");
+  });
+
+  it("rejects a reporting destination with an unsupported protocol", () => {
+    expect(() => loadConfig({ REPORTING_WEBHOOK_URL: "file:///tmp/report" })).toThrow(
+      "REPORTING_WEBHOOK_URL",
+    );
+  });
 });

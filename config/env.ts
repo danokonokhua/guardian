@@ -60,6 +60,10 @@ export interface ServerConfig {
   readonly sentryDsn?: string;
   /** Server-only secret required by the scheduler tick endpoint. */
   readonly cronSecret?: string;
+  /** Optional signed analytics reporting destination. */
+  readonly reportingWebhookUrl?: string;
+  /** Secret used to sign analytics reporting payloads. */
+  readonly reportingWebhookSecret?: string;
 }
 
 /** Full application configuration (server aggregate). */
@@ -175,6 +179,8 @@ export function parseServerConfig(env: RawEnv): ServerConfig {
   const supabaseServiceRoleKey = readString(env, "SUPABASE_SERVICE_ROLE_KEY");
   const sentryDsn = readString(env, "SENTRY_DSN");
   const cronSecret = readString(env, "CRON_SECRET");
+  const reportingWebhookUrl = readString(env, "REPORTING_WEBHOOK_URL");
+  const reportingWebhookSecret = readString(env, "REPORTING_WEBHOOK_SECRET");
 
   return {
     ...(databaseUrl !== undefined
@@ -184,6 +190,10 @@ export function parseServerConfig(env: RawEnv): ServerConfig {
     ...(supabaseServiceRoleKey !== undefined ? { supabaseServiceRoleKey } : {}),
     ...(sentryDsn !== undefined ? { sentryDsn: parseHttpUrl(sentryDsn, "SENTRY_DSN") } : {}),
     ...(cronSecret !== undefined ? { cronSecret } : {}),
+    ...(reportingWebhookUrl !== undefined
+      ? { reportingWebhookUrl: parseHttpUrl(reportingWebhookUrl, "REPORTING_WEBHOOK_URL") }
+      : {}),
+    ...(reportingWebhookSecret !== undefined ? { reportingWebhookSecret } : {}),
   };
 }
 
