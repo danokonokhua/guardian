@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: guardian-postgres-test
+    restart: "no"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: guardian_test
+    ports:
+      # Use a non-default host port to avoid collisions with local PostgreSQL
+      # services and stale Docker Desktop port-forwarding state.
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d guardian_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
