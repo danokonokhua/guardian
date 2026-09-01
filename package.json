@@ -22,6 +22,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "worker": "tsx scripts/worker.ts",
+    "reporting:smoke": "tsx scripts/reporting-smoke.ts",
     "test:integration": "vitest run tests/db/rls.integration.test.ts tests/jobs/system-ping.integration.test.ts tests/jobs/monitor-check.integration.test.ts"
   },
   "dependencies": {
