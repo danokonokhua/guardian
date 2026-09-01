@@ -37,7 +37,9 @@ The worker registers tenant-bound escalation jobs, applies retry/singleton polic
 queues notification deliveries for active organization owners/admins. The in-app provider
 enforces active membership inside a transaction-local RLS context. Analytics CSV/JSON export
 remains available through the organization-scoped API. The next phase requires product review
-before adding external reporting destinations or additional notification providers.
+before adding vendor-specific credentials or additional destinations. A signed webhook
+reporting adapter and transport-injected email notification adapter are now available;
+they perform no network calls until explicitly configured by the application.
 
 ## History
 

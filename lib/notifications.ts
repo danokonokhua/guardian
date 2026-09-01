@@ -20,6 +20,35 @@ export interface NotificationProvider {
   deliver(event: NotificationEvent): Promise<void>;
 }
 
+export interface EmailNotification {
+  to: string;
+  subject: string;
+  text: string;
+  organizationId: string;
+  issueId: string;
+}
+
+export interface EmailNotificationAdapter {
+  send(message: EmailNotification): Promise<void>;
+}
+
+/** Creates an email provider without coupling the worker to a vendor SDK. */
+export function createEmailNotificationProvider(
+  adapter: EmailNotificationAdapter,
+): NotificationProvider {
+  return {
+    async deliver(event) {
+      await adapter.send({
+        to: event.recipientUserId,
+        subject: event.title,
+        text: event.body,
+        organizationId: event.organizationId,
+        issueId: event.issueId,
+      });
+    },
+  };
+}
+
 export const inAppNotificationProvider: NotificationProvider = {
   async deliver(event) {
     await createInAppNotification(

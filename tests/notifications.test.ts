@@ -7,7 +7,11 @@ vi.mock("@/db/tenant", () => ({
     callback({ organizationMember: { findFirst } }),
   ),
 }));
-import { enqueueNotification, registerNotificationWorker } from "@/lib/notifications";
+import {
+  createEmailNotificationProvider,
+  enqueueNotification,
+  registerNotificationWorker,
+} from "@/lib/notifications";
 
 describe("notifications", () => {
   it("creates a retryable deduplicated delivery job", async () => {
@@ -53,5 +57,25 @@ describe("notifications", () => {
       },
     ]);
     expect(provider.deliver).toHaveBeenCalledOnce();
+  });
+
+  it("maps notification events to a vendor-neutral email adapter", async () => {
+    const send = vi.fn().mockResolvedValue(undefined);
+    const provider = createEmailNotificationProvider({ send });
+    await provider.deliver({
+      organizationId: "o",
+      issueId: "i",
+      recipientUserId: "u@example.test",
+      title: "SLA breach",
+      body: "Issue requires attention.",
+      channel: "EMAIL",
+    });
+    expect(send).toHaveBeenCalledWith({
+      to: "u@example.test",
+      subject: "SLA breach",
+      text: "Issue requires attention.",
+      organizationId: "o",
+      issueId: "i",
+    });
   });
 });
