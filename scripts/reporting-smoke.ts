@@ -1,5 +1,4 @@
 import { getConfiguredReportingDestination } from "@/services/reporting/configured";
-import { logger } from "@/lib/logger";
 
 async function main(): Promise<void> {
   const destination = getConfiguredReportingDestination();
@@ -14,10 +13,11 @@ async function main(): Promise<void> {
     generatedAt: new Date().toISOString(),
   });
 
-  logger.info("reporting_webhook_smoke_succeeded");
+  process.stdout.write("reporting_webhook_smoke_succeeded\n");
 }
 
 main().catch((error: unknown) => {
-  logger.error("reporting_webhook_smoke_failed", { error });
+  const message = error instanceof Error ? error.message : "Unknown reporting error";
+  process.stderr.write(`reporting_webhook_smoke_failed: ${message}\n`);
   process.exitCode = 1;
 });
