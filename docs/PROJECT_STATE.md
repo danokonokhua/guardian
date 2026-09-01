@@ -1,6 +1,6 @@
 # Guardian — Project State
 
-**Last updated:** 2026-09-01 (SLA policy, escalation, and analytics export)
+**Last updated:** 2026-09-01 (scheduled SLA escalation execution and reporting foundations)
 
 ## Current phase
 
@@ -28,12 +28,16 @@ this environment.** No DSN is committed anywhere.
 - Guarded `POST /api/cron/tick` using `CRON_SECRET` and fail-closed authentication.
 - Long-running worker entrypoint: `npm run worker`.
 - Authenticated dashboard with tenant-scoped monitoring, issue lifecycle, queue analytics,
-  notifications, organization SLA policy, breach escalation, and CSV/JSON analytics export.
+  notifications, organization SLA policy, scheduled breach escalation, and CSV/JSON analytics export.
 
 ## Next approved phase
 
-Next work should extend scheduled escalation execution and reporting integrations after
-the current code is reviewed and pushed.
+Scheduled SLA escalation execution and reporting foundations are now implemented and gated.
+The worker registers tenant-bound escalation jobs, applies retry/singleton policies, and
+queues notification deliveries for active organization owners/admins. The in-app provider
+enforces active membership inside a transaction-local RLS context. Analytics CSV/JSON export
+remains available through the organization-scoped API. The next phase requires product review
+before adding external reporting destinations or additional notification providers.
 
 ## History
 

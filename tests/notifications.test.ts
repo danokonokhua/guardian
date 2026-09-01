@@ -2,6 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 
 const findFirst = vi.fn();
 vi.mock("@/db/client", () => ({ getPrisma: () => ({ organizationMember: { findFirst } }) }));
+vi.mock("@/db/tenant", () => ({
+  withGucContext: vi.fn((_scope: unknown, callback: (tx: unknown) => unknown) =>
+    callback({ organizationMember: { findFirst } }),
+  ),
+}));
 import { enqueueNotification, registerNotificationWorker } from "@/lib/notifications";
 
 describe("notifications", () => {

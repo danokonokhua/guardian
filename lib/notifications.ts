@@ -3,6 +3,7 @@ import { getPrisma } from "@/db/client";
 import { getJobBoss } from "@/lib/jobs/boss";
 import { logger } from "@/lib/logger";
 import { createInAppNotification } from "@/services/notifications/repository";
+import { withGucContext } from "@/db/tenant";
 
 export const NOTIFICATION_JOB = "notification.deliver" as const;
 export type NotificationChannel = "EMAIL" | "IN_APP";
@@ -77,13 +78,18 @@ export async function registerNotificationWorker(
   await boss.work<NotificationEvent>(NOTIFICATION_JOB, async ([job]) => {
     if (!job) return;
     const prisma = getPrisma();
-    const member = await prisma.organizationMember.findFirst({
-      where: {
-        organizationId: job.data.organizationId,
-        userId: job.data.recipientUserId,
-        status: "ACTIVE",
-      },
-    });
+    const member = await withGucContext(
+      { organizationId: job.data.organizationId, userId: job.data.recipientUserId },
+      (tx) =>
+        tx.organizationMember.findFirst({
+          where: {
+            organizationId: job.data.organizationId,
+            userId: job.data.recipientUserId,
+            status: "ACTIVE",
+          },
+        }),
+      prisma,
+    );
     if (!member) return;
     await provider.deliver(job.data);
   });
