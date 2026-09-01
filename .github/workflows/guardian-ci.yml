@@ -59,7 +59,8 @@ jobs:
         run: npm run typecheck
 
       - name: Unit/API tests
-        run: npm test
+        # Integration suites are run explicitly after migrations below.
+        run: env -u DATABASE_URL -u DIRECT_URL -u TEST_DATABASE_URL npm test
 
       - name: Apply database migrations
         run: npm run db:deploy
@@ -83,3 +84,7 @@ jobs:
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Keep this job least-privilege: scan and fail on leaks without
+          # uploading SARIF or commenting on pull requests.
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
+          GITLEAKS_ENABLE_COMMENTS: "false"
