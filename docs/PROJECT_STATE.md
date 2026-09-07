@@ -1,6 +1,6 @@
 # Guardian — Project State
 
-**Last updated:** 2026-09-01 (scheduled SLA escalation execution and reporting foundations)
+**Last updated:** 2026-09-05 (tenant-safe dispatch architecture)
 
 ## Current phase
 
@@ -29,6 +29,11 @@ this environment.** No DSN is committed anywhere.
 - Long-running worker entrypoint: `npm run worker`.
 - Authenticated dashboard with tenant-scoped monitoring, issue lifecycle, queue analytics,
   notifications, organization SLA policy, scheduled breach escalation, and CSV/JSON analytics export.
+- Monitor configuration now exposes only the worker-backed UPTIME and SSL types; SEO, content,
+  links, performance, and form checks remain deferred until their workers are implemented.
+- Tenant dispatch metadata now lives in the private `guardian_jobs` schema. Monitor and SLA
+  schedulers claim only system-owned dispatch rows; worker execution continues through
+  transaction-local `app.org_id` context before reading tenant-owned tables.
 
 ## Next approved phase
 
@@ -173,6 +178,32 @@ further per protocol; classified as **ENVIRONMENT MEMORY LIMIT** for ≤ 2 GB ho
 - All environment access flows through `config/env.ts`; logging through `lib/logger.ts`;
   API failures through `withRoute` + `toApiErrorBody`.
 
-## Next task (pending human approval)
+## Current release gate and next phase (2026-09-02)
 
-Phase 1B-10 — to be determined by the approved PRD sequence after 1B-09 closes.
+Phase 1B-10 production-readiness gate is complete:
+
+- Prettier format check, ESLint, and TypeScript all pass.
+- Vitest passes 350 tests; 11 database-backed integration tests remain skipped
+  unless a disposable PostgreSQL instance is available.
+- The production build passes with `next build --webpack`, which is the
+  documented low-memory build path for this workstation.
+- The shared API wrapper now follows Next 16's required async route context,
+  so the production type generator and the local test contract agree.
+- `scripts/verify-phase-1b-10.ps1` invokes the pinned local CLIs directly and
+  no longer depends on a broken global npm shim.
+
+The next phase is **production deployment preparation**. The deployment target
+must provide Docker Compose, two long-lived services (the Next web process and
+the `npm run worker` process), persistent PostgreSQL storage, TLS, and secret
+environment variables. The cPanel site being monitored is not required to
+host Guardian itself. See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the release
+order and VPS checklist.
+
+The approved tenant-dispatch architecture is implemented in migration
+`20260905100000_tenant_dispatch`. Apply it before the production worker starts;
+the migration deliberately does not create roles, reset credentials, or bypass
+tenant RLS. It seeds dispatch rows for existing verified monitors and active
+issues when the direct migration role can read them. If the host uses a
+restricted migration role, re-run one check per existing monitor during the
+deployment smoke test so any missing rows are recreated through the normal
+tenant-scoped issue path.

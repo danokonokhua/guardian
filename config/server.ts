@@ -6,7 +6,7 @@ import "server-only";
  * The `server-only` import at the top is a bundler-enforced marker: any
  * attempt to import this module (directly or transitively) from a Client
  * Component fails the build. This is the architectural guarantee that
- * DATABASE_URL, DIRECT_URL, and SUPABASE_SERVICE_ROLE_KEY can never reach
+ * DATABASE_URL, DIRECT_URL, and SMTP credentials can never reach
  * the browser. In tests, Vitest aliases the marker to a no-op stub because
  * there is no bundler boundary under plain Node.
  */

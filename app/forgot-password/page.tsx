@@ -1,13 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { createBrowserClient } from "@supabase/ssr";
-
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  return url !== undefined && anonKey !== undefined ? createBrowserClient(url, anonKey) : null;
-}
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -20,26 +13,15 @@ export default function ForgotPasswordPage() {
     setMessage(null);
     setError(null);
     setSubmitting(true);
-    const supabase = getSupabaseClient();
-    if (supabase === null) {
-      setError("Supabase authentication is not configured.");
-      setSubmitting(false);
-      return;
-    }
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+    const response = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email }),
     });
-    if (resetError !== null) {
-      const providerMessage = resetError.message.toLowerCase();
-      setError(
-        providerMessage.includes("redirect")
-          ? "Supabase rejected the reset redirect. Add http://localhost:3000/reset-password to Supabase Auth redirect URLs."
-          : providerMessage.includes("rate")
-            ? "Too many reset requests. Wait a few minutes and try again."
-            : "Unable to send a password reset email. Check the Supabase email provider settings.",
-      );
-    } else {
+    if (response.ok) {
       setMessage("If an account exists for that email, a reset link has been sent.");
+    } else {
+      setError("Unable to process the password reset request.");
     }
     setSubmitting(false);
   }

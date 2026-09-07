@@ -4,6 +4,7 @@ import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
 import { enqueueNotification, type NotificationEvent } from "@/lib/notifications";
 import { readOrganizationSlaPolicy } from "@/services/organizations/settings";
+import { isChannelEnabled } from "@/services/notifications/repository";
 
 export interface SlaEscalationResult {
   checkedIssues: number;
@@ -62,11 +63,17 @@ export async function enqueueSlaEscalations(
       issueId: issue.id,
       title: `SLA breach: ${issue.title}`,
       body: `${issue.severity} issue has been open for ${ageMinutes} minutes and exceeded an organization SLA target.`,
-      channel: "IN_APP" as const,
     };
     for (const member of data.members) {
-      const result = await enqueue({ ...eventBase, recipientUserId: member.userId });
-      if (result !== null) notificationsQueued += 1;
+      for (const channel of ["IN_APP", "EMAIL"] as const) {
+        if (!(await isChannelEnabled(scope, member.userId, "ISSUE", channel))) continue;
+        const result = await enqueue({
+          ...eventBase,
+          recipientUserId: member.userId,
+          channel,
+        });
+        if (result !== null) notificationsQueued += 1;
+      }
     }
   }
   return {

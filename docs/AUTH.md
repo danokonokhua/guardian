@@ -1,54 +1,49 @@
-# Guardian — Identity & Authorization Foundation (Phase 1B-05)
+# Guardian — Local Authentication
+
+Guardian uses PostgreSQL-backed local authentication so the application can be
+deployed as a self-contained Docker Compose stack on a VPS. There is no
+Supabase Auth dependency.
 
 ## Architecture
 
 ```
-AUTH PROVIDER (approved: Supabase Auth — wired through lib/auth/supabase-adapter.ts)
-      ↓
-AUTH ADAPTER            lib/auth/adapter.ts   (only layer touching sessions/tokens)
-      ↓
-GUARDIAN IDENTITY CONTEXT  lib/auth/context.ts (getCurrentUser / requireUser /
-      ↓                                          requireOrganizationMember / requireRole)
-APPLICATION SERVICES    (never import the adapter or provider SDKs)
+HTTP cookie (guardian_session)
+        ↓ SHA-256 token lookup
+auth_sessions + users
+        ↓
+lib/auth/context.ts
+        ↓
+tenant membership and role authorization
 ```
 
-- **Identity projection** (`lib/auth/identity.ts`): `AuthenticatedUser`,
-  `MembershipContext`, `IdentityRepository` interface. The `User` /
-  `OrganizationMember` Prisma models remain the single source of truth; no
-  passwords, no auth secrets, no competing identity system.
-- **Adapter**: `AuthAdapter` interface with a fail-closed `AnonymousAuthAdapter`
-  default (no provider registered → every request unauthenticated). The Supabase
-  adapter is registered via `setAuthAdapter()` in a later phase.
-- **Repository**: `lib/auth/prisma-repository.ts` (server-only) implements
-  user/membership lookups through the existing Prisma boundary — no second ORM,
-  no raw SQL. Tests inject an in-memory fake via `setIdentityRepository()`.
-- **Authorization** (`lib/auth/authorization.ts`): deny-by-default primitives
-  over OWNER > ADMIN > MEMBER > VIEWER; only `ACTIVE` users and `ACTIVE`
-  memberships authorize. The full permission matrix (Phase 1A §10) arrives with
-  the API phase.
+- `AuthCredential` stores a scrypt password hash and lockout counters.
+- `AuthSession` stores only a hash of the random cookie token.
+- `PasswordResetToken` stores only a hash of a short-lived reset token.
+- `lib/auth/adapter.ts` is the only application seam for resolving identity.
+- Tenant membership remains authoritative in `organization_members`.
 
-## Decision semantics
+## User flows
 
-| Condition                                          | Result                                                                     |
-| -------------------------------------------------- | -------------------------------------------------------------------------- |
-| No / stale / inactive identity                     | 401 `UNAUTHORIZED`                                                         |
-| Not an ACTIVE member of the organization           | **404 `NOT_FOUND`** (existence masking — also covers cross-tenant probing) |
-| Member but below required role                     | 403 `FORBIDDEN`                                                            |
-| Membership bound to a different org than requested | 500 invariant error (`tenantContextFor`) — never a silent tenant switch    |
+- `POST /api/auth/login` validates credentials, applies the five-attempt
+  lockout policy, and sets an HTTP-only, SameSite=Lax session cookie.
+- `POST /api/auth/logout` revokes the current session and redirects to login.
+- `POST /api/auth/forgot-password` creates a one-hour reset token. With SMTP
+  configured it emails the link; in local development it logs the link.
+- `POST /api/auth/reset-password` consumes the token, updates the scrypt hash,
+  and revokes existing sessions.
 
-Client-supplied `userId` / `organizationId` are never proof of authorization:
-the adapter's identity plus the repository's membership relationship decide.
+## Initial account
 
-## Known limitations / deferred
+The Compose `bootstrap` service runs `npm run auth:bootstrap` after migrations.
+Set `GUARDIAN_ADMIN_EMAIL`, `GUARDIAN_ADMIN_PASSWORD`, and optionally the name
+and organization variables in `.env`. The command is idempotent: it
+creates the account and owner membership once, then leaves existing data intact.
 
-- Supabase Auth is used automatically when `NEXT_PUBLIC_SUPABASE_URL` and
-  `NEXT_PUBLIC_SUPABASE_ANON_KEY` are configured. When either is absent, the
-  adapter remains anonymous and all protected access fails closed.
-- `/login` provides the initial password sign-in flow, while `proxy.ts`
-  refreshes the provider session cookie before protected dashboard/API requests.
-- Signup and MFA remain later work. Password recovery is implemented through
-  `/forgot-password` and `/reset-password`; the Supabase redirect URL must be
-  allowlisted for each deployment environment.
-- Permission-matrix helpers, RLS, and route-level guards arrive with the API.
-- Live-database integration tests for the Prisma repository are deferred until
-  a real database is configured (documented boundary; unit tests cover logic).
+## Security rules
+
+- Passwords, reset tokens, and session tokens are never logged or stored in
+  plaintext.
+- Cookies are marked `Secure` when `NEXT_PUBLIC_APP_URL` uses HTTPS.
+- Login errors are intentionally generic so they do not disclose whether an
+  email exists.
+- Authorization still fails closed for suspended users and non-members.

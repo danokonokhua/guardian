@@ -39,6 +39,7 @@ yarn-error.log*
 # tool caches/config created inside the project directory (HOME == project root
 # in some sandboxes); never part of the repository
 .npm/
+.npm-cache/
 .cache/
 .config/
 .local/

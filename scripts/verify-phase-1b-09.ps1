@@ -21,7 +21,7 @@ for ($attempt = 1; $attempt -le 30; $attempt++) {
 }
 
 try {
-  $env:DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:55432/guardian_test"
+  $env:DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:56032/guardian_test"
   $env:DIRECT_URL = $env:DATABASE_URL
   $env:TEST_DATABASE_URL = $env:DATABASE_URL
   $env:NODE_ENV = "test"

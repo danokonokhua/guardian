@@ -10,7 +10,7 @@ import {
 } from "@/services/monitors/repository";
 import type { TenantScope } from "@/db/tenant";
 import type { PgBoss } from "pg-boss";
-import { getJobBoss } from "@/lib/jobs/boss";
+import { getJobBoss, startJobBoss } from "@/lib/jobs/boss";
 import {
   JOB_EXPIRE_SECONDS,
   JOB_RETRY_DELAY_SECONDS,
@@ -64,6 +64,7 @@ export async function triggerConfiguredMonitor(
   if (!monitor) throw new NotFoundError("Monitor");
 
   const jobBoss = boss ?? getJobBoss();
+  if (boss === undefined) await startJobBoss();
 
   await jobBoss.createQueue(MONITOR_CHECK_JOB, {
     retryLimit: JOB_RETRY_LIMIT,

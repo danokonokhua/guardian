@@ -1,7 +1,7 @@
 // Guardian database schema — the single source of truth for the database.
 //
 // Technology (approved Phase 1A architecture, ADR-001/ADR-002):
-//   PostgreSQL (Supabase-hosted) + Prisma + Prisma Migrate.
+//   PostgreSQL + Prisma + Prisma Migrate.
 //
 // Phase 1B-04 implements the APPROVED MVP DOMAIN MODEL (Phase 1A §6, ERD §7,
 // required chain of Phase 1B-04):
@@ -22,8 +22,8 @@
 //
 // Credentials: connection strings are referenced via env() and resolved from
 // the environment at runtime — never hardcoded, never committed.
-//   DATABASE_URL  — pooled connection (runtime queries; Supabase pooler)
-//   DIRECT_URL    — direct connection (migrations/administrative operations)
+//   DATABASE_URL  — runtime PostgreSQL connection
+//   DIRECT_URL    — direct connection used by migrations/administration
 
 datasource db {
   provider  = "postgresql"
@@ -39,9 +39,9 @@ generator client {
 // Enums — vocabulary from the approved Phase 1A architecture. Do not invent.
 // ---------------------------------------------------------------------------
 
-/// Phase 1A §6.1: users.status (active|suspended|deleted). No auth secrets —
-/// authentication is Supabase Auth (later phase); this table is an identity
-/// mirror/reference only.
+/// Phase 1A §6.1: users.status (active|suspended|deleted). Credentials and
+/// sessions live in the dedicated auth_* tables; this remains the tenant-facing
+/// identity projection.
 enum UserStatus {
   ACTIVE
   SUSPENDED
@@ -154,8 +154,55 @@ model User {
   issueActivities          IssueActivity[]      @relation("IssueActivityActor")
   issueActivityAssignments IssueActivity[]      @relation("IssueActivityAssignee")
   issueQueueViews          IssueQueueView[]     @relation("IssueQueueViewOwner")
+  authCredential           AuthCredential?
+  authSessions             AuthSession[]
+  passwordResetTokens      PasswordResetToken[]
 
   @@map("users")
+}
+
+/// Local Guardian credential record. Authentication is deliberately separate
+/// from the tenant identity mirror so password material never enters the
+/// application-facing User projection.
+model AuthCredential {
+  userId            String    @id
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordHash      String
+  failedAttempts    Int       @default(0)
+  lockedUntil       DateTime?
+  passwordUpdatedAt DateTime  @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("auth_credentials")
+}
+
+/// Opaque, database-backed login sessions. Only a SHA-256 token hash is stored.
+model AuthSession {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  lastSeenAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("auth_sessions")
+}
+
+/// Single-use password recovery token. Only its SHA-256 hash is persisted.
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("password_reset_tokens")
 }
 
 /// Phase 1A §6.1: THE TENANT ROOT. Soft delete (deletedAt), purge after 30d.

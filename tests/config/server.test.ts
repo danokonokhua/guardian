@@ -55,16 +55,15 @@ describe("loadServerConfig — production requirements", () => {
     expect(config.public.appUrl).toBe("https://guardian.example.com/");
   });
 
-  it("keeps database and Supabase variables optional in EVERY environment", () => {
+  it("keeps database variables optional in EVERY environment", () => {
     for (const nodeEnv of ["development", "test", "production"] as const) {
       const config = loadServerConfig({ NODE_ENV: nodeEnv });
 
       expect(config.server.databaseUrl).toBeUndefined();
       expect(config.server.directUrl).toBeUndefined();
-      expect(config.server.supabaseServiceRoleKey).toBeUndefined();
 
       const externalIssues = config.issues.filter((issue) =>
-        /DATABASE|SUPABASE|DIRECT/.test(issue.variable),
+        /DATABASE|DIRECT/.test(issue.variable),
       );
       expect(externalIssues).toEqual([]);
     }
@@ -76,16 +75,10 @@ describe("loadServerConfig — reserved values", () => {
     const config = loadServerConfig({
       DATABASE_URL: DUMMY_DATABASE_URL,
       DIRECT_URL: DUMMY_DATABASE_URL,
-      SUPABASE_SERVICE_ROLE_KEY: "dummy-service-role-key",
-      NEXT_PUBLIC_SUPABASE_URL: "https://supabase.example.co",
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key",
     });
 
     expect(config.server.databaseUrl).toBe(DUMMY_DATABASE_URL);
     expect(config.server.directUrl).toBe(DUMMY_DATABASE_URL);
-    expect(config.server.supabaseServiceRoleKey).toBe("dummy-service-role-key");
-    expect(config.public.supabaseUrl).toBe("https://supabase.example.co/");
-    expect(config.public.supabaseAnonKey).toBe("dummy-anon-key");
   });
 
   it("rejects a non-PostgreSQL DATABASE_URL without echoing its value", () => {
@@ -156,9 +149,7 @@ describe("server configuration singleton", () => {
 
   it("separates public and server scopes structurally", () => {
     expect(Object.keys(serverConfig.public)).not.toContain("databaseUrl");
-    expect(Object.keys(serverConfig.public)).not.toContain("supabaseServiceRoleKey");
     expect(Object.keys(serverConfig.server)).not.toContain("appUrl");
-    expect(Object.keys(serverConfig.server)).not.toContain("supabaseAnonKey");
   });
 });
 

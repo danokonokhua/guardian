@@ -8,6 +8,7 @@ import { logger } from "@/lib/logger";
 
 interface JobGlobal {
   __guardianPgBoss?: PgBoss;
+  __guardianPgBossStart?: Promise<PgBoss>;
 }
 
 const globalForJobs = globalThis as JobGlobal;
@@ -56,6 +57,15 @@ export function getJobBoss(): PgBoss {
 /** Starts pg-boss exactly once for this process. */
 export async function startJobBoss(): Promise<PgBoss> {
   const boss = getJobBoss();
-  await boss.start();
-  return boss;
+  if (globalForJobs.__guardianPgBossStart !== undefined) {
+    return globalForJobs.__guardianPgBossStart;
+  }
+  const starting = boss.start().then(() => boss);
+  globalForJobs.__guardianPgBossStart = starting;
+  try {
+    return await starting;
+  } catch (error) {
+    delete globalForJobs.__guardianPgBossStart;
+    throw error;
+  }
 }

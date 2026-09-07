@@ -5,7 +5,11 @@ import { parseWith } from "@/lib/validation";
 /** Phase 1B-10 monitor configuration contract. */
 export const monitorConfigSchema = z.object({
   websiteId: z.string().uuid(),
-  type: z.nativeEnum(MonitorType),
+  type: z
+    .nativeEnum(MonitorType)
+    .refine((value) => value === MonitorType.UPTIME || value === MonitorType.SSL, {
+      message: "This monitor type is not available yet. Choose UPTIME or SSL.",
+    }),
   enabled: z.boolean().optional().default(true),
   frequencyMinutes: z.number().int().min(1).max(1440).optional().default(5),
   config: z.record(z.string(), z.unknown()).optional().default({}),

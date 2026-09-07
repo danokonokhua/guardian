@@ -4,8 +4,13 @@ const findFirst = vi.fn();
 const findUnique = vi.fn();
 const upsert = vi.fn();
 const updateMany = vi.fn();
+const executeRaw = vi.fn().mockResolvedValue(0);
 vi.mock("@/db/client", () => ({
-  getPrisma: () => ({ website: { findFirst }, issue: { findUnique, upsert, updateMany } }),
+  getPrisma: () => ({
+    website: { findFirst },
+    issue: { findUnique, upsert, updateMany },
+    $executeRaw: executeRaw,
+  }),
 }));
 import { issueFingerprint, recordFinding, resolveFinding } from "@/lib/issue-engine";
 

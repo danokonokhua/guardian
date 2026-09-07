@@ -42,7 +42,8 @@ See [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) for the authoritative state
 
 Database foundation (PostgreSQL + Prisma) is installed — see
 [`docs/DATABASE.md`](docs/DATABASE.md) for the schema/migration workflow.
-Planned by the approved architecture: Supabase Auth.
+Authentication is PostgreSQL-backed and ships in the Docker Compose deployment;
+no external auth provider is required.
 
 Phase 1B-09 installs pg-boss 12.28.0 in the dedicated `guardian_jobs` schema, with a long-running `system.ping` worker and a guarded `POST /api/cron/tick` scheduler entrypoint.
 The exact closure procedure is documented in [`docs/JOB_GATE.md`](docs/JOB_GATE.md).
@@ -64,22 +65,23 @@ npm ci        # or: npm install (no lockfile cache yet on a fresh clone)
 
 ## 6. Environment configuration
 
-Copy the template and adjust (no real secrets are required for this phase):
+For local development, copy the template and adjust the values you need:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Variables actually consumed today (via `config/env.ts` only):
+The runtime consumes `DATABASE_URL`, `DIRECT_URL`, `CRON_SECRET`, SMTP values,
+and the self-hosted bootstrap values documented in `.env.example`. The same
+`.env` file is used by local commands and the Docker Compose/VPS stack.
 
 | Variable    | Purpose                                              | Required                | Example |
 | ----------- | ---------------------------------------------------- | ----------------------- | ------- |
 | `LOG_LEVEL` | Minimum logger severity (`debug\|info\|warn\|error`) | no (default `info`)     | `info`  |
 | `APP_ENV`   | Deployment label for logs/health                     | no (default `NODE_ENV`) | `local` |
 
-`DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, AI/payment keys are **reserved for later
-phases** and documented in `.env.example`. Supabase's public URL and anon key are consumed by
-the server authentication adapter when configured. All `.env*` files are
+`DATABASE_URL`, `DIRECT_URL`, SMTP, AI/payment keys are configured through the
+environment and documented in `.env.example`. All `.env*` files are
 gitignored; `.env.example` is the only tracked template.
 
 ## 7. Commands
@@ -95,6 +97,7 @@ gitignored; `.env.example` is the only tracked template.
 | `npm run test:watch`                                             | Vitest in watch mode                                                                     |
 | `npm run format` / `npm run format:check`                        | Prettier write / verify                                                                  |
 | `npm run db:generate` / `db:migrate` / `db:deploy` / `db:status` | Prisma client generation & migration workflow (see [docs/DATABASE.md](docs/DATABASE.md)) |
+| `npm run auth:bootstrap`                                      | Create the initial PostgreSQL-backed owner account and organization |
 | `npm run test:integration`                                       | Real-PostgreSQL RLS + pg-boss integration gates (requires `TEST_DATABASE_URL`)           |
 
 ### Production builds on low-memory machines (≤ 2 GB RAM)
@@ -132,7 +135,10 @@ canonical envelope `{ error: { code, message, requestId, details? } }`.
 
 ## 9. Current limitations
 
-- Foundation only: no authentication, database, monitoring, dashboard, jobs, or AI (by design).
+- The remaining PRD adapters (broken links, SEO, performance, forms, and
+  explainable health scoring) are staged for the next product phase.
+- SMTP is required for production worker/email delivery; local development can
+  omit it when email flows are not being tested.
 - Production builds need the webpack flag on ≤ 2 GB machines (see above).
 - `next start` presumes a completed build in `.next/`.
 - The workspace snapshot system does not persist `node_modules/` or `.next/` between
@@ -140,7 +146,7 @@ canonical envelope `{ error: { code, message, requestId, details? } }`.
 
 ## 10. Next development phase
 
-Phase 1B-02 (per the approved 1A sequence — to be confirmed by human review): extend the
-foundation toward the database/configuration milestones (PostgreSQL + Prisma setup), after
-which authentication (Supabase Auth), tenancy/RBAC primitives, and the pg-boss job
-foundation follow as separate, gated tasks.
+The next product phase extends the foundation with the remaining PRD monitoring
+adapters, evidence, health scoring, and recommendations. The deployment path
+is already self-contained: PostgreSQL, local authentication, web, and worker
+run together through Docker Compose.

@@ -2,13 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
-
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  return url !== undefined && anonKey !== undefined ? createBrowserClient(url, anonKey) : null;
-}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,15 +15,12 @@ export default function LoginPage() {
     setError(null);
     setSubmitting(true);
 
-    const supabase = getSupabaseClient();
-    if (supabase === null) {
-      setError("Supabase authentication is not configured.");
-      setSubmitting(false);
-      return;
-    }
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    if (signInError !== null) {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!response.ok) {
       setError("Unable to sign in with those credentials.");
       setSubmitting(false);
       return;

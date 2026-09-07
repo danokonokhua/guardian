@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 /**
  * Phase 1B development landing page.
  *
@@ -26,6 +28,13 @@ export default function HomePage() {
         <p className="mt-6 text-sm leading-relaxed text-neutral-400">
           Foundation services are operational. Sign in to access your organization dashboard.
         </p>
+
+        <Link
+          href="/login"
+          className="mt-6 inline-flex rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+        >
+          Sign in to Guardian
+        </Link>
 
         <p className="mt-6 font-mono text-xs text-neutral-500">
           liveness probe: <span className="text-neutral-300">GET /api/health</span>

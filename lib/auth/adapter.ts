@@ -7,15 +7,13 @@ import "server-only";
  * a specific authentication provider. Application code never touches these
  * details — it consumes lib/auth/context.ts.
  *
- * No provider is wired yet by design: Supabase Auth is the approved provider
- * for a later phase. Until an adapter is registered, the default ANONYMOUS
- * adapter resolves no identity — every request is unauthenticated and the
- * system fails closed (deny-by-default).
+ * Guardian uses a local PostgreSQL-backed adapter. The adapter boundary stays
+ * provider-neutral so a future external provider can still be introduced
+ * without leaking session details into application services.
  */
 
 import type { AuthenticatedIdentity } from "@/lib/auth/identity";
-import { loadPublicConfig } from "@/config/public";
-import { SupabaseAuthAdapter } from "@/lib/auth/supabase-adapter";
+import { LocalAuthAdapter } from "@/lib/auth/local-adapter";
 
 /** Contract every authentication provider adapter must satisfy. */
 export interface AuthAdapter {
@@ -27,7 +25,7 @@ export interface AuthAdapter {
   getSessionIdentity(): Promise<AuthenticatedIdentity | null>;
 }
 
-/** Fail-closed default: no provider wired → no identity, ever. */
+/** Fail-closed default used by tests or explicit no-auth wiring. */
 export class AnonymousAuthAdapter implements AuthAdapter {
   getSessionIdentity(): Promise<AuthenticatedIdentity | null> {
     return Promise.resolve(null);
@@ -35,20 +33,13 @@ export class AnonymousAuthAdapter implements AuthAdapter {
 }
 
 function defaultAuthAdapter(): AuthAdapter {
-  const config = loadPublicConfig();
-  if (config.supabaseUrl !== undefined && config.supabaseAnonKey !== undefined) {
-    return new SupabaseAuthAdapter(config.supabaseUrl, config.supabaseAnonKey);
-  }
-  return new AnonymousAuthAdapter();
+  return new LocalAuthAdapter();
 }
 
-// Supabase is used automatically when its public project settings are
-// configured; otherwise development and tests remain fail-closed.
 let authAdapter: AuthAdapter = defaultAuthAdapter();
 
 /**
- * Registers the application auth adapter. Called once during auth-provider
- * wiring (later phase) or by tests to simulate authenticated sessions.
+ * Registers the application auth adapter for tests or a future provider.
  */
 export function setAuthAdapter(adapter: AuthAdapter): void {
   authAdapter = adapter;

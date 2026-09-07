@@ -64,7 +64,8 @@ Legacy `/api/health` and `/api/health/ready` remain unchanged.
 
 ## Deliberately NOT implemented (later phases)
 
-Login/signup/sessions/cookies/Supabase wiring · product endpoints (websites,
+Product login/sessions/cookies are implemented through the local PostgreSQL
+auth adapter; product endpoints (websites,
 monitoring, issues, reports, notifications) · rate limiting · pagination ·
 API keys · webhooks · versioning beyond `/v1` prefix.
 

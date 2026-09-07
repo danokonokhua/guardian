@@ -3,7 +3,7 @@
  *
  * This module and its transitive imports (`config/env.ts`) reference ONLY
  * public variable names, so bundling it into client code leaks nothing.
- * Server-only variables (DATABASE_URL, SUPABASE_SERVICE_ROLE_KEY, …) live in
+ * Server-only variables (DATABASE_URL, SMTP_PASSWORD, …) live in
  * `config/server.ts`, which is guarded by the `server-only` marker.
  *
  * NOTE for future client components: Next.js statically replaces only

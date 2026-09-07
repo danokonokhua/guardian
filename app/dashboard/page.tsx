@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { NotificationsPanel } from "@/app/notifications-panel";
 import { MonitoringPanel } from "@/app/monitoring-panel";
 import { HealthPanel } from "@/app/health-panel";
@@ -24,6 +26,12 @@ export default async function DashboardPage() {
           <p className="mt-3 text-sm text-neutral-400">
             An authenticated session is required to access the dashboard.
           </p>
+          <Link
+            href="/login"
+            className="mt-6 inline-flex rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+          >
+            Go to sign in
+          </Link>
         </section>
       </main>
     );

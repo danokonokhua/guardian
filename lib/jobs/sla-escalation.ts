@@ -3,6 +3,12 @@ import "server-only";
 import type { PgBoss } from "pg-boss";
 import { getJobBoss } from "@/lib/jobs/boss";
 import { getPrisma } from "@/db/client";
+import {
+  claimSlaDispatch,
+  deleteSlaDispatch,
+  listDueSlaDispatches,
+  releaseSlaDispatch,
+} from "@/lib/jobs/dispatch";
 import { enqueueNotification } from "@/lib/notifications";
 import { enqueueSlaEscalations } from "@/services/issues/escalation";
 import {
@@ -39,19 +45,20 @@ export async function enqueueSlaEscalation(
   });
 }
 
-/** Finds organizations with active incidents and queues one tenant-bound escalation job. */
+/** Queues due tenant-bound escalation jobs from the system dispatch registry. */
 export async function scheduleDueSlaEscalations(boss: PgBoss = getJobBoss()): Promise<number> {
-  const organizations = await getPrisma().organization.findMany({
-    where: {
-      deletedAt: null,
-      issues: { some: { status: { notIn: ["RESOLVED", "IGNORED"] } } },
-    },
-    select: { id: true },
-    take: 1000,
-  });
+  const prisma = getPrisma();
+  const organizations = await listDueSlaDispatches(prisma);
   let queued = 0;
   for (const organization of organizations) {
-    if ((await enqueueSlaEscalation(organization.id, boss)) !== null) queued += 1;
+    const claimed = await claimSlaDispatch(prisma, organization.organizationId);
+    if (!claimed) continue;
+    try {
+      if ((await enqueueSlaEscalation(claimed.organizationId, boss)) !== null) queued += 1;
+    } catch (error) {
+      await releaseSlaDispatch(prisma, claimed.organizationId);
+      throw error;
+    }
   }
   return queued;
 }
@@ -69,6 +76,9 @@ export async function registerSlaEscalationWorker(boss: PgBoss = getJobBoss()): 
       { organizationId: job.data.organizationId, userId: SYSTEM_USER_ID, role: "OWNER" },
       (event) => enqueueNotification(event, boss),
     );
+    if (result.checkedIssues === 0) {
+      await deleteSlaDispatch(getPrisma(), job.data.organizationId);
+    }
     logger.info("sla_escalation_completed", {
       organizationId: job.data.organizationId,
       breachedIssues: result.breachedIssues,

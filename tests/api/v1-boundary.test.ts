@@ -107,7 +107,9 @@ afterEach(() => {
 
 describe("scenario 1 — /api/v1/health standardized response", () => {
   it("returns the success envelope with matching request id", async () => {
-    const response = await healthHandler(new Request("https://guardian.test/api/v1/health"));
+    const response = await healthHandler(new Request("https://guardian.test/api/v1/health"), {
+      params: Promise.resolve({}),
+    });
 
     expect(response.status).toBe(200);
     const body = await bodyOf<V1SuccessBody<{ status: string; service: string }>>(response);

@@ -20,8 +20,8 @@ AsyncLocalStorage, no process-global mutable tenant state (deliberately).
 
 ## 2–4. Authentication / membership / permission authority
 
-- Identity: exclusively the `AuthAdapter` seam (still anonymous-fail-closed;
-  Supabase wiring is a later phase).
+- Identity: exclusively the `AuthAdapter` seam, backed by local PostgreSQL
+  sessions and credentials.
 - Membership/role: exclusively the identity repository (database-authoritative).
 - Permissions: `lib/auth/permissions.ts` — the static, immutable Phase 1A §10
   matrix (24 permission strings × OWNER/ADMIN/MEMBER/VIEWER). ADMIN lacks
@@ -88,9 +88,16 @@ created offline, statically reviewed, and committed — it has NOT been applied
 to any database in this environment. Apply with `npm run db:deploy` when a
 database is provisioned (dev first), and run the gated integration suite.
 
-## 17. Deferred
+## 17. Background-job dispatch
 
-Supabase Auth wiring / sessions · AsyncLocalStorage request-scoped tenancy ·
-pg-boss (jobs will carry the serializable TenantScope) · provision-time role
-topology review (e.g. dedicated non-owner app role) · RLS for future tables ·
-product endpoints.
+The worker does not discover work by scanning tenant-owned tables. Migration
+`20260905100000_tenant_dispatch` creates private `guardian_jobs.monitor_dispatch`
+and `guardian_jobs.sla_dispatch` registries. Scheduler claims contain only the
+tenant ID and routing metadata; the worker then enters `withGucContext` before
+reading or mutating tenant rows. This avoids a privileged RLS bypass while
+keeping pg-boss payloads small and serializable.
+
+## 18. Deferred
+
+AsyncLocalStorage request-scoped tenancy · provision-time role topology review
+(e.g. dedicated non-owner app role) · RLS for future tables · product endpoints.

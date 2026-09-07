@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
@@ -12,6 +12,7 @@ import { IssueSeverity, IssueStatus, MemberRole, MonitorType, Prisma } from "@pr
  */
 
 const MIGRATION_DIR = "db/migrations/20260824140000_init_domain";
+const DISPATCH_MIGRATION = "db/migrations/20260905100000_tenant_dispatch/migration.sql";
 
 const modelNames = (): string[] => Prisma.dmmf.datamodel.models.map((model) => model.name);
 const fieldNames = (model: string): string[] =>
@@ -21,15 +22,19 @@ const fieldNames = (model: string): string[] =>
 
 describe("prisma schema validity", () => {
   it("validates cleanly (offline, dummy envs)", () => {
-    const output = execSync("npx prisma validate --schema db/schema.prisma", {
-      encoding: "utf8",
-      timeout: 60_000,
-      env: {
-        ...process.env,
-        DATABASE_URL: "postgresql://u:p@localhost:5432/guardian",
-        DIRECT_URL: "postgresql://u:p@localhost:5432/guardian",
+    const output = execFileSync(
+      process.execPath,
+      ["node_modules/prisma/build/index.js", "validate", "--schema", "db/schema.prisma"],
+      {
+        encoding: "utf8",
+        timeout: 60_000,
+        env: {
+          ...process.env,
+          DATABASE_URL: "postgresql://u:p@localhost:5432/guardian",
+          DIRECT_URL: "postgresql://u:p@localhost:5432/guardian",
+        },
       },
-    });
+    );
 
     expect(output).toContain("is valid");
   }, 30_000);
@@ -172,5 +177,24 @@ describe("first versioned migration", () => {
     ]) {
       expect(migration).toContain(`CREATE TABLE "${table}"`);
     }
+  });
+});
+
+describe("system-owned tenant dispatch", () => {
+  const migration = readFileSync(DISPATCH_MIGRATION, "utf8");
+
+  it("stores monitor and SLA routing metadata outside tenant-owned tables", () => {
+    expect(migration).toContain('CREATE TABLE "guardian_jobs"."monitor_dispatch"');
+    expect(migration).toContain('CREATE TABLE "guardian_jobs"."sla_dispatch"');
+    expect(migration).toContain('CREATE INDEX "monitor_dispatch_due_idx"');
+    expect(migration).toContain('CREATE INDEX "sla_dispatch_due_idx"');
+    expect(migration).toContain('FROM "monitoring_checks" AS m');
+    expect(migration).toContain('FROM "issues" AS i');
+  });
+
+  it("does not create a privileged RLS bypass or reset production credentials", () => {
+    expect(migration).not.toMatch(/BYPASSRLS/i);
+    expect(migration).not.toMatch(/CREATE ROLE/i);
+    expect(migration).not.toMatch(/PASSWORD\s+'[^']+'/i);
   });
 });

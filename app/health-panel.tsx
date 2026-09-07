@@ -134,7 +134,11 @@ export function HealthPanel({
       .then(async (response) =>
         response.ok ? ((await response.json()) as { data?: IssueAnalytics }) : { data: undefined },
       )
-      .then((payload) => setAnalytics(payload.data ?? null))
+      .then((payload) => {
+        const policy = payload.data?.policy;
+        setAnalytics(payload.data ?? null);
+        if (policy) setSlaDraft(policy);
+      })
       .catch(() => setAnalytics(null));
   }, [organizationId]);
 

@@ -19,6 +19,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Produce a minimal self-hostable server bundle for container deployments.
+  // Static assets are copied into the image by the production Dockerfile.
+  output: "standalone",
   poweredByHeader: false,
   async headers() {
     return [

@@ -1,41 +1,89 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const findMany = vi.fn();
-const update = vi.fn();
-vi.mock("@/db/client", () => ({ getPrisma: () => ({ monitor: { findMany, update } }) }));
+const { listDue, claim, release } = vi.hoisted(() => ({
+  listDue: vi.fn(),
+  claim: vi.fn(),
+  release: vi.fn(),
+}));
+
+vi.mock("@/db/client", () => ({ getPrisma: () => ({}) }));
+vi.mock("@/lib/jobs/dispatch", () => ({
+  listDueMonitorDispatches: listDue,
+  claimMonitorDispatch: claim,
+  releaseMonitorDispatch: release,
+}));
 
 import { scheduleDueMonitors } from "@/lib/jobs/scheduler";
 
-const bossMock = {
-  createQueue: vi.fn().mockResolvedValue(undefined),
-  send: vi.fn().mockResolvedValue("job-1"),
-};
-const boss = bossMock as never;
-
 describe("monitor scheduler", () => {
-  it("enqueues due monitors and advances nextRunAt", async () => {
-    findMany.mockResolvedValueOnce([
+  beforeEach(() => {
+    vi.clearAllMocks();
+    listDue.mockResolvedValue([]);
+    claim.mockResolvedValue(null);
+    release.mockResolvedValue(undefined);
+  });
+
+  it("claims and enqueues due dispatch rows without reading tenant tables", async () => {
+    listDue.mockResolvedValueOnce([
       {
-        id: "m1",
+        monitorId: "m1",
         organizationId: "o1",
         websiteId: "w1",
         type: "UPTIME",
+        enabled: true,
         frequencyMinutes: 5,
+        nextRunAt: new Date(),
       },
     ]);
-    update.mockResolvedValue({});
+    claim.mockResolvedValueOnce({
+      monitorId: "m1",
+      organizationId: "o1",
+      websiteId: "w1",
+      type: "UPTIME",
+      enabled: true,
+      frequencyMinutes: 5,
+      nextRunAt: new Date(),
+    });
+    const send = vi.fn().mockResolvedValue("job-1");
+    const boss = {
+      createQueue: vi.fn().mockResolvedValue(undefined),
+      send,
+    } as never;
+
     expect(await scheduleDueMonitors(boss)).toBe(1);
-    expect(bossMock.createQueue).toHaveBeenCalledWith("monitor.check", expect.any(Object));
-    expect(bossMock.send).toHaveBeenCalledWith(
+    expect(listDue).toHaveBeenCalledOnce();
+    expect(claim).toHaveBeenCalledWith(expect.anything(), "m1");
+    expect(send).toHaveBeenCalledWith(
       "monitor.check",
       { organizationId: "o1", websiteId: "w1", monitorId: "m1", type: "UPTIME" },
       expect.objectContaining({ singletonKey: "monitor:m1" }),
     );
-    expect(update).toHaveBeenCalledOnce();
   });
 
-  it("returns zero when no monitors are due", async () => {
-    findMany.mockResolvedValueOnce([]);
+  it("releases the claim when queue submission fails", async () => {
+    listDue.mockResolvedValueOnce([{ monitorId: "m1" }]);
+    claim.mockResolvedValueOnce({
+      monitorId: "m1",
+      organizationId: "o1",
+      websiteId: "w1",
+      type: "UPTIME",
+      frequencyMinutes: 5,
+    });
+    const error = new Error("queue unavailable");
+    const send = vi.fn().mockRejectedValue(error);
+    const boss = {
+      createQueue: vi.fn().mockResolvedValue(undefined),
+      send,
+    } as never;
+
+    await expect(scheduleDueMonitors(boss)).rejects.toBe(error);
+    expect(release).toHaveBeenCalledWith(expect.anything(), "m1");
+  });
+
+  it("returns zero when no dispatch rows are due", async () => {
+    const send = vi.fn();
+    const boss = { createQueue: vi.fn().mockResolvedValue(undefined), send } as never;
     expect(await scheduleDueMonitors(boss)).toBe(0);
+    expect(send).not.toHaveBeenCalled();
   });
 });

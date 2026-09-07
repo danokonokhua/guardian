@@ -8,7 +8,7 @@
  * (no competing identity system, no auth secrets, no password fields).
  *
  * Flow (mandated by Phase 1B-05 / approved 1A architecture):
- *   AUTH PROVIDER (later phase, e.g. Supabase Auth)
+ *   LOCAL AUTHENTICATION (PostgreSQL-backed credentials and sessions)
  *         ↓
  *   AUTH ADAPTER            (lib/auth/adapter.ts)
  *         ↓

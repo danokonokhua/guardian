@@ -1,7 +1,8 @@
 # Guardian — Database Foundation (Phase 1B-03) + Domain Schema (Phase 1B-04)
 
-Approved architecture: **PostgreSQL (Supabase-hosted) + Prisma + Prisma Migrate**
-(Phase 1A, ADR-001/ADR-002).
+Approved architecture: **self-hosted PostgreSQL + Prisma + Prisma Migrate**.
+The PRD permits an equivalent provider; this deployment runs PostgreSQL in
+Docker on the VPS.
 
 ## Domain models (Phase 1B-04)
 
@@ -24,10 +25,11 @@ audit_logs.
   citext extension for the case-insensitive unique email). Created OFFLINE via
   the documented `prisma migrate diff --from-empty --to-schema-datamodel`
   workflow and verified deterministic across regenerations.
-- **Live execution status:** BLOCKED in the development sandbox — no
-  PostgreSQL/Supabase database is configured there (none was fabricated).
-  Apply against the real database with `npm run db:deploy` once DATABASE_URL /
-  DIRECT_URL are configured.
+- `20260907160000_local_auth` — PostgreSQL-backed credentials, opaque sessions,
+  and single-use password-reset tokens for self-hosted deployments.
+- **Live execution status:** the Docker Compose `postgres` service is the
+  development and production database. The one-shot `migrate` service applies
+  versioned migrations before web and worker start.
 
 ## Layout
 
@@ -42,8 +44,8 @@ audit_logs.
 
 | Variable       | Used by                         | Purpose                                               |
 | -------------- | ------------------------------- | ----------------------------------------------------- |
-| `DATABASE_URL` | Prisma client (runtime queries) | Pooled connection (Supabase pooler / PgBouncer-style) |
-| `DIRECT_URL`   | Prisma Migrate (CLI only)       | Direct, non-pooled connection for migrations          |
+| `DATABASE_URL` | Prisma client (runtime queries) | Compose connection at `postgres:5432` |
+| `DIRECT_URL`   | Prisma Migrate (CLI only)       | Direct Compose connection at `postgres:5432` |
 
 Both are validated (PostgreSQL URL format) by `config/env.ts` when present and
 remain optional until Phase 1B-04. Neither is ever hardcoded, committed, or
@@ -53,7 +55,7 @@ returned by an API.
 
 ```bash
 # 1. Configure environment (local example — never commit real values)
-cp .env.example .env.local
+cp .env.example .env
 #   DATABASE_URL=postgresql://...   (pooled)
 #   DIRECT_URL=postgresql://...     (direct, for migrations)
 

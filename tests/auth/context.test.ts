@@ -228,7 +228,7 @@ describe("scenario 10 — provider details do not leak into business services", 
     const imports = source.split("\n").filter((line) => line.startsWith("import"));
     expect(imports.length).toBeGreaterThan(0);
     for (const line of imports) {
-      expect(line.toLowerCase()).not.toMatch(/cookie|header|token|jwt|bearer|supabase/);
+      expect(line.toLowerCase()).not.toMatch(/cookie|header|token|jwt|bearer/);
     }
   });
 });

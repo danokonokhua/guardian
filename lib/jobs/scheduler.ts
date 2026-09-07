@@ -9,6 +9,11 @@ import {
   JOB_EXPIRE_SECONDS,
 } from "@/lib/jobs/constants";
 import { getPrisma } from "@/db/client";
+import {
+  claimMonitorDispatch,
+  listDueMonitorDispatches,
+  releaseMonitorDispatch,
+} from "@/lib/jobs/dispatch";
 
 export interface MonitorCheckJob {
   organizationId: string;
@@ -26,37 +31,32 @@ export async function scheduleDueMonitors(boss: PgBoss = getJobBoss()): Promise<
     expireInSeconds: JOB_EXPIRE_SECONDS,
   });
   const prisma = getPrisma();
-  const due = await prisma.monitor.findMany({
-    where: {
-      enabled: true,
-      nextRunAt: { lte: new Date() },
-      website: { verifyStatus: "VERIFIED", deletedAt: null },
-    },
-    select: { id: true, organizationId: true, websiteId: true, type: true, frequencyMinutes: true },
-    take: 100,
-  });
+  const due = await listDueMonitorDispatches(prisma);
   for (const monitor of due) {
-    await boss.send(
-      MONITOR_CHECK_JOB,
-      {
-        organizationId: monitor.organizationId,
-        websiteId: monitor.websiteId,
-        monitorId: monitor.id,
-        type: monitor.type,
-      } satisfies MonitorCheckJob,
-      {
-        retryLimit: JOB_RETRY_LIMIT,
-        retryDelay: JOB_RETRY_DELAY_SECONDS,
-        retryBackoff: true,
-        expireInSeconds: JOB_EXPIRE_SECONDS,
-        singletonKey: `monitor:${monitor.id}`,
-        singletonSeconds: Math.max(1, monitor.frequencyMinutes * 60),
-      },
-    );
-    await prisma.monitor.update({
-      where: { id: monitor.id },
-      data: { nextRunAt: new Date(Date.now() + monitor.frequencyMinutes * 60_000) },
-    });
+    const claimed = await claimMonitorDispatch(prisma, monitor.monitorId);
+    if (!claimed) continue;
+    try {
+      await boss.send(
+        MONITOR_CHECK_JOB,
+        {
+          organizationId: claimed.organizationId,
+          websiteId: claimed.websiteId,
+          monitorId: claimed.monitorId,
+          type: claimed.type,
+        } satisfies MonitorCheckJob,
+        {
+          retryLimit: JOB_RETRY_LIMIT,
+          retryDelay: JOB_RETRY_DELAY_SECONDS,
+          retryBackoff: true,
+          expireInSeconds: JOB_EXPIRE_SECONDS,
+          singletonKey: `monitor:${claimed.monitorId}`,
+          singletonSeconds: Math.max(1, claimed.frequencyMinutes * 60),
+        },
+      );
+    } catch (error) {
+      await releaseMonitorDispatch(prisma, claimed.monitorId);
+      throw error;
+    }
   }
   return due.length;
 }

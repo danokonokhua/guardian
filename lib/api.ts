@@ -103,14 +103,11 @@ export function withRoute(handler: RouteHandler): (request: Request) => Promise<
  */
 export function withApiRoute(
   handler: ApiRouteHandler,
-): (
-  request: Request,
-  routeCtx?: { params?: Promise<Record<string, string>> },
-) => Promise<Response> {
-  return async (request: Request, routeCtx?: { params?: Promise<Record<string, string>> }) => {
+): (request: Request, routeCtx: { params: Promise<Record<string, string>> }) => Promise<Response> {
+  return async (request: Request, routeCtx: { params: Promise<Record<string, string>> }) => {
     const requestId = resolveRequestId(request);
     try {
-      const params = (await routeCtx?.params) ?? {};
+      const params = await routeCtx.params;
       return await handler(request, { requestId, params });
     } catch (error: unknown) {
       reportUnexpectedError(error, requestId);

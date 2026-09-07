@@ -11,6 +11,8 @@ export interface NotificationEvent {
   organizationId: string;
   issueId: string;
   recipientUserId: string;
+  /** Resolved from the server-side users table immediately before delivery. */
+  recipientEmail?: string;
   title: string;
   body: string;
   channel: NotificationChannel;
@@ -38,8 +40,14 @@ export function createEmailNotificationProvider(
 ): NotificationProvider {
   return {
     async deliver(event) {
+      const recipientEmail =
+        event.recipientEmail ??
+        (event.recipientUserId.includes("@") ? event.recipientUserId : undefined);
+      if (recipientEmail === undefined) {
+        throw new Error("Cannot deliver email notification without a recipient email address.");
+      }
       await adapter.send({
-        to: event.recipientUserId,
+        to: recipientEmail,
         subject: event.title,
         text: event.body,
         organizationId: event.organizationId,
@@ -60,11 +68,39 @@ export const inAppNotificationProvider: NotificationProvider = {
 
 export const emailNotificationProvider: NotificationProvider = {
   async deliver(event) {
-    logger.info("email_notification_queued", {
+    logger.warn("email_notification_not_configured", {
       organizationId: event.organizationId,
       recipientUserId: event.recipientUserId,
       issueId: event.issueId,
     });
+  },
+};
+
+let configuredEmailProvider: Promise<NotificationProvider> | undefined;
+
+/** Resolves and caches the SMTP adapter once per worker process. */
+function getConfiguredEmailProvider(): Promise<NotificationProvider> {
+  if (configuredEmailProvider !== undefined) return configuredEmailProvider;
+  // Dynamic import keeps SMTP-only code out of client-facing bundles.
+  configuredEmailProvider = import("@/services/notifications/smtp").then(
+    ({ createSmtpEmailNotificationAdapter }) => {
+      const adapter = createSmtpEmailNotificationAdapter();
+      return adapter === null
+        ? emailNotificationProvider
+        : createEmailNotificationProvider(adapter);
+    },
+  );
+  return configuredEmailProvider;
+}
+
+/** Routes queued channels to their concrete providers. */
+export const productionNotificationProvider: NotificationProvider = {
+  async deliver(event) {
+    if (event.channel === "IN_APP") {
+      await inAppNotificationProvider.deliver(event);
+      return;
+    }
+    await (await getConfiguredEmailProvider()).deliver(event);
   },
 };
 
@@ -116,10 +152,14 @@ export async function registerNotificationWorker(
             userId: job.data.recipientUserId,
             status: "ACTIVE",
           },
+          select: { id: true, user: { select: { email: true } } },
         }),
       prisma,
     );
     if (!member) return;
-    await provider.deliver(job.data);
+    const recipientEmail = member.user?.email;
+    await provider.deliver(
+      recipientEmail === undefined ? job.data : { ...job.data, recipientEmail },
+    );
   });
 }

@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+.env*
+!.env.example
+tests
+coverage
+*.log
+docker-compose.test.yml
+guardian-cpanel-release
+guardian-cpanel-release.zip
+guardian-prd-bundle.zip

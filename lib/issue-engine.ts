@@ -3,6 +3,7 @@ import type { IssueSeverity, Prisma } from "@prisma/client";
 
 import { getPrisma } from "@/db/client";
 import { withGucContext, type PrismaTransactionHost, type TenantScope } from "@/db/tenant";
+import { upsertSlaDispatch } from "@/lib/jobs/dispatch";
 
 export interface Finding {
   organizationId: string;
@@ -31,7 +32,7 @@ export async function recordFinding(finding: Finding): Promise<{ id: string; cre
 
 async function recordFindingWithClient(
   finding: Finding,
-  prisma: Pick<Prisma.TransactionClient, "website" | "issue">,
+  prisma: Pick<Prisma.TransactionClient, "website" | "issue" | "$executeRaw">,
 ): Promise<{ id: string; created: boolean }> {
   const website = await prisma.website.findFirst({
     where: { id: finding.websiteId, organizationId: finding.organizationId },
@@ -60,6 +61,10 @@ async function recordFindingWithClient(
       technicalEvidence: finding.technicalEvidence ?? {},
     },
   });
+  // Register SLA work in the same transaction as the finding. The scheduler
+  // only reads this system-owned dispatch row; all tenant issue reads remain
+  // inside the tenant GUC transaction in the worker.
+  await upsertSlaDispatch(prisma, finding.organizationId);
   return { id: issue.id, created: existing === null };
 }
 

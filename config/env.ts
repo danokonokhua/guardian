@@ -20,9 +20,9 @@
  *   the variable NAME — never the value (values may contain credentials).
  * - MISSING variables become `issues` (reportable warnings) rather than
  *   crashes, except where a value is structurally required by the runtime.
- *   This keeps `next build` / dev / test working before the database,
- *   Supabase, and other integrations exist (their variables stay optional
- *   until the phase that consumes them).
+ *   This keeps `next build` / dev / test working before deployment secrets are
+ *   supplied; runtime integrations validate their required values when they
+ *   initialize.
  * - Only variables with a current consumer (or reserved by an approved
  *   upcoming phase) are declared here. See `.env.example`.
  */
@@ -42,20 +42,14 @@ export interface ConfigIssue {
 export interface PublicConfig {
   /** Canonical application URL, e.g. https://guardian.example.com */
   readonly appUrl?: string;
-  /** Supabase project URL (public, used by the server auth adapter). */
-  readonly supabaseUrl?: string;
-  /** Supabase anon/public key (safe for browser/server auth clients). */
-  readonly supabaseAnonKey?: string;
 }
 
 /** Server-only configuration. Must never be imported into client code. */
 export interface ServerConfig {
-  /** Pooled PostgreSQL connection string (reserved — database phase). */
+  /** PostgreSQL connection string used by runtime queries. */
   readonly databaseUrl?: string;
-  /** Direct (non-pooled) PostgreSQL connection string (reserved). */
+  /** Direct PostgreSQL connection string used by migrations. */
   readonly directUrl?: string;
-  /** Supabase service-role key (reserved). NEVER expose to the browser. */
-  readonly supabaseServiceRoleKey?: string;
   /** Sentry ingestion DSN (optional — error capture stays disabled without it). */
   readonly sentryDsn?: string;
   /** Server-only secret required by the scheduler tick endpoint. */
@@ -64,6 +58,28 @@ export interface ServerConfig {
   readonly reportingWebhookUrl?: string;
   /** Secret used to sign analytics reporting payloads. */
   readonly reportingWebhookSecret?: string;
+  /** SMTP server hostname for operational email delivery. */
+  readonly smtpHost?: string;
+  /** SMTP server port. */
+  readonly smtpPort?: number;
+  /** SMTP username. */
+  readonly smtpUser?: string;
+  /** SMTP password or provider token. */
+  readonly smtpPassword?: string;
+  /** Whether SMTP uses implicit TLS (normally port 465). */
+  readonly smtpSecure?: boolean;
+  /** Verified sender address used for operational emails. */
+  readonly mailFromEmail?: string;
+  /** Optional display name for operational emails. */
+  readonly mailFromName?: string;
+  /** Initial self-hosted owner account email (bootstrap service only). */
+  readonly guardianAdminEmail?: string;
+  /** Initial self-hosted owner password (bootstrap service only). */
+  readonly guardianAdminPassword?: string;
+  /** Initial self-hosted owner display name. */
+  readonly guardianAdminName?: string;
+  /** Initial organization name created for the owner. */
+  readonly guardianOrganizationName?: string;
 }
 
 /** Full application configuration (server aggregate). */
@@ -153,22 +169,29 @@ function parsePostgresUrl(value: string, name: string): string {
   }
 }
 
+function parseBoolean(value: string, name: string): boolean {
+  if (value === "true") return true;
+  if (value === "false") return false;
+  throw new EnvironmentConfigError(`${name} must be either true or false.`);
+}
+
+function parsePort(value: string, name: string): number {
+  const port = Number(value);
+  if (!Number.isInteger(port) || port < 1 || port > 65_535) {
+    throw new EnvironmentConfigError(`${name} must be an integer between 1 and 65535.`);
+  }
+  return port;
+}
+
 /**
- * Parses ONLY NEXT_PUBLIC_* variables. Referenced by config/public.ts, which
- * is safe for browser bundles precisely because this function never touches
- * server-only names.
+ * Parses ONLY the browser-safe application URL. Referenced by
+ * config/public.ts, which never touches server-only names.
  */
 export function parsePublicConfig(env: RawEnv): PublicConfig {
   const appUrl = readString(env, "NEXT_PUBLIC_APP_URL");
-  const supabaseUrl = readString(env, "NEXT_PUBLIC_SUPABASE_URL");
-  const supabaseAnonKey = readString(env, "NEXT_PUBLIC_SUPABASE_ANON_KEY");
 
   return {
     ...(appUrl !== undefined ? { appUrl: parseHttpUrl(appUrl, "NEXT_PUBLIC_APP_URL") } : {}),
-    ...(supabaseUrl !== undefined
-      ? { supabaseUrl: parseHttpUrl(supabaseUrl, "NEXT_PUBLIC_SUPABASE_URL") }
-      : {}),
-    ...(supabaseAnonKey !== undefined ? { supabaseAnonKey } : {}),
   };
 }
 
@@ -176,24 +199,49 @@ export function parsePublicConfig(env: RawEnv): PublicConfig {
 export function parseServerConfig(env: RawEnv): ServerConfig {
   const databaseUrl = readString(env, "DATABASE_URL");
   const directUrl = readString(env, "DIRECT_URL");
-  const supabaseServiceRoleKey = readString(env, "SUPABASE_SERVICE_ROLE_KEY");
   const sentryDsn = readString(env, "SENTRY_DSN");
   const cronSecret = readString(env, "CRON_SECRET");
   const reportingWebhookUrl = readString(env, "REPORTING_WEBHOOK_URL");
   const reportingWebhookSecret = readString(env, "REPORTING_WEBHOOK_SECRET");
+  const smtpHost = readString(env, "SMTP_HOST");
+  const smtpPortValue = readString(env, "SMTP_PORT");
+  const smtpUser = readString(env, "SMTP_USER");
+  const smtpPassword = readString(env, "SMTP_PASSWORD");
+  const smtpSecureValue = readString(env, "SMTP_SECURE");
+  const mailFromEmail = readString(env, "MAIL_FROM_EMAIL");
+  const mailFromName = readString(env, "MAIL_FROM_NAME");
+  const guardianAdminEmail = readString(env, "GUARDIAN_ADMIN_EMAIL");
+  const guardianAdminPassword = readString(env, "GUARDIAN_ADMIN_PASSWORD");
+  const guardianAdminName = readString(env, "GUARDIAN_ADMIN_NAME");
+  const guardianOrganizationName = readString(env, "GUARDIAN_ORGANIZATION_NAME");
+  const smtpPort = smtpPortValue === undefined ? undefined : parsePort(smtpPortValue, "SMTP_PORT");
+  const smtpSecure =
+    smtpSecureValue === undefined ? smtpPort === 465 : parseBoolean(smtpSecureValue, "SMTP_SECURE");
 
   return {
     ...(databaseUrl !== undefined
       ? { databaseUrl: parsePostgresUrl(databaseUrl, "DATABASE_URL") }
       : {}),
     ...(directUrl !== undefined ? { directUrl: parsePostgresUrl(directUrl, "DIRECT_URL") } : {}),
-    ...(supabaseServiceRoleKey !== undefined ? { supabaseServiceRoleKey } : {}),
     ...(sentryDsn !== undefined ? { sentryDsn: parseHttpUrl(sentryDsn, "SENTRY_DSN") } : {}),
     ...(cronSecret !== undefined ? { cronSecret } : {}),
     ...(reportingWebhookUrl !== undefined
       ? { reportingWebhookUrl: parseHttpUrl(reportingWebhookUrl, "REPORTING_WEBHOOK_URL") }
       : {}),
     ...(reportingWebhookSecret !== undefined ? { reportingWebhookSecret } : {}),
+    ...(smtpHost !== undefined ? { smtpHost } : {}),
+    ...(smtpPort !== undefined ? { smtpPort } : {}),
+    ...(smtpUser !== undefined ? { smtpUser } : {}),
+    ...(smtpPassword !== undefined ? { smtpPassword } : {}),
+    ...(smtpHost !== undefined || smtpPort !== undefined || smtpSecureValue !== undefined
+      ? { smtpSecure }
+      : {}),
+    ...(mailFromEmail !== undefined ? { mailFromEmail } : {}),
+    ...(mailFromName !== undefined ? { mailFromName } : {}),
+    ...(guardianAdminEmail !== undefined ? { guardianAdminEmail } : {}),
+    ...(guardianAdminPassword !== undefined ? { guardianAdminPassword } : {}),
+    ...(guardianAdminName !== undefined ? { guardianAdminName } : {}),
+    ...(guardianOrganizationName !== undefined ? { guardianOrganizationName } : {}),
   };
 }
 

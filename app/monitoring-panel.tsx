@@ -376,7 +376,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               onChange={(event) => setType(event.target.value as Monitor["type"])}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
             >
-              {["UPTIME", "SSL", "SEO", "CONTENT", "LINKS", "PERFORMANCE", "FORM"].map((option) => (
+              {["UPTIME", "SSL"].map((option) => (
                 <option key={option}>{option}</option>
               ))}
             </select>
