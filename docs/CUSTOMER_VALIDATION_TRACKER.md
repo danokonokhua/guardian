@@ -12,17 +12,17 @@ without confirmation.
 
 ## Portfolio status
 
-| #   | Website                       | Technical snapshot                                                                   | Permission reconfirmed | Owner review | Action taken | Outcome confirmed |
-| --- | ----------------------------- | ------------------------------------------------------------------------------------ | ---------------------- | ------------ | ------------ | ----------------- |
-| 1   | okapiccf.com                  | Slow response snapshot; security-header gaps                                         | Pending                | Pending      | Pending      | Pending           |
-| 2   | ritssbeauty.com               | No non-empty H1; HSTS/CSP gaps (score 62; 2 warnings)                                | Pending                | Pending      | Pending      | Pending           |
-| 3   | hmcng.com                     | No non-empty H1; HSTS/CSP/nosniff/frame-protection gaps (score 62; 2 warnings)       | Pending                | Pending      | Pending      | Pending           |
-| 4   | gabofarms.com                 | SEO metadata/structure and security-header gaps                                      | Pending                | Pending      | Pending      | Pending           |
-| 5   | gabogreenenergysolutions.com  | SEO metadata/structure and security-header gaps                                      | Pending                | Pending      | Pending      | Pending           |
-| 6   | mvpterminallingllc.com        | No meta description; HSTS/CSP/nosniff/frame-protection gaps (score 62; 2 warnings)   | Pending                | Pending      | Pending      | Pending           |
+| #   | Website                       | Technical snapshot                                                                    | Permission reconfirmed | Owner review | Action taken | Outcome confirmed |
+| --- | ----------------------------- | ------------------------------------------------------------------------------------- | ---------------------- | ------------ | ------------ | ----------------- |
+| 1   | okapiccf.com                  | Slow response snapshot; security-header gaps                                          | Pending                | Pending      | Pending      | Pending           |
+| 2   | ritssbeauty.com               | No non-empty H1; HSTS/CSP gaps (score 62; 2 warnings)                                 | Pending                | Pending      | Pending      | Pending           |
+| 3   | hmcng.com                     | No non-empty H1; HSTS/CSP/nosniff/frame-protection gaps (score 62; 2 warnings)        | Pending                | Pending      | Pending      | Pending           |
+| 4   | gabofarms.com                 | SEO metadata/structure and security-header gaps                                       | Pending                | Pending      | Pending      | Pending           |
+| 5   | gabogreenenergysolutions.com  | SEO metadata/structure and security-header gaps                                       | Pending                | Pending      | Pending      | Pending           |
+| 6   | mvpterminallingllc.com        | No meta description; HSTS/CSP/nosniff/frame-protection gaps (score 62; 2 warnings)    | Pending                | Pending      | Pending      | Pending           |
 | 7   | fareharbor.com                | Sitemap HTTP 301; CSP/frame-protection gaps; incomplete probes (score 62; 2 warnings) | Pending                | Pending      | Pending      | Pending           |
 | 8   | danwebdevelopment.com         | Missing meta/H1/canonical; sitemap 404; header gaps (score 62; 2 warnings)            | Pending                | Pending      | Pending      | Pending           |
-| 9   | nenafrika.com                 | Slow response 5910 ms; security-header gaps (score 62; 2 warnings)                    | Pending                | Pending      | Pending           | Pending           |
+| 9   | nenafrika.com                 | Slow response 5910 ms; security-header gaps (score 62; 2 warnings)                    | Pending                | Pending      | Pending      | Pending           |
 | 10  | africancouncilofoptometry.org | Slow response 3304 ms; security-header gaps (score 62; 2 warnings)                    | Pending                | Pending      | Pending      | Pending           |
 
 ## First interview record

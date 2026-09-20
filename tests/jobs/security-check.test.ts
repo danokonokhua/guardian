@@ -223,7 +223,12 @@ describe("basic security monitor", () => {
     queuePage();
     SECURITY_PROBE_PATHS.forEach((probe, index) => {
       requestSafeOutbound.mockResolvedValueOnce(
-        response(index === 0 ? 200 : 404, index === 0 ? "<title>One moment, please...</title> Please wait while your request is being verified" : ""),
+        response(
+          index === 0 ? 200 : 404,
+          index === 0
+            ? "<title>One moment, please...</title> Please wait while your request is being verified"
+            : "",
+        ),
       );
     });
 
