@@ -1,6 +1,7 @@
 import type { TenantScope } from "@/db/tenant";
 import { ConflictError, NotFoundError } from "@/lib/errors";
 import { parseWith } from "@/lib/validation";
+import { requestSafeOutbound, resolveSafeOutboundUrl } from "@/lib/security/outbound-url";
 import { z } from "zod";
 import {
   createWebsite,
@@ -35,6 +36,7 @@ export async function onboardWebsite(scope: TenantScope, input: unknown): Promis
     throw new Error("Website URL must use http or https.");
   }
   url.hash = "";
+  await resolveSafeOutboundUrl(url.toString());
   try {
     return await createWebsite(scope, {
       normalizedUrl: url.toString().replace(/\/$/, ""),
@@ -62,8 +64,11 @@ export async function verifyWebsite(
   let verified = false;
   try {
     const origin = new URL(website.normalizedUrl).origin;
-    const response = await fetch(`${origin}/.well-known/guardian-verification.txt`, {
-      signal: AbortSignal.timeout(10_000),
+    const verificationUrl = `${origin}/.well-known/guardian-verification.txt`;
+    const response = await requestSafeOutbound(verificationUrl, {
+      method: "GET",
+      timeoutMs: 10_000,
+      maxBodyBytes: 2048,
     });
     if (response.ok) {
       const token = (await response.text()).trim().slice(0, 256);

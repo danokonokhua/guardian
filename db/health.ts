@@ -12,7 +12,7 @@ import "server-only";
  */
 
 import { serverConfig } from "@/config/server";
-import { getPrisma } from "@/db/client";
+import { assertRuntimeDatabaseRole } from "@/db/client";
 import { logger } from "@/lib/logger";
 
 export type DatabaseHealthStatus = "healthy" | "unconfigured" | "unhealthy";
@@ -34,7 +34,7 @@ export async function getDatabaseHealth(): Promise<DatabaseHealth> {
   const start = Date.now();
   try {
     await Promise.race([
-      getPrisma().$queryRaw`SELECT 1`,
+      assertRuntimeDatabaseRole(),
       new Promise<never>((_, reject) => {
         const timer = setTimeout(() => reject(new Error("probe timeout")), PROBE_TIMEOUT_MS);
         // Do not keep the process alive just for this guard.

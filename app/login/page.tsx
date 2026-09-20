@@ -73,9 +73,21 @@ export default function LoginPage() {
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>
+          <a
+            href="/signup"
+            className="block w-full rounded-md border border-emerald-600 px-4 py-2 text-center text-sm font-medium text-emerald-300 hover:border-emerald-500 hover:bg-emerald-950/40"
+          >
+            Create an account
+          </a>
           <p className="text-center text-sm text-neutral-400">
             <a className="text-emerald-400 hover:text-emerald-300" href="/forgot-password">
               Forgot your password?
+            </a>
+          </p>
+          <p className="text-center text-sm text-neutral-400">
+            New to Guardian?{" "}
+            <a className="text-emerald-400 hover:text-emerald-300" href="/signup">
+              Sign up
             </a>
           </p>
         </form>

@@ -13,6 +13,9 @@ import { IssueSeverity, IssueStatus, MemberRole, MonitorType, Prisma } from "@pr
 
 const MIGRATION_DIR = "db/migrations/20260824140000_init_domain";
 const DISPATCH_MIGRATION = "db/migrations/20260905100000_tenant_dispatch/migration.sql";
+const HEALTH_SCORE_MIGRATION = "db/migrations/20260911120000_health_score/migration.sql";
+const HEALTH_SCORE_GRANTS_MIGRATION =
+  "db/migrations/20260911123000_health_score_runtime_grants/migration.sql";
 
 const modelNames = (): string[] => Prisma.dmmf.datamodel.models.map((model) => model.name);
 const fieldNames = (model: string): string[] =>
@@ -51,6 +54,8 @@ describe("required models", () => {
       "Monitor",
       "MonitoringResult",
       "Issue",
+      "HealthScore",
+      "HealthScoreComponent",
     ]) {
       expect(modelNames()).toContain(model);
     }
@@ -84,6 +89,7 @@ describe("required enums (approved vocabulary, exact values)", () => {
     for (const type of [
       "UPTIME",
       "SSL",
+      "SECURITY",
       "SEO",
       "CONTENT",
       "LINKS",
@@ -92,6 +98,19 @@ describe("required enums (approved vocabulary, exact values)", () => {
     ] as const) {
       expect(MonitorType[type]).toBe(type);
     }
+  });
+
+  it("HealthScore categories and states match the PRD contract", () => {
+    expect(
+      Prisma.dmmf.datamodel.enums
+        .find((item) => item.name === "HealthScoreCategory")
+        ?.values.map((item) => item.name),
+    ).toEqual(["WEBSITE", "LEAD_GENERATION", "PERFORMANCE", "SEO", "SECURITY", "REPUTATION"]);
+    expect(
+      Prisma.dmmf.datamodel.enums
+        .find((item) => item.name === "HealthScoreState")
+        ?.values.map((item) => item.name),
+    ).toEqual(["MEASURED", "PARTIAL", "INSUFFICIENT_DATA"]);
   });
 });
 
@@ -104,6 +123,8 @@ describe("tenant isolation ownership", () => {
       "Monitor",
       "MonitoringResult",
       "Issue",
+      "HealthScore",
+      "HealthScoreComponent",
     ]) {
       expect(fieldNames(model)).toContain("organizationId");
     }
@@ -139,6 +160,29 @@ describe("critical unique constraints and indexes", () => {
   it("supports the issue queue and scheduler access patterns", () => {
     expect(schema).toContain("@@index([organizationId, status, severity])");
     expect(schema).toContain("@@index([nextRunAt])");
+  });
+
+  it("keeps score snapshots and components tenant-scoped with bounded history indexes", () => {
+    const migration = readFileSync(HEALTH_SCORE_MIGRATION, "utf8");
+    const grantsMigration = readFileSync(HEALTH_SCORE_GRANTS_MIGRATION, "utf8");
+    expect(migration).toContain('CREATE TABLE "health_scores"');
+    expect(migration).toContain('CREATE TABLE "health_score_components"');
+    expect(migration).toContain('ALTER TABLE "health_scores" FORCE ROW LEVEL SECURITY');
+    expect(migration).toContain('ALTER TABLE "health_score_components" FORCE ROW LEVEL SECURITY');
+    expect(migration).toContain('"health_scores_organizationId_calculatedAt_idx"');
+    expect(migration).toContain('"health_score_components_organizationId_calculatedAt_idx"');
+    expect(migration).toContain(
+      'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "health_scores" TO guardian_app',
+    );
+    expect(migration).toContain(
+      'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "health_score_components" TO guardian_app',
+    );
+    expect(grantsMigration).toContain(
+      'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "health_scores" TO guardian_app',
+    );
+    expect(grantsMigration).toContain(
+      'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "health_score_components" TO guardian_app',
+    );
   });
 });
 

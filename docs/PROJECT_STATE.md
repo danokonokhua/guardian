@@ -1,10 +1,10 @@
 # Guardian — Project State
 
-**Last updated:** 2026-09-05 (tenant-safe dispatch architecture)
+**Last updated:** 2026-09-13 (customer-validation gate opened after Free Audit v1 technical validation)
 
 ## Current phase
 
-**1B operations foundation — quality and live gates green.** Hardened/completed existing systems rather than
+**Customer validation — technical Free Audit v1 validation is complete; owner feedback and business-outcome evidence are being collected.** The working protocol and prefilled portfolio tracker are recorded in [`CUSTOMER_VALIDATION.md`](./CUSTOMER_VALIDATION.md) and [`CUSTOMER_VALIDATION_TRACKER.md`](./CUSTOMER_VALIDATION_TRACKER.md). Hardened/completed existing systems rather than
 duplicating: error taxonomy completed (ConflictError 409, RateLimitError 429;
 codes were already declared); logger field contract aligned to
 `{time, level, service, env, message, …}` with `requestId` via child loggers;
@@ -29,13 +29,46 @@ this environment.** No DSN is committed anywhere.
 - Long-running worker entrypoint: `npm run worker`.
 - Authenticated dashboard with tenant-scoped monitoring, issue lifecycle, queue analytics,
   notifications, organization SLA policy, scheduled breach escalation, and CSV/JSON analytics export.
-- Monitor configuration now exposes only the worker-backed UPTIME and SSL types; SEO, content,
-  links, performance, and form checks remain deferred until their workers are implemented.
+- Self-service `/signup` flow creates a local account, first organization, and owner membership
+  atomically, then signs the user in; `/login` and the landing page link to it.
+- Monitor configuration exposes worker-backed UPTIME, SSL, SECURITY, bounded same-origin
+  LINKS, Basic SEO v1, Performance v1, and safe Critical lead-form v1 checks. Content checks
+  remain deferred.
+- Basic SEO v1 scans the verified homepage with at most three SSRF-safe requests. It checks
+  title, meta description, non-empty H1, canonical, meta/X-Robots indexability, robots rules,
+  and same-origin sitemap availability/shape. Structured data and duplicate-content indicators
+  remain explicitly deferred follow-up work.
+- Basic Security v1 checks the verified homepage's HTTPS/security headers and six fixed,
+  same-origin exposed-configuration signatures. It is a bounded hygiene check, not a full
+  cybersecurity assessment.
+- Performance v1 measures one SSRF-safe server response with a bounded body and configurable
+  250–30,000 ms threshold. Browser rendering and Core Web Vitals remain deferred.
+- Critical lead-form v1 verifies one named server-rendered form and optionally a same-origin
+  `HEAD` probe. It never submits lead data or claims downstream delivery.
+- UPTIME has an explicit HTTP contract: 2xx/3xx responses are UP, 4xx/5xx responses are DOWN,
+  transport failures are ERROR, and status/latency evidence is shown in the dashboard.
 - Tenant dispatch metadata now lives in the private `guardian_jobs` schema. Monitor and SLA
   schedulers claim only system-owned dispatch rows; worker execution continues through
   transaction-local `app.org_id` context before reading tenant-owned tables.
+- Digital Health Score v1 applies the PRD weights (Website 25%, Lead Generation 25%,
+  Performance 15%, SEO 15%, Security 10%, Reputation 10%) using a deterministic,
+  explainable calculator. Scores and six component records are persisted as tenant-scoped
+  snapshots with bounded evidence and history; categories without an adapter remain
+  `PENDING`, so incomplete coverage is explicit rather than inferred as healthy.
+- Monitor findings now carry bounded business-impact, recommended-action, and impact-confidence
+  metadata where the monitor can establish it. The dashboard exposes the score, component
+  explanations, evidence counts/IDs, active issue drivers, and score history.
+- Grounded Recommendations v1 derives at most ten deterministic, read-only actions from active
+  persisted issue metadata and links them to current score-component evidence. Missing action
+  metadata is skipped rather than replaced with generic advice; no AI provider, action execution,
+  recommendation table, or recommendation lifecycle is introduced in this phase.
+- Free Audit v1 exposes a public `/audit` flow and `POST /api/audit`. It validates public targets
+  through the SSRF-safe outbound boundary, enforces hashed IP/target quotas in the existing
+  database throttle store, runs bounded UPTIME/PERFORMANCE/SEO/SECURITY adapters, and returns an
+  explainable partial score plus critical issues, warnings, limitations, and a signup handoff.
+  It does not persist audit data, submit forms, crawl sites, or claim browser performance metrics.
 
-## Next approved phase
+## Completed foundation work in this build
 
 Scheduled SLA escalation execution and reporting foundations are now implemented and gated.
 The worker registers tenant-bound escalation jobs, applies retry/singleton policies, and
@@ -45,6 +78,15 @@ remains available through the organization-scoped API. The next phase requires p
 before adding vendor-specific credentials or additional destinations. A signed webhook
 reporting adapter and transport-injected email notification adapter are now available;
 they perform no network calls until explicitly configured by the application.
+
+Basic SEO v1, Basic Security v1, Performance v1, and the safe Critical lead-form v1 foundation
+are now included in the worker-backed monitoring set. Grounded Recommendations v1 is available
+as a tenant-scoped health projection, and Free Audit v1 is available as a bounded public funnel.
+Deployment remains intentionally deferred while recommendation/audit quality and representative
+business-outcome validation are completed. The technical ten-site audit and its limitations are
+recorded in `AUDIT_VALIDATION_20260913.md`.
+Health Score v1 is implemented locally; the Reputation category remains pending until a
+PRD-approved adapter exists, and no deployment is authorized by this state record.
 
 ## History
 
@@ -68,9 +110,8 @@ execution blocked — no database configured in sandbox; apply later via
 - Prisma 6.19.2 pair (`@prisma/client` runtime / `prisma` dev-only). Prisma 7
   was evaluated and set aside: it removes schema-level connection config and
   mandates driver adapters — a larger footprint than the approved 1A pattern.
-- `db/schema.prisma` (datasource + generator only — NO domain models invented;
-  they arrive in Phase 1B-04), `db/client.ts` (server-only, lazy, hot-reload
-  safe), `db/health.ts` (time-boxed sanitized probe), `GET /api/health/ready`
+- `db/schema.prisma` (datasource, generator, and approved domain models), `db/client.ts`
+  (server-only, lazy, hot-reload safe), `db/health.ts` (time-boxed sanitized probe), `GET /api/health/ready`
   (application + database readiness; 503 only when a configured DB is down).
 - Scripts: `db:generate` / `db:migrate` / `db:deploy` / `db:status` +
   `postinstall` generate (offline, CI-safe). Workflow documented in
@@ -168,7 +209,7 @@ further per protocol; classified as **ENVIRONMENT MEMORY LIMIT** for ≤ 2 GB ho
 
 - Dependencies are pinned **exact**; every dependency has a current purpose. Phase 1B-09 adds
   `pg-boss@12.28.0` for PostgreSQL-backed jobs and `tsx@4.23.12` as the worker entrypoint
-  runner. The pg-boss 12.x runtime requires Node >=22.12.0.
+  runner. The dependency set requires Node >=22.13.0; the repository pins 22.23.2.
 - `eslint-config-next@16` ships native flat config; the legacy FlatCompat bridge crashes
   (circular structure), so native exports `…/core-web-vitals` + `…/typescript` are used
   and `@eslint/eslintrc` was removed after the fix.
@@ -178,12 +219,12 @@ further per protocol; classified as **ENVIRONMENT MEMORY LIMIT** for ≤ 2 GB ho
 - All environment access flows through `config/env.ts`; logging through `lib/logger.ts`;
   API failures through `withRoute` + `toApiErrorBody`.
 
-## Current release gate and next phase (2026-09-02)
+## Release gate history (2026-09-02)
 
 Phase 1B-10 production-readiness gate is complete:
 
 - Prettier format check, ESLint, and TypeScript all pass.
-- Vitest passes 350 tests; 11 database-backed integration tests remain skipped
+- Vitest passes 404 tests; 11 database-backed integration tests remain skipped
   unless a disposable PostgreSQL instance is available.
 - The production build passes with `next build --webpack`, which is the
   documented low-memory build path for this workstation.
@@ -192,12 +233,12 @@ Phase 1B-10 production-readiness gate is complete:
 - `scripts/verify-phase-1b-10.ps1` invokes the pinned local CLIs directly and
   no longer depends on a broken global npm shim.
 
-The next phase is **production deployment preparation**. The deployment target
-must provide Docker Compose, two long-lived services (the Next web process and
-the `npm run worker` process), persistent PostgreSQL storage, TLS, and secret
-environment variables. The cPanel site being monitored is not required to
-host Guardian itself. See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the release
-order and VPS checklist.
+Deployment preparation is documented but intentionally on hold for the current
+product build. When approved, the deployment target must provide Docker Compose,
+two long-lived services (the Next web process and the `npm run worker` process),
+persistent PostgreSQL storage, TLS, and secret environment variables. The cPanel
+site being monitored is not required to host Guardian itself. See
+[`DEPLOYMENT.md`](DEPLOYMENT.md) for the release order and VPS checklist.
 
 The approved tenant-dispatch architecture is implemented in migration
 `20260905100000_tenant_dispatch`. Apply it before the production worker starts;

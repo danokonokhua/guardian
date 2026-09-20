@@ -8,6 +8,23 @@ const { createMock, listMock, findVerificationMock, setVerificationMock } = vi.h
   findVerificationMock: vi.fn(),
   setVerificationMock: vi.fn(),
 }));
+const lookupMock = vi.hoisted(() =>
+  vi.fn().mockResolvedValue([{ address: "93.184.216.34", family: 4 }]),
+);
+const { requestSafeMock, resolveSafeMock } = vi.hoisted(() => ({
+  requestSafeMock: vi.fn(),
+  resolveSafeMock: vi.fn().mockResolvedValue({
+    url: new URL("https://example.com"),
+    hostname: "example.com",
+    address: "93.184.216.34",
+    family: 4,
+  }),
+}));
+vi.mock("node:dns/promises", () => ({ lookup: lookupMock }));
+vi.mock("@/lib/security/outbound-url", () => ({
+  requestSafeOutbound: requestSafeMock,
+  resolveSafeOutboundUrl: resolveSafeMock,
+}));
 vi.mock("@/services/websites/repository", () => ({
   createWebsite: createMock,
   listWebsites: listMock,
@@ -43,6 +60,15 @@ describe("website onboarding service", () => {
     });
   });
 
+  it("rejects private IP monitoring targets", async () => {
+    createMock.mockClear();
+    resolveSafeMock.mockRejectedValueOnce(new Error("private destination"));
+    await expect(onboardWebsite(scope, { url: "http://127.0.0.1:8080/admin" })).rejects.toThrow(
+      "private destination",
+    );
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("lists through the tenant repository", async () => {
     listMock.mockResolvedValue([]);
     await expect(listConfiguredWebsites(scope)).resolves.toEqual([]);
@@ -57,11 +83,15 @@ describe("website onboarding service", () => {
       verifyStatus: "PENDING",
     });
     setVerificationMock.mockResolvedValue({ id: "website-1", verifyStatus: "VERIFIED" });
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("token-123", { status: 200 })));
+    requestSafeMock.mockResolvedValue({ ok: true, status: 200, text: async () => "token-123" });
     await expect(verifyWebsite(scope, "website-1")).resolves.toMatchObject({
       verified: true,
       status: "VERIFIED",
     });
+    expect(requestSafeMock).toHaveBeenCalledWith(
+      "https://example.com/.well-known/guardian-verification.txt",
+      expect.objectContaining({ method: "GET", maxBodyBytes: 2048 }),
+    );
     expect(setVerificationMock).toHaveBeenCalledWith(scope, "website-1", "VERIFIED");
   });
 
@@ -73,7 +103,7 @@ describe("website onboarding service", () => {
       verifyStatus: "PENDING",
     });
     setVerificationMock.mockResolvedValue({ id: "website-1", verifyStatus: "FAILED" });
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("wrong", { status: 200 })));
+    requestSafeMock.mockResolvedValue({ ok: true, status: 200, text: async () => "wrong" });
     await expect(verifyWebsite(scope, "website-1")).resolves.toMatchObject({
       verified: false,
       status: "FAILED",

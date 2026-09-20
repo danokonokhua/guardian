@@ -4,7 +4,7 @@
 monitors the digital systems businesses depend on, converts technical signals into business
 impact, and tells the owner what to fix first.
 
-> **Current phase: 1B — Operations platform foundation (implemented through SLA analytics).**
+> **Current phase: 1B — Operations platform foundation (implemented through Digital Health Score v1).**
 > The repository contains the authenticated, tenant-isolated monitoring, issue,
 > notification, dashboard, analytics, and SLA foundations described by the approved
 > Phase 1A architecture (`docs/`).
@@ -20,10 +20,10 @@ Digital Operations Manager / AI COO for small and medium businesses.
 
 ## 2. Current development phase
 
-| Phase                                                                                                        | Status                |
-| ------------------------------------------------------------------------------------------------------------ | --------------------- |
-| 1A — Architecture & system design                                                                            | Approved              |
-| 1B foundation — application, database, auth, tenancy, jobs, monitoring, issues, notifications, SLA analytics | Implemented and gated |
+| Phase                                                                                                                                 | Status                |
+| ------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| 1A — Architecture & system design                                                                                                     | Approved              |
+| 1B foundation — application, database, auth, tenancy, jobs, monitoring, issues, notifications, SLA analytics, Digital Health Score v1 | Implemented and gated |
 
 See [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) for the authoritative state record.
 
@@ -43,7 +43,8 @@ See [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) for the authoritative state
 Database foundation (PostgreSQL + Prisma) is installed — see
 [`docs/DATABASE.md`](docs/DATABASE.md) for the schema/migration workflow.
 Authentication is PostgreSQL-backed and ships in the Docker Compose deployment;
-no external auth provider is required.
+no external auth provider is required. Visit `/signup` to create the first
+organization owner account, or `/login` for an existing account.
 
 Phase 1B-09 installs pg-boss 12.28.0 in the dedicated `guardian_jobs` schema, with a long-running `system.ping` worker and a guarded `POST /api/cron/tick` scheduler entrypoint.
 The exact closure procedure is documented in [`docs/JOB_GATE.md`](docs/JOB_GATE.md).
@@ -51,7 +52,8 @@ The exact closure procedure is documented in [`docs/JOB_GATE.md`](docs/JOB_GATE.
 
 ## 4. Requirements
 
-- **Node.js ≥ 22.12**. pg-boss 12.x requires Node 22.12+; `.nvmrc` pins `22.12.0`.
+- **Node.js ≥ 22.13**. The dependency set requires Node 22.13+; `.nvmrc` and
+  the production image pin `22.23.2`.
 - **npm ≥ 10** (no other package manager is required).
 - ~600 MB free disk for dependencies.
 
@@ -71,14 +73,20 @@ For local development, copy the template and adjust the values you need:
 cp .env.example .env
 ```
 
-The runtime consumes `DATABASE_URL`, `DIRECT_URL`, `CRON_SECRET`, SMTP values,
-and the self-hosted bootstrap values documented in `.env.example`. The same
-`.env` file is used by local commands and the Docker Compose/VPS stack.
+The runtime consumes the least-privilege `DATABASE_URL`, migration-only
+`DIRECT_URL`, `CRON_SECRET`, SMTP values, and the self-hosted bootstrap values
+documented in `.env.example`. Compose derives the two database URLs from the
+admin (`POSTGRES_USER`) and runtime (`POSTGRES_APP_USER`) role variables. The
+same `.env` file is used by local commands and the Docker Compose/VPS stack.
 
-| Variable    | Purpose                                              | Required                | Example |
-| ----------- | ---------------------------------------------------- | ----------------------- | ------- |
-| `LOG_LEVEL` | Minimum logger severity (`debug\|info\|warn\|error`) | no (default `info`)     | `info`  |
-| `APP_ENV`   | Deployment label for logs/health                     | no (default `NODE_ENV`) | `local` |
+| Variable                | Purpose                                              | Required                       | Example    |
+| ----------------------- | ---------------------------------------------------- | ------------------------------ | ---------- |
+| `LOG_LEVEL`             | Minimum logger severity (`debug\|info\|warn\|error`) | no (default `info`)            | `info`     |
+| `APP_ENV`               | Deployment label for logs/health                     | no (default `NODE_ENV`)        | `local`    |
+| `POSTGRES_APP_PASSWORD` | Password for the non-superuser runtime role          | Compose/VPS                    | `<random>` |
+| `GUARDIAN_WEB_PORT`     | Host port forwarded to the web container             | no (default `3000`)            | `3000`     |
+| `TRUSTED_PROXY`         | Trust sanitized client-IP forwarding headers         | no (default `false`)           | `true`     |
+| `TRUSTED_PROXY_TOKEN`   | Shared secret proving the trusted proxy boundary     | only with `TRUSTED_PROXY=true` | `<random>` |
 
 `DATABASE_URL`, `DIRECT_URL`, SMTP, AI/payment keys are configured through the
 environment and documented in `.env.example`. All `.env*` files are
@@ -97,7 +105,7 @@ gitignored; `.env.example` is the only tracked template.
 | `npm run test:watch`                                             | Vitest in watch mode                                                                     |
 | `npm run format` / `npm run format:check`                        | Prettier write / verify                                                                  |
 | `npm run db:generate` / `db:migrate` / `db:deploy` / `db:status` | Prisma client generation & migration workflow (see [docs/DATABASE.md](docs/DATABASE.md)) |
-| `npm run auth:bootstrap`                                      | Create the initial PostgreSQL-backed owner account and organization |
+| `npm run auth:bootstrap`                                         | Create the initial PostgreSQL-backed owner account and organization                      |
 | `npm run test:integration`                                       | Real-PostgreSQL RLS + pg-boss integration gates (requires `TEST_DATABASE_URL`)           |
 
 ### Production builds on low-memory machines (≤ 2 GB RAM)
@@ -135,8 +143,16 @@ canonical envelope `{ error: { code, message, requestId, details? } }`.
 
 ## 9. Current limitations
 
-- The remaining PRD adapters (broken links, SEO, performance, forms, and
-  explainable health scoring) are staged for the next product phase.
+- Basic SEO v1 is now worker-backed (homepage title, meta description, H1, canonical,
+  robots/indexability, and sitemap checks). Basic Security v1 is worker-backed for bounded
+  security headers and exposed-configuration signatures. Performance v1 measures server
+  response time, and Critical lead-form v1 checks named form presence with an optional safe
+  probe. The explainable Digital Health Score v1 is persisted with weighted components,
+  bounded evidence, issue drivers, and history; the Reputation category is explicitly pending
+  until an adapter exists. Grounded recommendations v1 are read-only actions derived from
+  active issue metadata and linked score evidence; AI explanations, action lifecycle, and
+  automatic remediation are not enabled. Structured data, duplicate-content analysis,
+  browser performance/CWV, and real lead submissions remain staged for later phases.
 - SMTP is required for production worker/email delivery; local development can
   omit it when email flows are not being tested.
 - Production builds need the webpack flag on ≤ 2 GB machines (see above).
@@ -146,7 +162,11 @@ canonical envelope `{ error: { code, message, requestId, details? } }`.
 
 ## 10. Next development phase
 
-The next product phase extends the foundation with the remaining PRD monitoring
-adapters, evidence, health scoring, and recommendations. The deployment path
-is already self-contained: PostgreSQL, local authentication, web, and worker
-run together through Docker Compose.
+The three adapter phases are implemented and gated: Basic Security v1, Performance v1,
+and safe Critical lead-form v1. Explainable issue evidence, Digital Health Score v1,
+read-only grounded recommendations v1, and the bounded rate-limited Free Audit v1 are now
+implemented. Technical execution on ten authorized websites is complete; the next product gate
+is business-owner feedback and measurement of problems prevented or resolved.
+Deployment remains intentionally on hold until those signals are validated. The deployment
+path is already self-contained: PostgreSQL, local authentication, web, and worker run
+together through Docker Compose.

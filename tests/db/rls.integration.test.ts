@@ -167,12 +167,12 @@ describe.skipIf(TEST_DATABASE_URL === undefined)(
       expect(result.count).toBe(0);
     });
 
-    it("G. ENABLE + FORCE ROW LEVEL SECURITY are active on all seven tenant tables", async () => {
+    it("G. ENABLE + FORCE ROW LEVEL SECURITY are active on all nine tenant tables", async () => {
       const catalog = await prisma.$queryRaw<
         Array<{ relname: string; relrowsecurity: boolean; relforcerowsecurity: boolean }>
       >`SELECT relname, relrowsecurity, relforcerowsecurity FROM pg_class
-      WHERE relname IN ('organizations','organization_members','businesses','websites','monitoring_checks','monitoring_results','issues')`;
-      expect(catalog.length).toBe(7);
+      WHERE relname IN ('organizations','organization_members','businesses','websites','monitoring_checks','monitoring_results','issues','health_scores','health_score_components')`;
+      expect(catalog.length).toBe(9);
       for (const table of catalog) {
         expect(table.relrowsecurity, `${table.relname} RLS enabled`).toBe(true);
         expect(table.relforcerowsecurity, `${table.relname} RLS forced`).toBe(true);

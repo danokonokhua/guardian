@@ -4,12 +4,12 @@
   "private": true,
   "description": "Digital Business Guardian — AI-powered digital business operations platform (foundation phase).",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/start-web.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -17,8 +17,10 @@
     "db:generate": "prisma generate --schema db/schema.prisma",
     "db:migrate": "node --env-file-if-exists=.env ./node_modules/prisma/build/index.js migrate dev --schema db/schema.prisma",
     "db:deploy": "node --env-file-if-exists=.env ./node_modules/prisma/build/index.js migrate deploy --schema db/schema.prisma",
+    "jobs:deploy": "node ./node_modules/pg-boss/dist/cli.js migrate --schema guardian_jobs",
     "db:status": "node --env-file-if-exists=.env ./node_modules/prisma/build/index.js migrate status --schema db/schema.prisma",
     "auth:bootstrap": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/bootstrap-admin.ts",
+    "audit:validate": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/free-audit-validation.ts",
     "postinstall": "prisma generate --schema db/schema.prisma",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

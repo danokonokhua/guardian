@@ -32,18 +32,26 @@ function Assert-Prerequisites {
   }
 }
 
+function Get-EnvironmentValue {
+  param([Parameter(Mandatory = $true)][string]$Name)
+
+  foreach ($line in (Get-Content -LiteralPath $EnvironmentFile)) {
+    if ($line -match '^\s*([^#][^=]*)=(.*)$' -and $matches[1].Trim() -eq $Name) {
+      return $matches[2].Trim().Trim('"')
+    }
+  }
+  return $null
+}
+
 function Assert-RuntimeEnvironment {
   $required = @(
+    "POSTGRES_USER",
     "POSTGRES_PASSWORD",
-    "DATABASE_URL",
-    "DIRECT_URL",
+    "POSTGRES_DB",
+    "POSTGRES_APP_PASSWORD",
     "GUARDIAN_ADMIN_EMAIL",
     "GUARDIAN_ADMIN_PASSWORD",
-    "CRON_SECRET",
-    "SMTP_HOST",
-    "SMTP_USER",
-    "SMTP_PASSWORD",
-    "MAIL_FROM_EMAIL"
+    "CRON_SECRET"
   )
   $values = @{}
   Get-Content -LiteralPath $EnvironmentFile | ForEach-Object {
@@ -115,7 +123,11 @@ switch ($Target) {
   }
   "health" {
     Invoke-ComposeControl ps
-    Invoke-ComposeControl exec -T postgres pg_isready -U guardian -d guardian
+    $postgresUser = Get-EnvironmentValue "POSTGRES_USER"
+    $postgresDb = Get-EnvironmentValue "POSTGRES_DB"
+    if ([string]::IsNullOrWhiteSpace($postgresUser)) { $postgresUser = "postgres" }
+    if ([string]::IsNullOrWhiteSpace($postgresDb)) { $postgresDb = "guardian" }
+    Invoke-ComposeControl exec -T postgres pg_isready -U $postgresUser -d $postgresDb
     Invoke-ComposeControl exec -T web node -e "fetch('http://127.0.0.1:3000/api/health/ready').then(async response => { console.log(await response.text()); process.exit(response.ok ? 0 : 1); }).catch(error => { console.error(error); process.exit(1); })"
     Invoke-ComposeControl exec -T worker node -e "console.log('Guardian worker container is running')"
   }

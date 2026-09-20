@@ -46,3 +46,16 @@ export function getPrisma(): PrismaClient {
   }
   return client;
 }
+
+/** Refuses to run application processes with PostgreSQL superuser privileges. */
+export async function assertRuntimeDatabaseRole(): Promise<void> {
+  const rows = await getPrisma().$queryRaw<Array<{ rolsuper: boolean; rolbypassrls: boolean }>>`
+    SELECT rolsuper, rolbypassrls
+    FROM pg_roles
+    WHERE rolname = current_user
+  `;
+  const role = rows[0];
+  if (role === undefined || role.rolsuper || role.rolbypassrls) {
+    throw new Error("Guardian runtime database role must be NOSUPERUSER and NOBYPASSRLS.");
+  }
+}

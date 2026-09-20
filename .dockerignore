@@ -1,6 +1,10 @@
 .git
 .next
 node_modules
+.npm-cache
+.config
+.docx-qa
+*.tsbuildinfo
 .env*
 !.env.example
 tests

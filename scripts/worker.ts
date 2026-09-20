@@ -9,6 +9,7 @@ async function main(): Promise<void> {
   // established its server-side runtime. Next.js uses the marker to prevent
   // browser imports; it is not a runtime restriction for this worker.
   const [
+    { assertRuntimeDatabaseRole },
     { startJobBoss },
     { registerSystemPingWorker },
     { registerMonitorCheckWorker },
@@ -17,6 +18,7 @@ async function main(): Promise<void> {
     { scheduleDueMonitors },
     { logger },
   ] = await Promise.all([
+    import("@/db/client"),
     import("@/lib/jobs/boss"),
     import("@/lib/jobs/system-ping"),
     import("@/lib/jobs/monitor-check"),
@@ -26,6 +28,7 @@ async function main(): Promise<void> {
     import("@/lib/logger"),
   ]);
   workerLogger = logger;
+  await assertRuntimeDatabaseRole();
   const boss = await startJobBoss();
   await registerSystemPingWorker(boss);
   await registerMonitorCheckWorker(boss);

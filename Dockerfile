@@ -5,7 +5,7 @@
 #   worker: npm run worker
 # Keep the worker persistent; it owns pg-boss and scheduled monitor work.
 
-FROM node:22.12.0-bookworm-slim AS build
+FROM node:22.23.2-bookworm-slim AS build
 WORKDIR /app
 
 # The canonical URL is browser-safe and may be inlined by Next.js.
@@ -25,9 +25,13 @@ RUN npm ci
 
 COPY . .
 ENV NODE_ENV=production
-RUN npm run build
+# Next 16 defaults to Turbopack, which can exceed the memory budget on the
+# small VPS targets this image is intended to support. The webpack path is
+# supported by Next and keeps the image build within the documented resource
+# envelope (the runtime image is unchanged).
+RUN npm run build -- --webpack
 
-FROM node:22.12.0-bookworm-slim AS runtime
+FROM node:22.23.2-bookworm-slim AS runtime
 WORKDIR /app
 
 # Prisma migration and query engines require the system OpenSSL libraries in
@@ -65,4 +69,4 @@ COPY --from=build --chown=guardian:guardian /app/tsconfig.json ./tsconfig.json
 USER guardian
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["node", "--require", "./scripts/server-only-cli.cjs", "./node_modules/tsx/dist/cli.mjs", "scripts/start-web.ts"]

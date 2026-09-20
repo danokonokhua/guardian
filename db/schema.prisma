@@ -11,9 +11,9 @@
 //                 │                       └─ Issue
 //                 └─ (tenant root: organizationId on every tenant-owned row)
 //
-// Monitoring results and verification are implemented in the monitoring phase;
-// health scores and recommendations remain staged for later; issue activity is
-// persisted with each lifecycle mutation for operational traceability.
+// Monitoring results, explainable health scores, and issue evidence are kept as
+// durable tenant-scoped records. Recommendations remain rule-based in this
+// phase; AI explanations and automated actions are staged for later.
 //
 // Tenancy: every tenant-owned table carries a required organizationId FK
 // (defense-in-depth alongside future RLS). Cross-parent consistency
@@ -86,10 +86,11 @@ enum WebsiteVerifyStatus {
 }
 
 /// Phase 1A §6.3: monitoring_checks.type
-/// (uptime|ssl|seo|content|links|performance|form).
+/// (uptime|ssl|security|seo|content|links|performance|form).
 enum MonitorType {
   UPTIME
   SSL
+  SECURITY
   SEO
   CONTENT
   LINKS
@@ -101,6 +102,31 @@ enum MonitorResultStatus {
   UP
   DOWN
   ERROR
+}
+
+/// PRD §10 weighted Digital Health Score categories.
+enum HealthScoreCategory {
+  WEBSITE
+  LEAD_GENERATION
+  PERFORMANCE
+  SEO
+  SECURITY
+  REPUTATION
+}
+
+/// Overall score coverage state. PARTIAL is expected while future categories
+/// (for example reputation) have no adapter or measured results.
+enum HealthScoreState {
+  MEASURED
+  PARTIAL
+  INSUFFICIENT_DATA
+}
+
+/// A component is either backed by at least one measurable monitor result or
+/// explicitly pending; missing data is never presented as a healthy score.
+enum HealthScoreComponentState {
+  MEASURED
+  PENDING
 }
 
 /// Phase 1A §15.2: CRITICAL | HIGH | MEDIUM | LOW | INFO.
@@ -177,6 +203,18 @@ model AuthCredential {
   @@map("auth_credentials")
 }
 
+/// Short-lived, hashed login throttle buckets. Keys contain no raw IP or email.
+model AuthLoginThrottle {
+  keyHash         String    @id
+  windowStartedAt DateTime
+  attempts        Int       @default(0)
+  blockedUntil    DateTime?
+  updatedAt       DateTime  @updatedAt
+
+  @@index([blockedUntil])
+  @@map("auth_login_throttles")
+}
+
 /// Opaque, database-backed login sessions. Only a SHA-256 token hash is stored.
 model AuthSession {
   id         String   @id @default(uuid())
@@ -228,6 +266,8 @@ model Organization {
   issueQueueViews         IssueQueueView[]
   notificationPreferences NotificationPreference[]
   inAppNotifications      InAppNotification[]
+  healthScores             HealthScore[]
+  healthScoreComponents    HealthScoreComponent[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -369,6 +409,49 @@ model MonitoringResult {
   @@index([organizationId, monitorId, checkedAt])
   @@index([websiteId, checkedAt])
   @@map("monitoring_results")
+}
+
+/// Durable, explainable Digital Health Score snapshot (PRD §10/§24).
+/// A snapshot is immutable after creation and is retained for score history.
+model HealthScore {
+  id             String          @id @default(uuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  score          Int?
+  state          HealthScoreState
+  coverageWeight Int             @default(0)
+  sourceVersion  String          @default("v1")
+  calculatedAt   DateTime        @default(now())
+  components     HealthScoreComponent[]
+
+  @@index([organizationId, calculatedAt])
+  @@map("health_scores")
+}
+
+/// One weighted category in a score snapshot. Evidence is bounded structured
+/// metadata (counts, monitor/result IDs, and issue IDs), never page contents.
+model HealthScoreComponent {
+  id             String                     @id @default(uuid())
+  healthScoreId  String
+  healthScore    HealthScore                @relation(fields: [healthScoreId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  category       HealthScoreCategory
+  weight         Int
+  score          Int?
+  state          HealthScoreComponentState
+  monitorCount   Int                        @default(0)
+  resultCount    Int                        @default(0)
+  upCount        Int                        @default(0)
+  downCount      Int                        @default(0)
+  errorCount     Int                        @default(0)
+  explanation    String
+  evidence       Json                       @default("{}")
+  calculatedAt   DateTime                   @default(now())
+
+  @@unique([healthScoreId, category])
+  @@index([organizationId, calculatedAt])
+  @@map("health_score_components")
 }
 
 /// Phase 1A §6.4: deduplicated, lifecycle-managed problem.

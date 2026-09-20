@@ -13,11 +13,15 @@ User (identity mirror, no auth secrets)
 Organization (tenant root) ── OrganizationMember (OWNER|ADMIN|MEMBER|VIEWER)
   └─ Business ── Website ──┬─ Monitor  (table: monitoring_checks; one per type/website)
                            └─ Issue    (fingerprint-deduped lifecycle)
+Organization ── HealthScore snapshot ── HealthScoreComponent (six PRD categories; tenant-scoped)
 ```
 
-Deferred to their engine phases (per Phase 1A staging): monitoring_results,
-issue_events, health_scores(+components), recommendations, notifications,
-audit_logs.
+Implemented engine tables include `monitoring_results`, `issue_events`,
+`health_scores`/`health_score_components`, and notification tables. Grounded
+recommendations v1 are a tenant-scoped read projection over existing issue and
+score data and therefore require no table or migration. Persistent
+recommendation lifecycle records and audit logs remain deferred to later engine
+phases.
 
 ## Migrations
 
@@ -27,29 +31,36 @@ audit_logs.
   workflow and verified deterministic across regenerations.
 - `20260907160000_local_auth` — PostgreSQL-backed credentials, opaque sessions,
   and single-use password-reset tokens for self-hosted deployments.
+- `20260911120000_health_score` — PRD-weighted Digital Health Score v1 snapshots
+  and explainable category components. Both tables are tenant-scoped with
+  `ENABLE ROW LEVEL SECURITY` and `FORCE ROW LEVEL SECURITY`; score snapshots
+  retain bounded evidence and issue-driver references, not page bodies or raw
+  response data.
+- `20260911123000_health_score_runtime_grants` — idempotently grants the
+  least-privilege `guardian_app` runtime role access to score snapshots and
+  components for databases that already applied the table migration.
 - **Live execution status:** the Docker Compose `postgres` service is the
   development and production database. The one-shot `migrate` service applies
-  versioned migrations before web and worker start.
+  Prisma and pg-boss migrations with the admin role before web and worker start.
 
 ## Layout
 
-| Path               | Purpose                                                                                                             |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `db/schema.prisma` | Single source of truth for the database (datasource + generator; models arrive in 1B-04)                            |
-| `db/migrations/`   | Version-controlled migrations (created by `prisma migrate dev`; first migration lands with the first domain models) |
-| `db/client.ts`     | Server-only Prisma client: lazy instantiation, hot-reload-safe global caching                                       |
-| `db/health.ts`     | Time-boxed, sanitized readiness probe (`SELECT 1`)                                                                  |
+| Path               | Purpose                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| `db/schema.prisma` | Single source of truth for the database (datasource, generator, and approved domain models)  |
+| `db/migrations/`   | Version-controlled, ordered Prisma migrations, including the health-score snapshot migration |
+| `db/client.ts`     | Server-only Prisma client: lazy instantiation, hot-reload-safe global caching                |
+| `db/health.ts`     | Time-boxed, sanitized readiness probe (`SELECT 1`)                                           |
 
 ## Connection variables (server-only — never `NEXT_PUBLIC_*`)
 
-| Variable       | Used by                         | Purpose                                               |
-| -------------- | ------------------------------- | ----------------------------------------------------- |
-| `DATABASE_URL` | Prisma client (runtime queries) | Compose connection at `postgres:5432` |
-| `DIRECT_URL`   | Prisma Migrate (CLI only)       | Direct Compose connection at `postgres:5432` |
+| Variable       | Used by                                   | Purpose                                                                 |
+| -------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
+| `DATABASE_URL` | Prisma client and pg-boss runtime queries | Derived Compose connection at `postgres:5432` using `POSTGRES_APP_USER` |
+| `DIRECT_URL`   | Prisma Migrate (CLI only)                 | Derived Compose connection at `postgres:5432` using `POSTGRES_USER`     |
 
-Both are validated (PostgreSQL URL format) by `config/env.ts` when present and
-remain optional until Phase 1B-04. Neither is ever hardcoded, committed, or
-returned by an API.
+Both are validated (PostgreSQL URL format) by `config/env.ts` when present.
+Neither is ever hardcoded, committed, or returned by an API.
 
 ## Workflow
 
@@ -101,20 +112,22 @@ Rules:
 
 ## Testing
 
-Database unit tests run against **no live database** (`tests/db/`):
-unconfigured behavior, unreachable-database sanitization, singleton/hot-reload
-semantics, and secret non-disclosure. A live-database integration suite
-becomes relevant with Phase 1B-04 domain models and will be isolated and
-documented there.
+Database unit tests run without a live database (`tests/db/`), including schema
+and migration/RLS catalog assertions. `tests/db/rls.integration.test.ts` is
+gated by `TEST_DATABASE_URL`; when enabled it applies all migrations and checks
+tenant isolation plus `ENABLE + FORCE ROW LEVEL SECURITY` on the nine tenant
+tables, including both health-score tables. The scorer and health repository
+also have deterministic unit coverage without external services.
 
 ## Phase 1B-09 job storage
 
 Guardian background jobs use pg-boss in the dedicated PostgreSQL schema `guardian_jobs`.
 The schema is intentionally outside the tenant RLS model because these are infrastructure
-records rather than tenant-owned application data. pg-boss owns its internal tables and
-performs its own schema migrations at worker startup; the Prisma migration only establishes
-the namespace. The worker prefers `DIRECT_URL` when available and falls back to `DATABASE_URL`.
+records rather than tenant-owned application data. The Compose `migrate` service runs pg-boss
+schema migrations once with `DIRECT_URL`/the admin role; the worker uses only
+`DATABASE_URL` and never performs database-level DDL at startup.
 
-The long-running worker is started with `npm run worker`. The guarded `POST /api/cron/tick`
+The long-running worker is started with `npm run worker` and refuses to start if
+the runtime role is a PostgreSQL superuser or has `BYPASSRLS`. The guarded `POST /api/cron/tick`
 endpoint requires `Authorization: Bearer <CRON_SECRET>` and only enqueues the singleton
 `system.ping` foundation job; the worker performs the actual processing.

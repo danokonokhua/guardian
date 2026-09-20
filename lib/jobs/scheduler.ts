@@ -22,7 +22,7 @@ export interface MonitorCheckJob {
   type: string;
 }
 
-/** Enqueues due monitors; execution is intentionally handled by a later phase. */
+/** Enqueues due monitors; execution is handled by the registered worker adapters. */
 export async function scheduleDueMonitors(boss: PgBoss = getJobBoss()): Promise<number> {
   await boss.createQueue(MONITOR_CHECK_JOB, {
     retryLimit: JOB_RETRY_LIMIT,

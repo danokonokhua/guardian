@@ -36,6 +36,9 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
   const [websiteId, setWebsiteId] = useState("");
   const [type, setType] = useState<Monitor["type"]>("UPTIME");
   const [frequencyMinutes, setFrequencyMinutes] = useState("5");
+  const [formId, setFormId] = useState("");
+  const [formPagePath, setFormPagePath] = useState("");
+  const [formProbePath, setFormProbePath] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -109,7 +112,14 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
           type,
           frequencyMinutes: Number(frequencyMinutes),
           enabled: true,
-          config: {},
+          config:
+            type === "FORM"
+              ? {
+                  formId: formId.trim(),
+                  ...(formPagePath.trim() === "" ? {} : { pagePath: formPagePath.trim() }),
+                  ...(formProbePath.trim() === "" ? {} : { probePath: formProbePath.trim() }),
+                }
+              : {},
         }),
       });
       if (!response.ok) {
@@ -117,6 +127,9 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
         throw new Error(`Unable to create monitor (request ${requestId})`);
       }
       setWebsiteId("");
+      setFormId("");
+      setFormPagePath("");
+      setFormProbePath("");
       setReloadToken((value) => value + 1);
     } catch (cause: unknown) {
       setActionError(cause instanceof Error ? cause.message : "Unable to create monitor");
@@ -256,6 +269,9 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               {monitor.results?.[0] && (
                 <p className="mt-2 text-xs text-neutral-400">
                   Last result: {monitor.results[0].status}
+                  {monitor.results[0].httpStatusCode !== null
+                    ? ` · HTTP ${monitor.results[0].httpStatusCode}`
+                    : ""}
                   {monitor.results[0].responseTimeMs !== null
                     ? ` · ${monitor.results[0].responseTimeMs} ms`
                     : ""}
@@ -376,11 +392,49 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               onChange={(event) => setType(event.target.value as Monitor["type"])}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
             >
-              {["UPTIME", "SSL"].map((option) => (
-                <option key={option}>{option}</option>
-              ))}
+              {["UPTIME", "SSL", "SECURITY", "LINKS", "SEO", "PERFORMANCE", "FORM"].map(
+                (option) => (
+                  <option key={option}>{option}</option>
+                ),
+              )}
             </select>
           </label>
+          {type === "FORM" && (
+            <div className="md:col-span-4 grid gap-3 md:grid-cols-3">
+              <label className="text-xs text-neutral-400">
+                Form ID or name
+                <input
+                  required
+                  value={formId}
+                  onChange={(event) => setFormId(event.target.value)}
+                  className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
+                  placeholder="contact-form"
+                />
+              </label>
+              <label className="text-xs text-neutral-400">
+                Page path (optional)
+                <input
+                  value={formPagePath}
+                  onChange={(event) => setFormPagePath(event.target.value)}
+                  className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
+                  placeholder="/contact"
+                />
+              </label>
+              <label className="text-xs text-neutral-400">
+                Safe probe path (optional)
+                <input
+                  value={formProbePath}
+                  onChange={(event) => setFormProbePath(event.target.value)}
+                  className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
+                  placeholder="/api/lead-health"
+                />
+              </label>
+              <p className="md:col-span-3 text-xs text-neutral-500">
+                v1 confirms the server-rendered form is present. If a probe path is supplied,
+                Guardian sends a same-origin HEAD request; it never submits lead data.
+              </p>
+            </div>
+          )}
           <label className="text-xs text-neutral-400">
             Frequency (min)
             <input
@@ -395,7 +449,11 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
           </label>
           <button
             type="submit"
-            disabled={submitting || availableWebsites.length === 0}
+            disabled={
+              submitting ||
+              availableWebsites.length === 0 ||
+              (type === "FORM" && formId.trim() === "")
+            }
             className="self-end rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-neutral-950 disabled:opacity-50"
           >
             {submitting ? "Adding…" : "Add check"}

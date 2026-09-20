@@ -15,6 +15,9 @@ export interface IssueRecord {
   title: string;
   summary: string;
   technicalEvidence: Prisma.JsonValue;
+  businessImpact: string | null;
+  impactConfidence: number | null;
+  metadata: Prisma.JsonValue;
   firstSeenAt: Date;
   lastSeenAt: Date;
   resolvedAt: Date | null;
@@ -45,6 +48,9 @@ const select = {
   title: true,
   summary: true,
   technicalEvidence: true,
+  businessImpact: true,
+  impactConfidence: true,
+  metadata: true,
   firstSeenAt: true,
   lastSeenAt: true,
   resolvedAt: true,
@@ -80,6 +86,9 @@ function mapIssue(issue: Prisma.IssueGetPayload<{ select: typeof select }>): Iss
     title: issue.title,
     summary: issue.summary,
     technicalEvidence: issue.technicalEvidence,
+    businessImpact: issue.businessImpact,
+    impactConfidence: issue.impactConfidence,
+    metadata: issue.metadata,
     firstSeenAt: issue.firstSeenAt,
     lastSeenAt: issue.lastSeenAt,
     resolvedAt: issue.resolvedAt,

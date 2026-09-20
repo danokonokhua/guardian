@@ -1,30 +1,31 @@
 # Guardian PRD Traceability
 
 **Canonical source:** [`PRD.md`](./PRD.md), transcribed from the supplied `Guardian_Master_PRD.pdf` (Version 2.0).  
-**Reviewed:** 3 September 2026  
+**Reviewed:** 13 September 2026
 **Purpose:** Keep implementation decisions tied to explicit product requirements and prevent scope drift.
 
 ## Current alignment
 
-| PRD capability                      | Current repository evidence                                                | Status                      | Next required work                                                                     |
-| ----------------------------------- | -------------------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------- |
-| Authentication and organizations    | Local PostgreSQL auth adapter, organization membership, RBAC, tenant-scoped APIs | Implemented foundation | Verify production Compose bootstrap and end-to-end flows |
-| Businesses and websites             | Website/business services and APIs                                         | Implemented foundation      | Add full onboarding/scan experience                                                    |
-| Uptime and SSL monitoring           | Background worker, monitor configuration, results, issue creation          | Implemented for these types | Verify scheduled execution on the production host                                      |
-| HTTP status and response time       | Uptime worker records HTTP status and response time                        | Partial                     | Define and test the separate HTTP monitoring contract                                  |
-| Website scanning/free audit         | Verification endpoint exists                                               | Missing as PRD audit        | Build rate-limited public audit flow                                                   |
-| Broken links                        | Monitor type is represented in the model/UI                                | Missing execution           | Implement a bounded, SSRF-safe link scanner                                            |
-| Basic SEO                           | Monitor type is represented in the model/UI                                | Missing execution           | Implement title/meta/headings/canonical/robots/sitemap/indexability checks             |
-| Basic security                      | SSL exists; broader checks are not implemented                             | Partial                     | Add scoped security-header and exposed-configuration checks; state limitations clearly |
-| Critical lead forms                 | FORM monitor type exists in the model/UI                                   | Missing execution           | Design safe synthetic form testing and evidence capture                                |
-| Issues and lifecycle                | Issue engine, severity/status, activity, deduplication fields              | Implemented foundation      | Ensure every monitor emits evidence, impact, confidence, and recommendations           |
-| Digital Health Score                | PRD defines six weighted categories; schema comments say scores are staged | Missing                     | Add explainable score computation and component history                                |
-| Recommendations and AI explanations | No complete grounded recommendation/AI layer                               | Missing                     | Implement only after reliable observations and issue evidence exist                    |
-| Email and in-app alerts             | Notification services and SMTP adapter exist                               | Implemented foundation      | Verify provider configuration and delivery/retry behavior in production                |
-| Background jobs                     | pg-boss plus private tenant-dispatch registry; worker scopes tenant reads  | Implemented foundation      | Confirm persistent worker hosting and apply the dispatch migration                     |
-| Reporting                           | Queue analytics/export exists                                              | Partial                     | Add PRD daily/weekly/monthly report content                                            |
-| Billing                             | No complete billing implementation                                         | Future phase                | Do not begin before MVP validation                                                     |
-| Agency/white-label                  | Not yet implemented                                                        | Future phase                | Begin only after MVP testing and product validation                                    |
+| PRD capability                      | Current repository evidence                                                                                                                    | Status                      | Next required work                                                                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Authentication and organizations    | Local PostgreSQL auth adapter, self-service signup, organization membership, RBAC, tenant-scoped APIs                                          | Implemented foundation      | Verify production Compose bootstrap and end-to-end flows                                                                        |
+| Businesses and websites             | Website/business services and APIs                                                                                                             | Implemented foundation      | Add full onboarding/scan experience                                                                                             |
+| Uptime and SSL monitoring           | Background worker, monitor configuration, results, issue creation                                                                              | Implemented for these types | Verify scheduled execution on the production host                                                                               |
+| HTTP status and response time       | Explicit UPTIME contract: 2xx/3xx UP, 4xx/5xx DOWN, transport ERROR; durable status and latency evidence                                       | Implemented foundation      | Verify scheduled execution on representative real websites                                                                      |
+| Website scanning/free audit         | Public `/audit` page and `POST /api/audit`; SSRF-safe bounded checks, hashed IP/target throttling, score/findings/limitations, signup handoff  | Technically validated v1    | Collect business-owner feedback on usefulness; add broader crawl/submission capabilities only with approval                     |
+| Broken links                        | `LINKS` monitor, bounded same-origin worker scan, issue evidence                                                                               | Implemented foundation      | Verify on representative real websites and tune false-positive handling                                                         |
+| Basic SEO                           | `SEO` monitor worker checks title, meta description, non-empty H1, canonical, robots/indexability, and sitemap                                 | Implemented foundation      | Verify on representative real websites; add structured-data and duplicate-content indicators later                              |
+| Basic security                      | `SECURITY` worker checks bounded security headers and high-confidence exposed configuration paths                                              | Implemented foundation      | Verify on representative real websites; add broader indicators only with a separate contract                                    |
+| Performance                         | `PERFORMANCE` worker measures bounded verified-homepage server response time with a configurable threshold                                     | Implemented foundation      | Verify on representative real websites; add browser/CWV signals later                                                           |
+| Critical lead forms                 | `FORM` worker verifies one named server-rendered form and optional same-origin `HEAD` probe; failures carry impact/action                      | Implemented safe foundation | Validate on representative real sites; a synthetic submission canary requires explicit approval                                 |
+| Issues and lifecycle                | Issue engine, severity/status, activity, deduplication, evidence, business-impact, and bounded confidence fields                               | Implemented foundation      | Validate evidence and recommendation quality on representative real sites                                                       |
+| Digital Health Score                | `lib/health-score.ts` deterministic v1 calculator; `health_scores`/`health_score_components` migration and tenant-scoped history               | Implemented v1              | Validate category adapters and score stability on representative real sites; Reputation remains pending until an adapter exists |
+| Recommendations and AI explanations | Read-only grounded recommendation projection derives active issue actions and links them to current score evidence; no AI/action execution yet | Implemented v1              | Validate action quality on representative real sites; add AI explanations and persistent lifecycle only after product review    |
+| Email and in-app alerts             | Notification services and SMTP adapter exist                                                                                                   | Implemented foundation      | Verify provider configuration and delivery/retry behavior in production                                                         |
+| Background jobs                     | pg-boss plus private tenant-dispatch registry; worker scopes tenant reads                                                                      | Implemented foundation      | Verify persistent worker hosting and migration on the eventual deployment target                                                |
+| Reporting                           | Queue analytics/export exists                                                                                                                  | Partial                     | Add PRD daily/weekly/monthly report content                                                                                     |
+| Billing                             | No complete billing implementation                                                                                                             | Future phase                | Do not begin before MVP validation                                                                                              |
+| Agency/white-label                  | Not yet implemented                                                                                                                            | Future phase                | Begin only after MVP testing and product validation                                                                             |
 
 ## Required implementation order
 
@@ -37,6 +38,17 @@
 7. Implement the rate-limited free audit funnel.
 8. Test with 5–10 real businesses and measure business problems prevented or resolved.
 9. Only after validation, proceed to billing, Google integrations, SEO expansion, WordPress, agency workflows, white-label, and later AI COO capabilities.
+
+Items 4, 5, the grounded-recommendation portion of item 6, and item 7 now have
+bounded v1 implementations in the repository. Recommendations are read-only,
+tenant-scoped, and derived only from persisted issue actions plus current score
+evidence; AI explanations and action lifecycle remain staged. The free audit is
+also read-only and in-memory, with a database-backed abuse quota and no account
+or website created until the user chooses the signup handoff. Representative
+technical execution on ten authorized websites is recorded in
+`AUDIT_VALIDATION_20260913.md`; the immediate product gate is business-owner
+feedback and a prevented/resolved problem metric. Deployment remains a
+separate, intentionally deferred gate.
 
 ## Non-negotiable guardrails
 

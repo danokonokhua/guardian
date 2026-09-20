@@ -40,6 +40,6 @@ migrate-logs:
 
 health:
 	$(COMPOSE) ps
-	$(COMPOSE) exec -T postgres pg_isready -U guardian -d guardian
+	$(COMPOSE) exec -T postgres sh -c 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"'
 	$(COMPOSE) exec -T web node -e "fetch('http://127.0.0.1:3000/api/health/ready').then(async response => { console.log(await response.text()); process.exit(response.ok ? 0 : 1); }).catch(error => { console.error(error); process.exit(1); })"
 	$(COMPOSE) exec -T worker node -e "console.log('Guardian worker container is running')"

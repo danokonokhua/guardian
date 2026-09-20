@@ -16,15 +16,14 @@ const globalForJobs = globalThis as JobGlobal;
 /**
  * Creates the single pg-boss instance used by the Guardian process.
  *
- * The job system deliberately uses DIRECT_URL when available. pg-boss owns
- * schema setup/migrations and maintains its own connection pool; a direct
- * PostgreSQL connection is therefore the safest fit for the worker while
- * DATABASE_URL remains the Prisma runtime pool.
+ * pg-boss owns its schema setup and maintains its own connection pool, but it
+ * must run as the same least-privilege runtime role as Prisma. DIRECT_URL is
+ * reserved for the migration/bootstrap phase and is never used by workers.
  */
 function createBoss(): PgBoss {
-  const connectionString = serverConfig.server.directUrl ?? serverConfig.server.databaseUrl;
+  const connectionString = serverConfig.server.databaseUrl;
   if (connectionString === undefined) {
-    throw new Error("Job system is not configured: DATABASE_URL or DIRECT_URL is required.");
+    throw new Error("Job system is not configured: DATABASE_URL is required.");
   }
 
   const boss = new PgBoss({

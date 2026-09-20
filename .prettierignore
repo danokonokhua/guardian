@@ -10,3 +10,5 @@ next-env.d.ts
 .env.*
 !.env.example
 *.log
+# Generated cPanel standalone bundle; keep its upstream formatting intact.
+guardian-cpanel-release/server.js

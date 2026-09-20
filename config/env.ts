@@ -80,6 +80,10 @@ export interface ServerConfig {
   readonly guardianAdminName?: string;
   /** Initial organization name created for the owner. */
   readonly guardianOrganizationName?: string;
+  /** Whether a trusted reverse proxy supplies the client IP headers. */
+  readonly trustedProxy?: boolean;
+  /** Shared secret header used to prove the request crossed that proxy. */
+  readonly trustedProxyToken?: string;
 }
 
 /** Full application configuration (server aggregate). */
@@ -214,9 +218,13 @@ export function parseServerConfig(env: RawEnv): ServerConfig {
   const guardianAdminPassword = readString(env, "GUARDIAN_ADMIN_PASSWORD");
   const guardianAdminName = readString(env, "GUARDIAN_ADMIN_NAME");
   const guardianOrganizationName = readString(env, "GUARDIAN_ORGANIZATION_NAME");
+  const trustedProxyValue = readString(env, "TRUSTED_PROXY");
+  const trustedProxyToken = readString(env, "TRUSTED_PROXY_TOKEN");
   const smtpPort = smtpPortValue === undefined ? undefined : parsePort(smtpPortValue, "SMTP_PORT");
   const smtpSecure =
     smtpSecureValue === undefined ? smtpPort === 465 : parseBoolean(smtpSecureValue, "SMTP_SECURE");
+  const trustedProxy =
+    trustedProxyValue === undefined ? undefined : parseBoolean(trustedProxyValue, "TRUSTED_PROXY");
 
   return {
     ...(databaseUrl !== undefined
@@ -242,6 +250,8 @@ export function parseServerConfig(env: RawEnv): ServerConfig {
     ...(guardianAdminPassword !== undefined ? { guardianAdminPassword } : {}),
     ...(guardianAdminName !== undefined ? { guardianAdminName } : {}),
     ...(guardianOrganizationName !== undefined ? { guardianOrganizationName } : {}),
+    ...(trustedProxy !== undefined ? { trustedProxy } : {}),
+    ...(trustedProxyToken !== undefined ? { trustedProxyToken } : {}),
   };
 }
 

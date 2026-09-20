@@ -3,7 +3,6 @@ name: guardian
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: guardian-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -17,6 +16,27 @@ services:
       timeout: 5s
       retries: 12
 
+  db-roles:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-guardian_app}
+      # Keep the variable optional at Compose parse time so control commands
+      # (`down`, `ps`, and `logs`) still work when a fresh `.env` has not yet
+      # been completed. `ensure-postgres-app-role.sh` fails closed when the
+      # role password is actually needed, and the Windows wrapper validates
+      # it before `up`.
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-}
+    volumes:
+      - ./scripts/ensure-postgres-app-role.sh:/usr/local/bin/ensure-postgres-app-role.sh:ro
+    entrypoint: ["/bin/sh", "/usr/local/bin/ensure-postgres-app-role.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   migrate:
     build:
       context: .
@@ -25,12 +45,15 @@ services:
     environment:
       NODE_ENV: production
       APP_ENV: ${APP_ENV:-production}
-      DATABASE_URL: ${DATABASE_URL}
-      DIRECT_URL: ${DIRECT_URL}
-    command: ["npm", "run", "db:deploy"]
+      DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
+      DIRECT_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PGBOSS_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    command: ["sh", "-c", "npm run db:deploy && npm run jobs:deploy"]
     depends_on:
       postgres:
         condition: service_healthy
+      db-roles:
+        condition: service_completed_successfully
     restart: "no"
 
   bootstrap:
@@ -41,8 +64,7 @@ services:
     environment:
       NODE_ENV: production
       APP_ENV: ${APP_ENV:-production}
-      DATABASE_URL: ${DATABASE_URL}
-      DIRECT_URL: ${DIRECT_URL}
+      DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
       GUARDIAN_ADMIN_EMAIL: ${GUARDIAN_ADMIN_EMAIL}
       GUARDIAN_ADMIN_PASSWORD: ${GUARDIAN_ADMIN_PASSWORD}
       GUARDIAN_ADMIN_NAME: ${GUARDIAN_ADMIN_NAME:-Guardian Owner}
@@ -63,10 +85,11 @@ services:
       APP_ENV: ${APP_ENV:-production}
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      DATABASE_URL: ${DATABASE_URL}
-      DIRECT_URL: ${DIRECT_URL}
+      DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
       CRON_SECRET: ${CRON_SECRET}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      TRUSTED_PROXY: ${TRUSTED_PROXY:-false}
+      TRUSTED_PROXY_TOKEN: ${TRUSTED_PROXY_TOKEN:-}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USER: ${SMTP_USER:-}
@@ -74,9 +97,16 @@ services:
       SMTP_SECURE: ${SMTP_SECURE:-false}
       MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Guardian Alerts}
-    command: ["node", "server.js"]
+    command:
+      [
+        "node",
+        "--require",
+        "./scripts/server-only-cli.cjs",
+        "./node_modules/tsx/dist/cli.mjs",
+        "scripts/start-web.ts",
+      ]
     ports:
-      - "3000:3000"
+      - "127.0.0.1:${GUARDIAN_WEB_PORT:-3000}:3000"
     depends_on:
       bootstrap:
         condition: service_completed_successfully
@@ -87,11 +117,12 @@ services:
           "CMD",
           "node",
           "-e",
-          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+          "fetch('http://127.0.0.1:3000/api/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 20s
 
   worker:
     build:
@@ -101,8 +132,7 @@ services:
     environment:
       NODE_ENV: production
       APP_ENV: ${APP_ENV:-production}
-      DATABASE_URL: ${DATABASE_URL}
-      DIRECT_URL: ${DIRECT_URL}
+      DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
       CRON_SECRET: ${CRON_SECRET}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       SMTP_HOST: ${SMTP_HOST}

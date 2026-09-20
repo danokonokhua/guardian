@@ -1,8 +1,57 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { GroundedRecommendation } from "@/lib/recommendations";
 
 type HealthData = {
+  healthScore?: {
+    score: number | null;
+    state: "MEASURED" | "PARTIAL" | "INSUFFICIENT_DATA";
+    coverageWeight: number;
+    totalWeight: number;
+    sourceVersion: string;
+    calculatedAt: string;
+    explanation: string;
+    components: Array<{
+      category: string;
+      label: string;
+      weight: number;
+      score: number | null;
+      state: "MEASURED" | "PENDING";
+      contribution: number;
+      explanation: string;
+      evidence: {
+        monitorTypes: string[];
+        monitorIds: string[];
+        resultIds: string[];
+        issueIds: string[];
+        issueSeverities: string[];
+        upCount: number;
+        downCount: number;
+        errorCount: number;
+        resultCount: number;
+        monitorCount: number;
+      };
+      drivers: Array<{
+        id: string;
+        ruleId: string;
+        severity: string;
+        title: string;
+        summary: string;
+        businessImpact: string | null;
+        lastSeenAt: string | null;
+      }>;
+    }>;
+  };
+  recommendations?: GroundedRecommendation[];
+  healthScoreHistory?: Array<{
+    id: string;
+    score: number | null;
+    state: string;
+    coverageWeight: number;
+    sourceVersion: string;
+    calculatedAt: string;
+  }>;
   summary: {
     monitors: number;
     up: number;
@@ -34,6 +83,9 @@ type HealthData = {
     assignedToId?: string | null;
     assignedTo?: { id: string; email: string; name: string | null } | null;
     technicalEvidence?: unknown;
+    businessImpact?: string | null;
+    impactConfidence?: number | null;
+    metadata?: unknown;
     websiteName: string;
   }>;
   responseHistory: Array<{
@@ -225,7 +277,15 @@ export function HealthPanel({
     return <p className="p-4 text-sm text-neutral-400">Loading health results…</p>;
   }
 
-  const { summary, recentResults, issues, responseHistory } = result.data;
+  const {
+    healthScore,
+    recommendations = [],
+    healthScoreHistory,
+    summary,
+    recentResults,
+    issues,
+    responseHistory,
+  } = result.data;
   const maxResponse = Math.max(...responseHistory.map((point) => point.responseTimeMs), 1);
   const severityRank: Record<string, number> = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3, INFO: 4 };
   const visibleIssues = issues
@@ -317,6 +377,148 @@ export function HealthPanel({
   };
   return (
     <div className="space-y-5">
+      {healthScore && (
+        <section
+          className="rounded-lg border border-neutral-800 p-4"
+          aria-labelledby="digital-health-score-heading"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 id="digital-health-score-heading" className="font-medium">
+                Digital Health Score
+              </h3>
+              <p className="mt-1 text-xs text-neutral-400">
+                PRD-weighted score from the latest measurable monitor results and active issues.
+              </p>
+            </div>
+            <div className="text-right">
+              <p
+                className={`text-3xl font-semibold ${healthScore.score === null ? "text-neutral-400" : healthScore.score >= 80 ? "text-emerald-300" : healthScore.score >= 50 ? "text-amber-300" : "text-red-300"}`}
+                aria-label="Digital health score"
+              >
+                {healthScore.score === null ? "—" : `${healthScore.score}/100`}
+              </p>
+              <p className="text-xs text-neutral-500">
+                {healthScore.state === "MEASURED"
+                  ? "Measured"
+                  : healthScore.state === "PARTIAL"
+                    ? "Partial coverage"
+                    : "Insufficient data"}
+              </p>
+            </div>
+          </div>
+          <p className="mt-3 text-sm text-neutral-300">{healthScore.explanation}</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            Coverage: {healthScore.coverageWeight}/{healthScore.totalWeight} weight · calculated{" "}
+            {new Date(healthScore.calculatedAt).toLocaleString()}
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {healthScore.components.map((component) => (
+              <article
+                key={component.category}
+                className="rounded-md border border-neutral-800 bg-neutral-950/40 p-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-medium">{component.label}</h4>
+                    <p className="text-xs text-neutral-500">Weight {component.weight}%</p>
+                  </div>
+                  <span
+                    className={`text-sm font-semibold ${component.score === null ? "text-neutral-500" : component.score >= 80 ? "text-emerald-300" : component.score >= 50 ? "text-amber-300" : "text-red-300"}`}
+                  >
+                    {component.score === null ? "Pending" : `${component.score}/100`}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs text-neutral-400">{component.explanation}</p>
+                {component.drivers.length > 0 && (
+                  <div className="mt-2 border-t border-neutral-800 pt-2">
+                    <p className="text-xs font-medium text-amber-200">Active evidence</p>
+                    <ul className="mt-1 space-y-1 text-xs text-neutral-400">
+                      {component.drivers.slice(0, 3).map((driver) => (
+                        <li key={driver.id}>
+                          <span className="text-amber-300">{driver.severity}</span> · {driver.title}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+          {healthScoreHistory && healthScoreHistory.length > 0 && (
+            <div className="mt-4 border-t border-neutral-800 pt-3">
+              <p className="text-xs font-medium text-neutral-400">Score history</p>
+              <ol className="mt-2 flex flex-wrap gap-2" aria-label="Digital health score history">
+                {healthScoreHistory.slice(0, 8).map((snapshot) => (
+                  <li
+                    key={snapshot.id}
+                    className="rounded border border-neutral-800 px-2 py-1 text-xs text-neutral-400"
+                    title={`${new Date(snapshot.calculatedAt).toLocaleString()} · ${snapshot.coverageWeight}% coverage`}
+                  >
+                    {snapshot.score === null ? "—" : snapshot.score}/100
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </section>
+      )}
+      {healthScore && (
+        <section
+          className="rounded-lg border border-neutral-800 p-4"
+          aria-labelledby="grounded-recommendations-heading"
+        >
+          <div>
+            <h3 id="grounded-recommendations-heading" className="font-medium">
+              Recommended next actions
+            </h3>
+            <p className="mt-1 text-xs text-neutral-400">
+              Read-only actions derived from active monitor evidence and the current health score.
+            </p>
+          </div>
+          {recommendations.length === 0 ? (
+            <p className="mt-3 text-sm text-neutral-400">No evidence-backed actions are pending.</p>
+          ) : (
+            <ol className="mt-3 grid gap-3 lg:grid-cols-2" aria-label="Grounded recommendations">
+              {recommendations.map((recommendation) => (
+                <li
+                  key={recommendation.id}
+                  className="rounded-md border border-neutral-800 bg-neutral-950/40 p-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-medium text-amber-200">
+                        {recommendation.priority} priority
+                      </p>
+                      <h4 className="mt-1 text-sm font-medium">{recommendation.title}</h4>
+                    </div>
+                    <span className="rounded border border-emerald-900/60 px-2 py-1 text-xs text-emerald-200">
+                      Evidence-backed
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-emerald-100/90">{recommendation.action}</p>
+                  <p className="mt-2 text-xs text-neutral-400">{recommendation.rationale}</p>
+                  {recommendation.businessImpact && (
+                    <p className="mt-2 text-xs text-amber-200">
+                      Business impact: {recommendation.businessImpact}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-neutral-500">
+                    Source: {recommendation.source.ruleId}
+                    {recommendation.source.category ? ` · ${recommendation.source.category}` : ""}
+                    {recommendation.source.componentScore !== null
+                      ? ` · score ${recommendation.source.componentScore}/100`
+                      : " · score pending"}
+                    {recommendation.confidence !== null
+                      ? ` · confidence ${Math.round(recommendation.confidence * 100)}%`
+                      : ""}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+      )}
       {analytics && (
         <section
           className="rounded-lg border border-neutral-800 p-4"
@@ -473,6 +675,9 @@ export function HealthPanel({
                     className={monitorResult.status === "UP" ? "text-emerald-300" : "text-red-300"}
                   >
                     {monitorResult.status}
+                    {monitorResult.httpStatusCode !== null
+                      ? ` · HTTP ${monitorResult.httpStatusCode}`
+                      : ""}
                     {monitorResult.responseTimeMs !== null
                       ? ` · ${monitorResult.responseTimeMs} ms`
                       : ""}
@@ -759,6 +964,29 @@ export function HealthPanel({
                         {JSON.stringify(issue.technicalEvidence, null, 2)}
                       </pre>
                     )}
+                    {issue.businessImpact && (
+                      <div className="mt-3 rounded-md border border-amber-900/50 bg-amber-950/20 p-3 text-sm">
+                        <p className="font-medium text-amber-200">Business impact</p>
+                        <p className="mt-1 text-amber-100/80">{issue.businessImpact}</p>
+                      </div>
+                    )}
+                    {typeof issue.impactConfidence === "number" && (
+                      <p className="mt-2 text-xs text-neutral-500">
+                        Impact confidence: {Math.round(issue.impactConfidence * 100)}%
+                      </p>
+                    )}
+                    {typeof issue.metadata === "object" &&
+                      issue.metadata !== null &&
+                      "recommendedAction" in issue.metadata &&
+                      typeof (issue.metadata as { recommendedAction?: unknown })
+                        .recommendedAction === "string" && (
+                        <div className="mt-3 rounded-md border border-emerald-900/50 bg-emerald-950/20 p-3 text-sm">
+                          <p className="font-medium text-emerald-200">Recommended action</p>
+                          <p className="mt-1 text-emerald-100/80">
+                            {(issue.metadata as { recommendedAction: string }).recommendedAction}
+                          </p>
+                        </div>
+                      )}
                   </div>
                 )}
               </li>

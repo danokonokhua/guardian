@@ -29,12 +29,26 @@ export default function HomePage() {
           Foundation services are operational. Sign in to access your organization dashboard.
         </p>
 
-        <Link
-          href="/login"
-          className="mt-6 inline-flex rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
-        >
-          Sign in to Guardian
-        </Link>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/login"
+            className="inline-flex rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+          >
+            Sign in to Guardian
+          </Link>
+          <Link
+            href="/signup"
+            className="inline-flex rounded-md border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-950/40 hover:border-emerald-500"
+          >
+            Create an account
+          </Link>
+          <Link
+            href="/audit"
+            className="inline-flex rounded-md border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-200 hover:border-emerald-500 hover:text-emerald-300"
+          >
+            Run a free audit
+          </Link>
+        </div>
 
         <p className="mt-6 font-mono text-xs text-neutral-500">
           liveness probe: <span className="text-neutral-300">GET /api/health</span>
