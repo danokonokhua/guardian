@@ -6,17 +6,22 @@ import { prismaIdentityRepository } from "@/lib/auth/prisma-repository";
 import type { AuthenticatedUser, IdentityRepository, MembershipContext } from "@/lib/auth/identity";
 import type { ApiErrorBody, V1SuccessBody } from "@/types/api";
 
-const { updateMock, triggerMock } = vi.hoisted(() => ({
+const { updateMock, deleteMock, triggerMock } = vi.hoisted(() => ({
   updateMock: vi.fn(),
+  deleteMock: vi.fn(),
   triggerMock: vi.fn(),
 }));
 
 vi.mock("@/services/monitors/service", () => ({
   updateConfiguredMonitor: updateMock,
+  deleteConfiguredMonitor: deleteMock,
   triggerConfiguredMonitor: triggerMock,
 }));
 
-import { PATCH } from "@/app/api/v1/organizations/[organizationId]/monitors/[monitorId]/route";
+import {
+  DELETE,
+  PATCH,
+} from "@/app/api/v1/organizations/[organizationId]/monitors/[monitorId]/route";
 import { POST } from "@/app/api/v1/organizations/[organizationId]/monitors/[monitorId]/run/route";
 
 const ORG_A = "11111111-1111-4111-8111-111111111111";
@@ -66,6 +71,7 @@ beforeEach(() => {
   setIdentityRepository(identityRepository);
   setAuthAdapter(adapter);
   updateMock.mockReset();
+  deleteMock.mockReset();
   triggerMock.mockReset();
 });
 
@@ -109,6 +115,23 @@ describe("monitor management routes", () => {
     );
     expect(response.status).toBe(404);
     expect(updateMock).not.toHaveBeenCalled();
+  });
+
+  it("deletes a monitor through the tenant-scoped management route", async () => {
+    deleteMock.mockResolvedValue(undefined);
+    const response = await DELETE(
+      new Request("https://guardian.test", { method: "DELETE" }),
+      params({ organizationId: ORG_A, monitorId: MONITOR_A }),
+    );
+    expect(response.status).toBe(200);
+    expect((await body<V1SuccessBody<unknown>>(response)).data).toEqual({
+      deleted: true,
+      monitorId: MONITOR_A,
+    });
+    expect(deleteMock).toHaveBeenCalledWith(
+      expect.objectContaining({ organizationId: ORG_A }),
+      MONITOR_A,
+    );
   });
 
   it("rejects unauthenticated trigger requests", async () => {

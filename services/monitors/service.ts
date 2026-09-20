@@ -3,6 +3,7 @@ import { ConflictError, NotFoundError } from "@/lib/errors";
 import { parseMonitorConfig, parseMonitorUpdate } from "@/lib/monitor-config";
 import {
   createMonitor,
+  deleteMonitor,
   findMonitor,
   listMonitors,
   updateMonitor,
@@ -52,6 +53,14 @@ export async function updateConfiguredMonitor(
   const updated = await updateMonitor(scope, monitorId, parsed);
   if (!updated) throw new NotFoundError("Monitor");
   return updated;
+}
+
+export async function deleteConfiguredMonitor(
+  scope: TenantScope,
+  monitorId: string,
+): Promise<void> {
+  const deleted = await deleteMonitor(scope, monitorId);
+  if (!deleted) throw new NotFoundError("Monitor");
 }
 
 /** Enqueues one immediate check after validating the monitor in the caller's tenant. */

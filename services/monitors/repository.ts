@@ -3,7 +3,7 @@ import "server-only";
 import type { MonitorType } from "@prisma/client";
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
-import { upsertMonitorDispatch } from "@/lib/jobs/dispatch";
+import { deleteMonitorDispatch, upsertMonitorDispatch } from "@/lib/jobs/dispatch";
 
 export interface MonitorRecord {
   id: string;
@@ -113,5 +113,18 @@ export function updateMonitor(
           : undefined,
     });
     return monitor;
+  });
+}
+
+export function deleteMonitor(scope: TenantScope, monitorId: string): Promise<boolean> {
+  return withTenantTransaction(scope, async (tx) => {
+    const existing = await tx.monitor.findFirst({
+      where: { id: monitorId, organizationId: scope.organizationId },
+      select: { id: true },
+    });
+    if (!existing) return false;
+    await deleteMonitorDispatch(tx, monitorId);
+    await tx.monitor.delete({ where: { id: monitorId } });
+    return true;
   });
 }

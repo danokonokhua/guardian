@@ -45,6 +45,8 @@ describe("MonitoringPanel FORM option", () => {
 
     render(<MonitoringPanel organizationId={ORGANIZATION_ID} />);
 
+    expect(await screen.findByRole("option", { name: "Lead generation (forms)" })).toBeEnabled();
+    expect(screen.getByRole("option", { name: "Reputation (coming soon)" })).toBeDisabled();
     await user.selectOptions(await screen.findByLabelText("Website"), "website-1");
     await user.selectOptions(screen.getByLabelText("Check type"), "FORM");
     await user.type(screen.getByLabelText("Form ID or name"), "contact-form");

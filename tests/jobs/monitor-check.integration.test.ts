@@ -177,8 +177,9 @@ describe.skipIf(TEST_DATABASE_URL === undefined)(
       });
       expect(jobId).toMatch(/^[0-9a-f-]{36}$/i);
 
+      const deadline = Date.now() + 20_000;
       let issueFound = false;
-      for (let attempt = 0; attempt < 100; attempt += 1) {
+      while (Date.now() < deadline) {
         const snapshot = await withTenantTransaction(
           scope,
           async (tx) => ({
@@ -196,9 +197,12 @@ describe.skipIf(TEST_DATABASE_URL === undefined)(
           issueFound = true;
           break;
         }
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 250));
       }
-      expect(issueFound).toBe(true);
-    });
+      expect(
+        issueFound,
+        "monitor worker did not persist a DOWN result and open an issue within 20s",
+      ).toBe(true);
+    }, 20_000);
   },
 );

@@ -16,6 +16,25 @@ type Monitor = {
   }>;
 };
 
+const monitorOptions = [
+  { value: "UPTIME", label: "Website uptime" },
+  { value: "SSL", label: "SSL certificate" },
+  { value: "SECURITY", label: "Security headers" },
+  { value: "LINKS", label: "Broken links" },
+  { value: "SEO", label: "SEO" },
+  { value: "PERFORMANCE", label: "Performance" },
+  { value: "FORM", label: "Lead generation (forms)" },
+] as const;
+
+const futureMonitorOptions = [{ value: "REPUTATION", label: "Reputation (coming soon)" }] as const;
+
+function monitorLabel(type: string): string {
+  return (
+    [...monitorOptions, ...futureMonitorOptions].find((option) => option.value === type)?.label ??
+    type
+  );
+}
+
 type Website = {
   id: string;
   hostname: string;
@@ -36,6 +55,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
   const [websiteId, setWebsiteId] = useState("");
   const [type, setType] = useState<Monitor["type"]>("UPTIME");
   const [frequencyMinutes, setFrequencyMinutes] = useState("5");
+  const [frequencyDrafts, setFrequencyDrafts] = useState<Record<string, string>>({});
   const [formId, setFormId] = useState("");
   const [formPagePath, setFormPagePath] = useState("");
   const [formProbePath, setFormProbePath] = useState("");
@@ -203,6 +223,44 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
     }
   }
 
+  async function changeFrequency(monitor: Monitor) {
+    const value = Number(frequencyDrafts[monitor.id] ?? monitor.frequencyMinutes);
+    if (!Number.isInteger(value) || value < 1 || value > 1440) {
+      setActionError("Frequency must be a whole number between 1 and 1440 minutes.");
+      return;
+    }
+    setActionError(null);
+    try {
+      const response = await fetch(
+        `/api/v1/organizations/${organizationId}/monitors/${monitor.id}`,
+        {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ frequencyMinutes: value }),
+        },
+      );
+      if (!response.ok) throw new Error("Unable to update monitor frequency.");
+      setReloadToken((current) => current + 1);
+    } catch (cause: unknown) {
+      setActionError(cause instanceof Error ? cause.message : "Unable to update monitor frequency");
+    }
+  }
+
+  async function removeMonitor(monitor: Monitor) {
+    if (!window.confirm(`Remove the ${monitorLabel(monitor.type)} monitor?`)) return;
+    setActionError(null);
+    try {
+      const response = await fetch(
+        `/api/v1/organizations/${organizationId}/monitors/${monitor.id}`,
+        { method: "DELETE" },
+      );
+      if (!response.ok) throw new Error("Unable to remove monitor.");
+      setReloadToken((current) => current + 1);
+    } catch (cause: unknown) {
+      setActionError(cause instanceof Error ? cause.message : "Unable to remove monitor");
+    }
+  }
+
   async function runMonitor(monitor: Monitor) {
     setActionError(null);
     try {
@@ -254,7 +312,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-medium">{monitor.type} check</h3>
+                  <h3 className="font-medium">{monitorLabel(monitor.type)}</h3>
                   <p className="mt-1 text-sm text-neutral-400">Website {monitor.websiteId}</p>
                 </div>
                 <span
@@ -263,9 +321,32 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   {monitor.enabled ? "Enabled" : "Paused"}
                 </span>
               </div>
-              <p className="mt-4 text-xs text-neutral-500">
-                Runs every {monitor.frequencyMinutes} minutes
-              </p>
+              <div className="mt-4 flex items-end gap-2">
+                <label className="text-xs text-neutral-500">
+                  Runs every (minutes)
+                  <input
+                    aria-label={`Frequency for ${monitorLabel(monitor.type)}`}
+                    type="number"
+                    min={1}
+                    max={1440}
+                    value={frequencyDrafts[monitor.id] ?? String(monitor.frequencyMinutes)}
+                    onChange={(event) =>
+                      setFrequencyDrafts((current) => ({
+                        ...current,
+                        [monitor.id]: event.target.value,
+                      }))
+                    }
+                    className="mt-1 w-24 rounded-md border border-neutral-700 bg-neutral-950 px-2 py-1 text-xs text-neutral-100"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="rounded-md border border-neutral-700 px-3 py-1 text-xs hover:bg-neutral-800"
+                  onClick={() => void changeFrequency(monitor)}
+                >
+                  Save timing
+                </button>
+              </div>
               {monitor.results?.[0] && (
                 <p className="mt-2 text-xs text-neutral-400">
                   Last result: {monitor.results[0].status}
@@ -291,6 +372,13 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   onClick={() => void runMonitor(monitor)}
                 >
                   Run now
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md border border-red-900 px-3 py-1 text-xs text-red-300 hover:bg-red-950/40"
+                  onClick={() => void removeMonitor(monitor)}
+                >
+                  Remove
                 </button>
               </div>
             </li>
@@ -392,13 +480,23 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               onChange={(event) => setType(event.target.value as Monitor["type"])}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
             >
-              {["UPTIME", "SSL", "SECURITY", "LINKS", "SEO", "PERFORMANCE", "FORM"].map(
-                (option) => (
-                  <option key={option}>{option}</option>
-                ),
-              )}
+              {monitorOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+              {futureMonitorOptions.map((option) => (
+                <option key={option.value} value={option.value} disabled>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </label>
+          <p className="md:col-span-4 text-xs text-neutral-500">
+            Lead generation measures the availability of a configured lead form without submitting
+            customer data. Reputation is visible for roadmap clarity and remains disabled until the
+            PRD&apos;s approved review-platform integration is available.
+          </p>
           {type === "FORM" && (
             <div className="md:col-span-4 grid gap-3 md:grid-cols-3">
               <label className="text-xs text-neutral-400">

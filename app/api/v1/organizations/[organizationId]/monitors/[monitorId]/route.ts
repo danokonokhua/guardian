@@ -1,7 +1,7 @@
 import { createTenantScope } from "@/db/tenant";
 import { withApiRoute, apiSuccess } from "@/lib/api";
 import { requirePermission } from "@/lib/auth/context";
-import { updateConfiguredMonitor } from "@/services/monitors/service";
+import { deleteConfiguredMonitor, updateConfiguredMonitor } from "@/services/monitors/service";
 
 export const PATCH = withApiRoute(async (request, { params, requestId }) => {
   const organizationId = params.organizationId;
@@ -14,4 +14,13 @@ export const PATCH = withApiRoute(async (request, { params, requestId }) => {
     await request.json(),
   );
   return apiSuccess(data, requestId);
+});
+
+export const DELETE = withApiRoute(async (_request, { params, requestId }) => {
+  const organizationId = params.organizationId;
+  const monitorId = params.monitorId;
+  if (!organizationId || !monitorId) throw new Error("Missing monitor path parameters.");
+  const context = await requirePermission(organizationId, "monitoring:manage");
+  await deleteConfiguredMonitor(createTenantScope(context), monitorId);
+  return apiSuccess({ deleted: true, monitorId }, requestId);
 });
