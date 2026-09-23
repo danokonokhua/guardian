@@ -148,6 +148,7 @@ export function HealthPanel({
     "ALL",
   );
   const [severityFilter, setSeverityFilter] = useState("ALL");
+  const [outcomeType, setOutcomeType] = useState("ALL");
   const [sortBy, setSortBy] = useState<"lastSeenAt" | "severity" | "status">("lastSeenAt");
 
   useEffect(() => {
@@ -284,8 +285,18 @@ export function HealthPanel({
     summary,
     recentResults,
     issues,
-    responseHistory,
   } = result.data;
+  const filteredResults = recentResults.filter(
+    (point) => outcomeType === "ALL" || point.monitorType === outcomeType,
+  );
+  const visibleResults = filteredResults.slice(0, 10);
+  // Both panels use the same bounded result set, never unrelated uptime samples.
+  const responseHistory = visibleResults
+    .filter(
+      (point): point is typeof point & { responseTimeMs: number } => point.responseTimeMs !== null,
+    )
+    .slice()
+    .reverse();
   const maxResponse = Math.max(...responseHistory.map((point) => point.responseTimeMs), 1);
   const severityRank: Record<string, number> = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3, INFO: 4 };
   const visibleIssues = issues
@@ -659,11 +670,33 @@ export function HealthPanel({
           <h3 id="recent-outcomes" className="font-medium">
             Recent outcomes
           </h3>
-          {recentResults.length === 0 ? (
+          <label className="mt-3 block text-xs text-neutral-400">
+            Monitoring criteria
+            <select
+              value={outcomeType}
+              onChange={(event) => setOutcomeType(event.target.value)}
+              className="ml-2 rounded border border-neutral-700 bg-neutral-950 px-2 py-1 text-neutral-100"
+            >
+              <option value="ALL">All criteria</option>
+              {["UPTIME", "SSL", "SECURITY", "LINKS", "SEO", "PERFORMANCE", "FORM"].map((type) => (
+                <option key={type} value={type}>
+                  {type === "FORM" ? "Lead generation (forms)" : type}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="mt-2 text-xs text-neutral-500">
+            Latest {visibleResults.length} of {filteredResults.length} loaded outcomes.
+          </p>
+          {visibleResults.length === 0 ? (
             <p className="mt-3 text-sm text-neutral-400">No monitor results recorded yet.</p>
           ) : (
-            <ul className="mt-3 space-y-2">
-              {recentResults.slice(0, 10).map((monitorResult) => (
+            <ul
+              className="mt-3 max-h-64 overflow-y-auto space-y-2"
+              aria-label="Recent outcomes list"
+              tabIndex={0}
+            >
+              {visibleResults.map((monitorResult) => (
                 <li
                   key={monitorResult.id}
                   className="flex items-center justify-between gap-4 text-sm"
@@ -695,10 +728,18 @@ export function HealthPanel({
           <h3 id="response-history" className="font-medium">
             Response-time history
           </h3>
+          <p className="mt-2 text-xs text-neutral-500">
+            Matches the selected recent outcomes. Times represent check duration, not browser
+            page-load speed.
+          </p>
           {responseHistory.length === 0 ? (
             <p className="mt-3 text-sm text-neutral-400">No response-time history available.</p>
           ) : (
-            <ol className="mt-3 space-y-2">
+            <ol
+              className="mt-3 max-h-64 overflow-y-auto space-y-2"
+              aria-label="Response-time samples"
+              tabIndex={0}
+            >
               {responseHistory.map((point, index) => (
                 <li
                   key={`${point.checkedAt}-${index}`}
@@ -712,7 +753,12 @@ export function HealthPanel({
                       }}
                     />
                   </span>
-                  <span className="text-neutral-400">{point.responseTimeMs} ms</span>
+                  <span
+                    className="text-neutral-400"
+                    title={`${point.websiteName} · ${point.monitorType} · ${point.checkedAt}`}
+                  >
+                    {point.responseTimeMs} ms
+                  </span>
                 </li>
               ))}
             </ol>

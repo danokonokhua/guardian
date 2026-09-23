@@ -317,11 +317,17 @@ export async function registerMonitorCheckWorker(boss: PgBoss): Promise<void> {
       },
     };
     if (outcome.healthy) {
-      await resolveFindingScoped(
-        { organizationId: job.data.organizationId },
-        issueFingerprint(finding),
-        prisma,
-      );
+      // A successful uptime response recovers both transport and HTTP-status
+      // failures. Other adapters must never resolve availability incidents.
+      const recoveredRules =
+        monitorType === "UPTIME" ? ["monitor.uptime", "monitor.http_status"] : [finding.ruleId];
+      for (const ruleId of recoveredRules) {
+        await resolveFindingScoped(
+          { organizationId: job.data.organizationId },
+          issueFingerprint({ ...finding, ruleId }),
+          prisma,
+        );
+      }
     } else {
       await recordFindingScoped({ organizationId: job.data.organizationId }, finding, prisma);
     }

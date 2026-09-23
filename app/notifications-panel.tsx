@@ -53,7 +53,7 @@ export function NotificationsPanel({ organizationId }: { organizationId: string 
       </p>
     );
   return (
-    <ul className="space-y-3">
+    <ul className="max-h-80 overflow-y-auto space-y-3 pr-2" aria-label="Notifications" tabIndex={0}>
       {items.map((n) => (
         <li
           key={n.id}

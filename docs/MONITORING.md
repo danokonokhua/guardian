@@ -13,6 +13,12 @@ broken-link checks while reusing the same tenant-scoped result pipeline.
   evidence.
 - DNS, connection, TLS, timeout, malformed-response, and outbound-policy
   failures are recorded as `ERROR` with a `monitor.uptime` finding.
+  The message states that availability could not be confirmed, not that all
+  visitors experienced an outage. A successful response is still `UP` when slow;
+  latency thresholds belong to the separate `PERFORMANCE` monitor.
+  A homepage transport failure during `LINKS` scanning is an incomplete link
+  check under `monitor.links`, never an uptime finding. Historical incidents
+  are not rewritten by this classification change.
 - `responseTimeMs` is the non-negative elapsed duration of the bounded HEAD
   request. The request is limited to 10 seconds and does not read a response
   body.
@@ -30,6 +36,13 @@ PRD's broader performance monitor remains a later adapter.
 The worker-backed `SEO` monitor contract is documented separately in
 [`SEO.md`](./SEO.md). It is a bounded verified-homepage scan; structured data,
 duplicate-content analysis, and broader SEO Intelligence remain deferred.
+
+## Incident recovery
+
+A successful uptime check resolves both prior availability failures
+(`monitor.uptime`) and HTTP-status failures (`monitor.http_status`) for that
+website within its tenant. Other successful check types resolve only their own
+rule; a successful link check must not clear an uptime incident.
 
 ## Basic Security v1
 

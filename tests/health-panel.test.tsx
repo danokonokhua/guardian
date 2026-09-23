@@ -2,7 +2,8 @@
 
 import "@testing-library/jest-dom/vitest";
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { HealthPanel } from "@/app/health-panel";
@@ -15,6 +16,56 @@ afterEach(() => {
 });
 
 describe("HealthPanel", () => {
+  it("filters outcomes and timing samples together and bounds both lists", async () => {
+    const recentResults = Array.from({ length: 15 }, (_, index) => ({
+      id: `result-${index}`,
+      monitorType: index === 0 ? "SSL" : "UPTIME",
+      websiteName: "example.com",
+      status: "UP",
+      checkedAt: "2026-01-01T00:00:00Z",
+      responseTimeMs: index === 0 ? 999 : 120,
+      httpStatusCode: 200,
+    }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        !url.endsWith("/health")
+          ? new Response("{}", { status: 404 })
+          : new Response(
+              JSON.stringify({
+                data: {
+                  summary: {
+                    monitors: 2,
+                    up: 2,
+                    down: 0,
+                    error: 0,
+                    pending: 0,
+                    activeIssues: 0,
+                    recoveredIssues: 0,
+                  },
+                  recentResults,
+                  issues: [],
+                  responseHistory: [],
+                },
+              }),
+            ),
+      ),
+    );
+    render(<HealthPanel organizationId={ORG} />);
+    const outcomes = await screen.findByRole("list", { name: "Recent outcomes list" });
+    expect(within(outcomes).getAllByRole("listitem")).toHaveLength(10);
+    expect(outcomes).toHaveClass("max-h-64", "overflow-y-auto");
+    const user = userEvent.setup();
+    await user.selectOptions(screen.getByLabelText("Monitoring criteria"), "SSL");
+    expect(within(outcomes).getAllByRole("listitem")).toHaveLength(1);
+    const samples = screen.getByRole("list", { name: "Response-time samples" });
+    expect(within(samples).getAllByRole("listitem")).toHaveLength(1);
+    expect(within(samples).getByText("999 ms")).toBeInTheDocument();
+    expect(within(samples).queryByText("120 ms")).not.toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Monitoring criteria"), "SEO");
+    expect(screen.queryByRole("list", { name: "Response-time samples" })).not.toBeInTheDocument();
+    expect(screen.getByText("No response-time history available.")).toBeInTheDocument();
+  });
   it("shows loading while health data is pending", () => {
     vi.stubGlobal(
       "fetch",

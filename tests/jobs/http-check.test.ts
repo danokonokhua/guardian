@@ -56,4 +56,28 @@ describe("HTTP monitoring contract", () => {
     expect(outcome.details).toMatchObject({ checkType: "UPTIME", failureClass: "transport" });
     expect(outcome.finding.ruleId).toBe("monitor.uptime");
   });
+  it("does not claim an outage on a transport failure", async () => {
+    requestSafeOutbound.mockRejectedValue(new Error("fetch failed"));
+    expect(await runHttpCheck("https://example.test")).toMatchObject({
+      status: "ERROR",
+      finding: {
+        title: "Website availability could not be confirmed",
+        summary: expect.stringContaining("does not confirm an outage"),
+      },
+    });
+  });
+
+  it("keeps a slow successful response UP", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValueOnce(1000).mockReturnValueOnce(7000);
+    try {
+      requestSafeOutbound.mockResolvedValue({ status: 200 });
+      expect(await runHttpCheck("https://example.test")).toMatchObject({
+        status: "UP",
+        healthy: true,
+        responseTimeMs: 6000,
+      });
+    } finally {
+      clock.mockRestore();
+    }
+  });
 });

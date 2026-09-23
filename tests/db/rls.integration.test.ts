@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -40,12 +40,22 @@ describe.skipIf(TEST_DATABASE_URL === undefined)(
     beforeAll(() => {
       prisma = new PrismaClient({ datasources: { db: { url: RLS_DATABASE_URL } } });
       // Deterministic schema + RLS policies on the throwaway test database.
-      execSync("npx prisma migrate deploy --schema db/schema.prisma", {
-        env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL, DIRECT_URL: TEST_DATABASE_URL },
-        stdio: "pipe",
-        timeout: 120_000,
-      });
-    });
+      execFileSync(
+        process.execPath,
+        [
+          "./node_modules/prisma/build/index.js",
+          "migrate",
+          "deploy",
+          "--schema",
+          "db/schema.prisma",
+        ],
+        {
+          env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL, DIRECT_URL: TEST_DATABASE_URL },
+          stdio: "pipe",
+          timeout: 120_000,
+        },
+      );
+    }, 130_000);
 
     beforeAll(async () => {
       // Seed both tenants inside GUC-scoped transactions (RLS-compliant writes).

@@ -64,11 +64,14 @@ describe("MonitoringPanel", () => {
 
     render(<MonitoringPanel organizationId={ORGANIZATION_ID} />);
 
-    expect(await screen.findByText("UPTIME check")).toBeInTheDocument();
-    expect(screen.getByText("SSL check")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Website uptime" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "SSL certificate" })).toBeInTheDocument();
     expect(screen.getByText("Enabled")).toBeInTheDocument();
     expect(screen.getByText("Paused")).toBeInTheDocument();
-    expect(screen.getByText("Runs every 5 minutes")).toBeInTheDocument();
+    expect(screen.getByRole("spinbutton", { name: "Frequency for Website uptime" })).toHaveValue(5);
+    expect(screen.getByRole("spinbutton", { name: "Frequency for SSL certificate" })).toHaveValue(
+      60,
+    );
   });
 
   it("shows the request ID when monitor loading fails", async () => {

@@ -65,6 +65,10 @@ describe("NotificationsPanel", () => {
     render(<NotificationsPanel organizationId={ORGANIZATION_ID} />);
 
     const title = await screen.findByText("Monitor down");
+    expect(screen.getByRole("list", { name: "Notifications" })).toHaveClass(
+      "max-h-80",
+      "overflow-y-auto",
+    );
     const item = title.closest("li");
     expect(item).toHaveClass("border-emerald-700/60");
 

@@ -58,9 +58,50 @@ vi.mock("@/db/client", () => ({
 }));
 vi.mock("@/services/health/repository", () => ({ captureHealthScoreSnapshot }));
 import { registerMonitorCheckWorker } from "@/lib/jobs/monitor-check";
+import { issueFingerprint } from "@/lib/issue-engine";
 
 describe("monitor.check worker", () => {
+  it("keeps a failed LINKS scan out of uptime incidents even with stale queued type", async () => {
+    upsertIssue.mockClear();
+    createResult.mockClear();
+    const work = vi.fn();
+    findMonitor.mockResolvedValue({
+      id: "m1",
+      type: "LINKS",
+      enabled: true,
+      organizationId: "o1",
+      websiteId: "w1",
+      frequencyMinutes: 5,
+    });
+    findWebsite.mockResolvedValue({
+      id: "w1",
+      normalizedUrl: "https://example.test",
+      verifyStatus: "VERIFIED",
+    });
+    requestSafeMock.mockRejectedValueOnce(new Error("fetch failed"));
+    await registerMonitorCheckWorker({ createQueue: vi.fn(), work } as never);
+    const handler = work.mock.calls[0]![1] as (jobs: unknown[]) => Promise<void>;
+    await handler([
+      { data: { monitorId: "m1", websiteId: "w1", organizationId: "o1", type: "UPTIME" } },
+    ]);
+    expect(createResult).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        status: "ERROR",
+        details: expect.objectContaining({ checkType: "LINKS" }),
+      }),
+    });
+    expect(upsertIssue).toHaveBeenCalledTimes(1);
+    expect(upsertIssue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        create: expect.objectContaining({
+          ruleId: "monitor.links",
+          title: "Broken-link check could not be completed",
+        }),
+      }),
+    );
+  });
   it("records a successful uptime check", async () => {
+    findIssue.mockClear();
     const work = vi.fn();
     const boss = { createQueue: vi.fn(), work } as never;
     findMonitor.mockResolvedValue({
@@ -84,6 +125,15 @@ describe("monitor.check worker", () => {
       where: { id: "m1" },
       data: expect.objectContaining({ consecutiveFailures: 0 }),
     });
+    for (const ruleId of ["monitor.uptime", "monitor.http_status"]) {
+      expect(findIssue).toHaveBeenCalledWith({
+        select: { id: true, status: true },
+        where: expect.objectContaining({
+          organizationId: "o1",
+          fingerprint: issueFingerprint({ ruleId, websiteId: "w1", subjectKey: "w1" }),
+        }),
+      });
+    }
   });
 
   it("increments failures when the check fails", async () => {
@@ -150,6 +200,7 @@ describe("monitor.check worker", () => {
   });
 
   it("runs the LINKS adapter through the shared monitor worker", async () => {
+    findIssue.mockClear();
     const work = vi.fn();
     const boss = { createQueue: vi.fn(), work } as never;
     findMonitor.mockResolvedValue({
@@ -181,6 +232,18 @@ describe("monitor.check worker", () => {
       data: expect.objectContaining({
         status: "UP",
         details: expect.objectContaining({ checkType: "LINKS", scannedLinks: 1 }),
+      }),
+    });
+    expect(findIssue).toHaveBeenCalledTimes(1);
+    expect(findIssue).toHaveBeenCalledWith({
+      select: { id: true, status: true },
+      where: expect.objectContaining({
+        organizationId: "o1",
+        fingerprint: issueFingerprint({
+          ruleId: "monitor.links",
+          websiteId: "w1",
+          subjectKey: "w1",
+        }),
       }),
     });
   });

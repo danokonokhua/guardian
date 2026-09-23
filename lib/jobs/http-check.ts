@@ -43,8 +43,8 @@ export async function runHttpCheck(url: string): Promise<HttpCheckOutcome> {
         ? {
             ruleId: "monitor.uptime",
             severity: "HIGH",
-            title: "Website is unreachable",
-            summary: "The website did not respond successfully.",
+            title: "Website availability could not be confirmed",
+            summary: "The availability check has recovered.",
           }
         : {
             ruleId: "monitor.http_status",
@@ -65,8 +65,13 @@ export async function runHttpCheck(url: string): Promise<HttpCheckOutcome> {
       finding: {
         ruleId: "monitor.uptime",
         severity: "HIGH",
-        title: "Website is unreachable",
-        summary: errorMessage,
+        title: "Website availability could not be confirmed",
+        summary: `Guardian could not complete its availability check: ${errorMessage} This does not confirm an outage for visitors.`,
+        businessImpact:
+          "Website availability is unknown from this monitoring location; visitor impact has not been confirmed.",
+        recommendedAction:
+          "Check the site independently and inspect DNS, TLS, hosting, and the monitoring worker's connectivity before concluding that the website is down.",
+        impactConfidence: 0.5,
       },
     };
   }

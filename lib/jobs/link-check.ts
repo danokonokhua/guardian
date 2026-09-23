@@ -101,7 +101,7 @@ export async function runLinksCheck(url: string, config: unknown = {}): Promise<
       finding: {
         ruleId: "monitor.links",
         severity: "HIGH",
-        title: "Website links could not be checked",
+        title: "Broken-link check could not be completed",
         summary: "Guardian could not load the verified homepage to inspect its links.",
       },
     };
@@ -117,7 +117,7 @@ export async function runLinksCheck(url: string, config: unknown = {}): Promise<
       finding: {
         ruleId: "monitor.links",
         severity: "HIGH",
-        title: "Website links could not be checked",
+        title: "Broken-link check could not be completed",
         summary: `Guardian could not load the homepage (HTTP ${page.status}).`,
       },
     };

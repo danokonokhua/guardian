@@ -8,6 +8,15 @@ import { extractSameOriginLinks, runLinksCheck } from "@/lib/jobs/link-check";
 describe("link monitor", () => {
   beforeEach(() => vi.clearAllMocks());
 
+  it("classifies homepage transport failure as an incomplete LINKS check", async () => {
+    requestSafeOutbound.mockRejectedValueOnce(new Error("fetch failed"));
+    expect(await runLinksCheck("https://example.com")).toMatchObject({
+      status: "ERROR",
+      details: { checkType: "LINKS", scannedLinks: 0 },
+      finding: { ruleId: "monitor.links", title: "Broken-link check could not be completed" },
+    });
+  });
+
   it("extracts unique same-origin HTTP links and skips unsafe or external schemes", () => {
     const html = `
       <a href="/pricing">Pricing</a>
