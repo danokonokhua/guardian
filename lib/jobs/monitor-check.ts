@@ -1,3 +1,6 @@
+import { collectDnsSnapshot } from "@/lib/dns/collector";
+import { persistDnsObservation, dnsOutcome } from "@/lib/jobs/dns-check";
+import type { DnsSnapshot } from "@/lib/dns/records";
 import tls from "node:tls";
 import type { PgBoss } from "pg-boss";
 
@@ -234,12 +237,16 @@ export async function registerMonitorCheckWorker(boss: PgBoss): Promise<void> {
     if (!target) return;
 
     let outcome: MonitorCheckOutcome;
+    let dnsSnapshot: DnsSnapshot | undefined;
     // The database record is authoritative when available.  Older queued jobs
     // may omit `type`, so retain the historical UPTIME default only for an
     // absent value; arbitrary unknown types are ignored instead of silently
     // running the wrong adapter.
     const monitorType = target.monitor.type ?? job.data.type ?? "UPTIME";
-    if (monitorType === "SSL") {
+    if (monitorType === "DNS") {
+      dnsSnapshot = await collectDnsSnapshot(new URL(target.website.normalizedUrl).hostname);
+      outcome = dnsOutcome(dnsSnapshot, {});
+    } else if (monitorType === "SSL") {
       outcome = await runSslCheck(target.website.normalizedUrl);
     } else if (monitorType === "SECURITY") {
       outcome = await runSecurityCheck(target.website.normalizedUrl);
@@ -260,6 +267,7 @@ export async function registerMonitorCheckWorker(boss: PgBoss): Promise<void> {
     await withGucContext(
       { organizationId: job.data.organizationId },
       async (tx) => {
+        if (dnsSnapshot) outcome = await persistDnsObservation(tx, target.monitor.id, dnsSnapshot);
         await tx.monitoringResult.create({
           data: {
             organizationId: job.data.organizationId,

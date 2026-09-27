@@ -12,3 +12,6 @@ next-env.d.ts
 *.log
 # Generated cPanel standalone bundle; keep its upstream formatting intact.
 guardian-cpanel-release/server.js
+# Preserve imported Stitch reference files as exported.
+design/stitch/originals/
+design/stitch/extracted/

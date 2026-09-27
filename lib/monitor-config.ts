@@ -38,6 +38,7 @@ export const monitorConfigSchema = z.object({
     .nativeEnum(MonitorType)
     .refine(
       (value) =>
+        value === MonitorType.DNS ||
         value === MonitorType.UPTIME ||
         value === MonitorType.SSL ||
         value === MonitorType.SECURITY ||
@@ -47,7 +48,7 @@ export const monitorConfigSchema = z.object({
         value === MonitorType.FORM,
       {
         message:
-          "This monitor type is not available yet. Choose UPTIME, SSL, SECURITY, LINKS, SEO, PERFORMANCE, or FORM.",
+          "This monitor type is not available yet. Choose DNS, UPTIME, SSL, SECURITY, LINKS, SEO, PERFORMANCE, or FORM.",
       },
     ),
   enabled: z.boolean().optional().default(true),
@@ -73,6 +74,8 @@ export type MonitorUpdateInput = z.input<typeof monitorUpdateSchema>;
 
 export function parseMonitorConfig(input: unknown): MonitorConfig {
   const parsed = parseWith(monitorConfigSchema, input, "monitor");
+  if (parsed.type === MonitorType.DNS)
+    return { ...parsed, config: parseWith(z.object({}).strict(), parsed.config, "monitor.config") };
   if (parsed.type === MonitorType.PERFORMANCE) {
     return {
       ...parsed,

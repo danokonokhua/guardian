@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AnonymousAuthAdapter, setAuthAdapter, type AuthAdapter } from "@/lib/auth/adapter";
 import { setIdentityRepository } from "@/lib/auth/context";
@@ -6,18 +6,24 @@ import { prismaIdentityRepository } from "@/lib/auth/prisma-repository";
 import type { AuthenticatedUser, IdentityRepository, MembershipContext } from "@/lib/auth/identity";
 import type { ApiErrorBody, V1SuccessBody } from "@/types/api";
 
-const { listMock, markReadMock } = vi.hoisted(() => ({
+const { listMock, markReadMock, preferenceMock, enabledMock } = vi.hoisted(() => ({
+  preferenceMock: vi.fn(),
+  enabledMock: vi.fn().mockResolvedValue(true),
   listMock: vi.fn(),
   markReadMock: vi.fn(),
 }));
 
 vi.mock("@/services/notifications/repository", () => ({
+  setPreference: preferenceMock,
+  isChannelEnabled: enabledMock,
   listInAppNotifications: listMock,
   markInAppNotificationRead: markReadMock,
 }));
 
 import { GET as listHandler } from "@/app/api/v1/organizations/[organizationId]/notifications/route";
 import { PATCH as readHandler } from "@/app/api/v1/organizations/[organizationId]/notifications/[notificationId]/read/route";
+
+import { PATCH as preferenceHandler } from "@/app/api/v1/organizations/[organizationId]/notifications/preferences/route";
 
 const ORG_A = "11111111-1111-4111-8111-111111111111";
 const ORG_B = "22222222-2222-4222-8222-222222222222";
@@ -163,5 +169,48 @@ describe("notification API routes", () => {
     expect(response.status).toBe(400);
     const result = await body<ApiErrorBody>(response);
     expect(result.error.code).toBe("VALIDATION_ERROR");
+  });
+});
+
+describe("personal notification preferences", () => {
+  it("binds writes to the authenticated member", async () => {
+    const response = await preferenceHandler(
+      new Request("http://localhost/api/preferences", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ channel: "EMAIL", enabled: false }),
+      }),
+      params({ organizationId: ORG_A }),
+    );
+    expect(response.status).toBe(200);
+    expect(preferenceMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ organizationId: ORG_A }),
+      USER_A,
+      "ISSUE",
+      "EMAIL",
+      false,
+    );
+  });
+  it("rejects a supplied recipient override", async () => {
+    const response = await preferenceHandler(
+      new Request("http://localhost/api/preferences", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ channel: "EMAIL", enabled: false, userId: "another-user" }),
+      }),
+      params({ organizationId: ORG_A }),
+    );
+    expect(response.status).toBe(400);
+  });
+  it("rejects another organization", async () => {
+    const response = await preferenceHandler(
+      new Request("http://localhost/api/preferences", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ channel: "EMAIL", enabled: false }),
+      }),
+      params({ organizationId: ORG_B }),
+    );
+    expect(response.status).toBe(404);
   });
 });

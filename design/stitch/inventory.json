@@ -1,0 +1,417 @@
+﻿[
+  {
+    "id": 1,
+    "archive": "Guardian AI — Agency Multi-Client Management \u0026 White-Label Reporting.zip",
+    "folder": "guardian-ai-agency-multi-client-management-white-label-reporting",
+    "headings": [
+      "24 Client Sites",
+      "2 Actionable Risks",
+      "$84,200",
+      "Active Tenant Fleet",
+      "White-Label Studio \u0026amp; Domain Identity",
+      "Apex Digital • Executive Operations Brief",
+      "Agency Team \u0026amp; Multi-Tenant Access",
+      "Bulk WordPress Fleet Engine",
+      "White-Label Studio \u0026amp; Engine"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 2,
+    "archive": "Guardian AI — AI COO Briefings \u0026 Autonomous Decision Log.zip",
+    "folder": "guardian-ai-ai-coo-briefings-autonomous-decision-log",
+    "headings": [
+      "Aura Capital Portfolio",
+      "AI COO Strategic Briefings \u0026amp; Action Hub",
+      "Executive Morning Telemetry Synthesis",
+      "“ What happened this week? ”",
+      "“ Why did our score fall? ”",
+      "“ Which page should we improve first? ”",
+      "Autonomous Decision \u0026amp; Approval Pipeline",
+      "Hot Redis Cache Ingestion \u0026amp; DB Connection Pool Expansion",
+      "Auto-Merge Meta Schema Canonical on Duplicate Villa Pages",
+      "Real-Time Reasoning Inspector",
+      "Cryptographic Autonomous Action \u0026amp; Rollback Ledger"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 3,
+    "archive": "Guardian AI — AI COO Briefings \u0026 Decision Engine (Mobile).zip",
+    "folder": "guardian-ai-ai-coo-briefings-decision-engine-mobile",
+    "headings": [
+      "Aura Luxury Living",
+      "Morning Strategic Bridge",
+      "Today\u0027s Morning Operational Synthesis",
+      "psychology PRD §16 Instant Executive Answers",
+      "Decision Engine Safeguards",
+      "Hot Redis Cache Ingestion \u0026amp; DB Connection Pool Expansion",
+      "history_toggle_off Immutable Rollback \u0026amp; Ledger"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 4,
+    "archive": "Guardian AI — AI Orchestration Command Center.zip",
+    "folder": "guardian-ai-ai-orchestration-command-center",
+    "headings": [
+      "High-Priority Directives",
+      "Autonomous Failover Route: /villas/skyline-penthouse",
+      "Keyword Cannibalization Remediation",
+      "Scale Down Off-Peak Cloud Run Instances",
+      "Live Telemetry \u0026amp; Event Stream",
+      "Reasoning Chain"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 5,
+    "archive": "Guardian AI — Billing \u0026 Subscription Tier Management (Mobile).zip",
+    "folder": "guardian-ai-billing-subscription-tier-management-mobile",
+    "headings": [
+      "speed Telemetry Quota Cycle (May 15 - Jun 15)",
+      "layers Available Subscriptions",
+      "Pro Sentinel",
+      "Agency Tier UNLIMITED OPS",
+      "credit_card Payment Method \u0026amp; Invoicing",
+      "receipt_long Recent Invoices"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 6,
+    "archive": "Guardian AI — Billing \u0026 Subscription Tier Management.zip",
+    "folder": "guardian-ai-billing-subscription-tier-management",
+    "headings": [
+      "Subscription Operations \u0026amp; Quota Sentinel",
+      "Pro Sentinel Tier",
+      "Plan Quotas \u0026amp; Real-Time Usage Meters",
+      "Available Operational Tiers",
+      "Payment Methods \u0026amp; Billing Entity",
+      "Invoice \u0026amp; Telemetry Billing History"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 7,
+    "archive": "Guardian AI — Digital Health Vitals \u0026 Infrastructure.zip",
+    "folder": "guardian-ai-digital-health-vitals-infrastructure",
+    "headings": [
+      "Digital Infrastructure \u0026amp; Revenue Gateway Vitals",
+      "Global Uptime \u0026amp; Edge Latency Matrix",
+      "SSL \u0026amp; Cryptographic Posture",
+      "Real-User Core Web Vitals (CWV) \u0026amp; Field Performance",
+      "Autonomous Spider \u0026amp; Broken Link Index",
+      "Guardian AI COO Diagnosis"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 8,
+    "archive": "Guardian AI — Digital Health Vitals (Mobile).zip",
+    "folder": "guardian-ai-digital-health-vitals-mobile",
+    "headings": [
+      "Digital Health Index",
+      "Global Edge \u0026amp; PoP Beacons",
+      "Core Web Vitals (RUM)",
+      "SSL \u0026amp; Transport Security",
+      "Broken Link \u0026amp; 404 Sentinel"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 9,
+    "archive": "Guardian AI — Executive Command Center (Variant B).zip",
+    "folder": "guardian-ai-executive-command-center-variant-b",
+    "headings": [
+      "Conversion Path Failure — HTTP 500 on Lead Booking Request",
+      "Conversion Funnel Telemetry"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 10,
+    "archive": "Guardian AI — Incident Forensics \u0026 White-Label Modal Studio.zip",
+    "folder": "guardian-ai-incident-forensics-white-label-modal-studio",
+    "headings": [
+      "Guardian AI — Executive Operations \u0026amp; Forensics Suite",
+      "Target: /villas/skyline-penthouse",
+      "Deterministic Action Required",
+      "Client PDF Report Studio",
+      "Aura Capital Portfolio"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 11,
+    "archive": "Guardian AI — Notification Rules \u0026 Alert Matrix (Mobile).zip",
+    "folder": "guardian-ai-notification-rules-alert-matrix-mobile",
+    "headings": [
+      "Guardian AI",
+      "Notification Matrix",
+      "Active P1 Critical Revenue Escalation Policy",
+      "rule_settings Severity Alert Matrix",
+      "cable Active Ingestion \u0026amp; Dispatch Nodes",
+      "Marcus Kensington"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 12,
+    "archive": "Guardian AI — Notification Rules, Alert Matrix \u0026 Webhook Dispatcher.zip",
+    "folder": "guardian-ai-notification-rules-alert-matrix-webhook-dispatcher",
+    "headings": [
+      "Notification Architecture \u0026amp; Incident Dispatch Matrix",
+      "Severity-Based Alert Routing Matrix",
+      "Multi-Tier Escalation Policy Graph: P1 Critical Chain",
+      "Webhook Dispatcher \u0026amp; Cryptography",
+      "RBAC Notification Permissions Matrix"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 13,
+    "archive": "Guardian AI — Operations Command Center (Mobile).zip",
+    "folder": "guardian-ai-operations-command-center-mobile",
+    "headings": [
+      "Conversion Path Failure Detected on /villas/skyline-penthouse",
+      "Executive Triage Deck",
+      "Live Monitored Endpoints"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 14,
+    "archive": "Guardian AI — Operations Command Center.zip",
+    "folder": "guardian-ai-operations-command-center",
+    "headings": [],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 15,
+    "archive": "Guardian AI — Public Homepage \u0026 Free Audit Scanner (Mobile).zip",
+    "folder": "guardian-ai-public-homepage-free-audit-scanner-mobile",
+    "headings": [
+      "Is your digital business actually working?",
+      "Autonomous Protection Engine",
+      "1. 24/7 Conversion \u0026amp; Form Sentry",
+      "2. AI COO Morning Briefings",
+      "3. One-Tap Autonomous Remediations"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 16,
+    "archive": "Guardian AI — Public Homepage \u0026 Free Audit Tool.zip",
+    "folder": "guardian-ai-public-homepage-free-audit-tool",
+    "headings": [
+      "Never Let Another Silent Revenue Leak Go Undetected.",
+      "Instant Digital Health \u0026amp; Revenue Leak Inspection",
+      "Booking Inquiry API Timeout Causing Silent Form Submission Drop",
+      "Unlock Full 24-Page Deep Audit \u0026amp; Deploy Autonomous Guardrails",
+      "Engineered for Digital Revenue Defense",
+      "Silent Revenue Loss Sentinel",
+      "Financial Impact vs. Technical Jargon",
+      "Autonomous Remediation Matrix",
+      "AI COO Executive Briefings",
+      "Calculate Your Silent Revenue Exposure",
+      "Stop Guessing If Your Digital Business Is Actually Working."
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 17,
+    "archive": "Guardian AI — Reputation \u0026 Competitor Intelligence (Mobile).zip",
+    "folder": "guardian-ai-reputation-competitor-intelligence-mobile",
+    "headings": [
+      "Critical Review Triage (PRD §14)",
+      "Growth \u0026amp; Reputation Upside",
+      "Competitor Threat Matrix (PRD §15)",
+      "Belgravia Prime",
+      "Elysian Luxe"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 18,
+    "archive": "Guardian AI — Reputation \u0026 Competitor Intelligence Suite.zip",
+    "folder": "guardian-ai-reputation-competitor-intelligence-suite",
+    "headings": [
+      "Reputation \u0026amp; Competitor Intelligence Suite 94% Sentiment Health",
+      "Reputation \u0026amp; Review Sentiment Stream",
+      "Competitor Radar \u0026amp; Threat Matrix"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 19,
+    "archive": "Guardian AI — Revenue Protection \u0026 Conversion Inspector (Mobile).zip",
+    "folder": "guardian-ai-revenue-protection-conversion-inspector-mobile",
+    "headings": [
+      "Revenue Protection \u0026amp; Conversion Sentinel",
+      "Live Funnel Drop-off Stream",
+      "Spin up ephemeral Redis cache queue \u0026amp; failover ingestion",
+      "device_hub Monitored Conversion Endpoints (4)"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 20,
+    "archive": "Guardian AI — Revenue Protection \u0026 Conversion Path Forensic Inspector.zip",
+    "folder": "guardian-ai-revenue-protection-conversion-path-forensic-inspector",
+    "headings": [
+      "CRITICAL CONVERSION PATH BREAKDOWN: /villas/skyline-penthouse/inquire",
+      "filter_alt Conversion Funnel Drop-off Waterfall",
+      "search_insights Root-Cause Forensic Diagnostics",
+      "precision_manufacturing Autonomous Remediation Matrix",
+      "history_toggle_off Autonomous Intervention \u0026amp; Rollback Ledger"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 21,
+    "archive": "Guardian AI — Secure Operator Auth \u0026 Login (Mobile).zip",
+    "folder": "guardian-ai-secure-operator-auth-login-mobile",
+    "headings": ["Operator Authentication"],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 22,
+    "archive": "Guardian AI — Secure Operator Login.zip",
+    "folder": "guardian-ai-secure-operator-login",
+    "headings": ["Welcome back to Guardian", "Priority Incident Dispatch"],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 23,
+    "archive": "Guardian AI — Security Posture \u0026 CVE Sentinel (Mobile).zip",
+    "folder": "guardian-ai-security-posture-cve-sentinel-mobile",
+    "headings": [
+      "lock_clock Transport \u0026amp; Header Hardening Triage",
+      "WordPress \u0026amp; Infra CVE Sentinel"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 24,
+    "archive": "Guardian AI — Security Posture \u0026 Insecure Header Guard.zip",
+    "folder": "guardian-ai-security-posture-insecure-header-guard",
+    "headings": [
+      "Security Posture \u0026amp; Insecure Header Guard",
+      "HTTP Security Headers \u0026amp; Transport Hardening Guard",
+      "WordPress \u0026amp; Digital Infrastructure CVE Sentinel",
+      "Immutable Configuration Drift Monitor",
+      "Guardian AI Security Briefing"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 25,
+    "archive": "Guardian AI — Sentinel Deployment \u0026 Telemetry Verification.zip",
+    "folder": "guardian-ai-sentinel-deployment-telemetry-verification",
+    "headings": [
+      "Step 4: Sentinel Deployment \u0026amp; Revenue Route Verification",
+      "Global Synthetic Sentinel Mesh",
+      "Live Synthetic Buyer Inquiry Simulation",
+      "Baseline Digital Health Score",
+      "Guardian AI COO • Initial Briefing"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 26,
+    "archive": "Guardian AI — SEO Intelligence \u0026 Keyword Cannibalization Inspector.zip",
+    "folder": "guardian-ai-seo-intelligence-keyword-cannibalization-inspector",
+    "headings": [
+      "SEO Intelligence \u0026amp; SERP Revenue Defense",
+      "Keyword Cannibalization \u0026amp; Intent Collision Matrix",
+      "Organic Ranking Decay \u0026amp; SERP Drop Inspector",
+      "Technical SEO \u0026amp; Indexability",
+      "Guardian AI SEO Analyst Briefing"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 27,
+    "archive": "Guardian AI — SEO Intelligence \u0026 SERP Defense (Mobile).zip",
+    "folder": "guardian-ai-seo-intelligence-serp-defense-mobile",
+    "headings": [
+      "SERP Anomaly Detected",
+      "Executive SEO Telemetry",
+      "7-Day Keyword Movement",
+      "Technical SEO Verification"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 28,
+    "archive": "Guardian AI — Sign Up \u0026 Organization Setup.zip",
+    "folder": "guardian-ai-sign-up-organization-setup",
+    "headings": [
+      "Never let another silent revenue leak go undetected.",
+      "Create your Guardian account"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 29,
+    "archive": "Guardian AI — Website Onboarding \u0026 Discovery Wizard.zip",
+    "folder": "guardian-ai-website-onboarding-discovery-wizard",
+    "headings": [
+      "Live Spider Engine",
+      "Form \u0026amp; Inquiry Conversion Funnels",
+      "Transaction Bridges \u0026amp; Reservation Holds",
+      "High-Net-Worth Direct Communication Channels",
+      "Estimated Revenue at Risk",
+      "Edge Node Baselines",
+      "Sentinel Alert Escalation"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 30,
+    "archive": "Guardian AI — Website Onboarding Wizard (Mobile).zip",
+    "folder": "guardian-ai-website-onboarding-wizard-mobile",
+    "headings": [
+      "Domain \u0026amp; Telemetry Sentinel Probe",
+      "Aura Luxury Living",
+      "Active Probe Configuration (4 Modules)",
+      "Synthetic Lead Form Hunter",
+      "Edge Uptime \u0026amp; Latency Beacon",
+      "WordPress \u0026amp; Headless CMS",
+      "WhatsApp \u0026amp; Webhook Bridge"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 31,
+    "archive": "Guardian AI — WordPress Deep Connect \u0026 Plugin AutoFix (Mobile).zip",
+    "folder": "guardian-ai-wordpress-deep-connect-plugin-autofix-mobile",
+    "headings": [
+      "Elementor Pro v3.19.2",
+      "Zero-Downtime Pipeline",
+      "extension Plugin Fleet Telemetry"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  },
+  {
+    "id": 32,
+    "archive": "Guardian AI — WordPress Deep Connect \u0026 Plugin AutoFix Cockpit.zip",
+    "folder": "guardian-ai-wordpress-deep-connect-plugin-autofix-cockpit",
+    "headings": [
+      "Core Runtime \u0026amp; Engine",
+      "CVE Threat Sentinel",
+      "Staging Sandbox Health",
+      "Zero-Downtime Rollback",
+      "Elementor Pro",
+      "WooCommerce Bookings \u0026amp; Luxury Escapes",
+      "WP Rocket Performance Engine",
+      "ACF Pro",
+      "Aura Luxury Theme Child",
+      "Staging Regression Inspector",
+      "Autonomous Deployment Guardrails",
+      "security_update_good Authorize Live Remediation"
+    ],
+    "designHash": "DDD91151CD6664984A3E699ABC1E58B6028581D2C464ADC869B7638D42ACD2A9"
+  }
+]

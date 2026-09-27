@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Guardian AI — Reputation &amp; Competitor Intelligence Suite</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed-variant": "#005236",
+            "secondary-fixed": "#acedff",
+            "error-container": "#93000a",
+            "surface-container-low": "#171b26",
+            "surface": "#0f131d",
+            "on-surface": "#dfe2f1",
+            "inverse-primary": "#4d44e3",
+            "surface-container-highest": "#313540",
+            "inverse-surface": "#dfe2f1",
+            "surface-container": "#1c1f2a",
+            "outline": "#918fa1",
+            "on-tertiary": "#003824",
+            "on-tertiary-fixed": "#002113",
+            "on-error": "#690005",
+            "background": "#0f131d",
+            "on-secondary-fixed": "#001f26",
+            "secondary": "#4cd7f6",
+            "surface-container-high": "#262a35",
+            "on-primary-fixed-variant": "#3323cc",
+            "surface-bright": "#353944",
+            "tertiary-fixed-dim": "#4edea3",
+            "primary-container": "#4f46e5",
+            "on-primary-fixed": "#0f0069",
+            "secondary-fixed-dim": "#4cd7f6",
+            "on-error-container": "#ffdad6",
+            "surface-dim": "#0f131d",
+            "on-tertiary-container": "#67f4b7",
+            "surface-variant": "#313540",
+            "surface-tint": "#c3c0ff",
+            "on-primary-container": "#dad7ff",
+            "on-background": "#dfe2f1",
+            "on-secondary-fixed-variant": "#004e5c",
+            "primary": "#c3c0ff",
+            "on-primary": "#1d00a5",
+            "on-secondary": "#003640",
+            "inverse-on-surface": "#2c303b",
+            "secondary-container": "#03b5d3",
+            "tertiary": "#4edea3",
+            "surface-container-lowest": "#0a0e18",
+            "outline-variant": "#464555",
+            "primary-fixed": "#e2dfff",
+            "on-surface-variant": "#c7c4d8",
+            "primary-fixed-dim": "#c3c0ff",
+            "error": "#ffb4ab",
+            "on-secondary-container": "#00424e",
+            "tertiary-container": "#006e4b",
+            "tertiary-fixed": "#6ffbbe"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {},
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "display": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+    body {
+      background-color: #0a0e18;
+      color: #dfe2f1;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Hairline borders and luminous accents */
+    .glow-indigo {
+      box-shadow: 0 0 20px -3px rgba(79, 70, 229, 0.35);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 16px -4px rgba(16, 185, 129, 0.25);
+    }
+    .glow-rose {
+      box-shadow: 0 0 20px -2px rgba(244, 63, 94, 0.25);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<!-- ================= TOP HEADER (Shared Component JSON Blueprint) ================= -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface-container-low/90 backdrop-blur-md border-b border-outline-variant/30 flex items-center justify-between px-4 lg:px-6">
+<div class="flex items-center gap-6">
+<!-- Brand & Product Title -->
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-lg flex items-center justify-center p-0.5 overflow-hidden">
+<img alt="Guardian AI Security Shield" class="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(79,70,229,0.7)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq9YHKITgEksMrsu7WSNL_h8p_ylEGKJT8QaWrjrvbBogVjDc7_hf21mAsX2NwOe9u-RBHOw2Qjb_uaWwG4Kx53b8YPrt3w7e1VIWJanzUwSBGku7x5FaUl6XTRTBD9J-QbDWgLra9rUpD4dVdpuPGMiWCeI8FHJsCMoXqlAdPyFzKyq2KGVl1Eyf2LzKq_YCDgm_dKt12by6ckB8jwCE353k9ybIUKyvdacb-rfvzrhzJjML8wJ5n7E7bQZFwB8A3Iw"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline font-extrabold text-base tracking-tight text-text-primary flex items-center gap-1.5">
+            Guardian AI
+            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-primary-container/30 text-primary border border-primary-container/40">PRO V4.8</span>
+</span>
+</div>
+</div>
+<!-- Tenant Switcher -->
+<div class="hidden xl:flex items-center gap-2 pl-4 border-l border-outline-variant/40">
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-lg border border-outline-variant/40 hover:border-primary-container/60 transition-colors cursor-pointer">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label text-xs font-semibold text-on-surface">Aura Luxury Living - Real Estate Group</span>
+<span class="text-[10px] text-tertiary font-mono bg-tertiary-container/30 px-1.5 py-0.2 rounded">12 Nodes Online</span>
+<span class="material-symbols-outlined text-outline text-sm">unfold_more</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden lg:flex items-center gap-1 ml-2 text-xs font-medium">
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-3 py-2 rounded-lg transition-colors" href="#bridge">Command Bridge</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-3 py-2 rounded-lg transition-colors" href="#revenue">Revenue Protection</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-3 py-2 rounded-lg transition-colors" href="#health">Digital Health</a>
+<a class="bg-primary-container/20 text-primary border-b-2 border-primary-container font-semibold px-3 py-2 rounded-t-lg transition-colors flex items-center gap-1.5" href="#reputation">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+          Reputation &amp; Competitors
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-3 py-2 rounded-lg transition-colors" href="#workflows">Workflows</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-3 py-2 rounded-lg transition-colors" href="#audit">Audit Logs</a>
+</nav>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-3">
+<!-- Search on top bar -->
+<div class="relative hidden md:block w-48 xl:w-64">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded-lg pl-8 pr-3 py-1.5 text-xs text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Query SERP / Reviewers / Diffs..." type="text"/>
+</div>
+<button class="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-outline-variant/60 bg-surface-container hover:bg-surface-bright text-on-surface transition-all active:scale-95">
+<span class="material-symbols-outlined text-secondary text-sm">sync</span>
+<span>Sync Google Profile</span>
+</button>
+<button class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 text-white shadow-sm glow-indigo transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+<span class="hidden md:inline">Add Competitor</span>
+</button>
+<div class="h-5 w-px bg-outline-variant/40 hidden sm:block"></div>
+<!-- Icon Actions -->
+<div class="flex items-center gap-1">
+<button class="relative p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-lg">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-low"></span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="AI Agent Engine">
+<span class="material-symbols-outlined text-lg">smart_toy</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Filter &amp; Tune Viewport">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+</div>
+<!-- User Avatar -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant/40">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary-container to-secondary p-0.5 cursor-pointer">
+<div class="w-full h-full bg-surface-container rounded-full flex items-center justify-center font-bold text-xs text-primary">
+            EO
+          </div>
+</div>
+</div>
+</div>
+</header>
+<!-- ================= DOCKED LEFT RAIL NAVIGATION ================= -->
+<aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-low border-r border-outline-variant/30 flex flex-col justify-between p-4 z-40 hidden md:flex">
+<div class="flex flex-col gap-6">
+<!-- Side Rail Header Info -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high border border-outline-variant/40 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">domain</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-bold font-headline uppercase tracking-wider text-on-surface truncate">Aura Capital Portfolio</span>
+<span class="text-[11px] text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            Vigilant • All Nodes Active
+          </span>
+</div>
+</div>
+<!-- Nav Links -->
+<div class="flex flex-col gap-1">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider px-3 mb-1">Operational Domains</span>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" href="#operations">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+<span>Operations Deck</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" href="#telemetry">
+<span class="material-symbols-outlined text-lg">monitoring</span>
+<span>Telemetry Grid</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" href="#revenue-guard">
+<span class="material-symbols-outlined text-lg">shield</span>
+<span>Revenue Guard</span>
+</a>
+<!-- Active Tab according to PRD section 14/15 -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-container text-on-surface border-l-2 border-primary-container text-xs font-semibold shadow-sm" href="#reputation-serp">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">troubleshoot</span>
+<span class="text-primary font-bold">Reputation &amp; SERP</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[10px] bg-primary-container/30 text-primary font-mono font-bold">PRD 14</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" href="#competitor-matrix">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">radar</span>
+<span>Competitor Matrix</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" href="#security">
+<span class="material-symbols-outlined text-lg">lock</span>
+<span>Security Shield</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" href="#settings">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span>System Settings</span>
+</a>
+</div>
+</div>
+<!-- Quick CTA & Footers -->
+<div class="flex flex-col gap-3 pt-4 border-t border-outline-variant/30">
+<!-- Quick Action Button -->
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-gradient-to-r from-primary-container to-secondary text-white font-headline text-xs font-bold tracking-wide shadow-md hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">radar</span>
+<span>Trigger Sentiment Crawl</span>
+</button>
+<div class="flex flex-col gap-1 text-[11px] text-outline">
+<a class="flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-surface-container hover:text-on-surface transition-colors" href="#hotline">
+<span class="material-symbols-outlined text-base text-rose-400">crisis_alert</span>
+<span>Incident Hotline</span>
+</a>
+<a class="flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-surface-container hover:text-on-surface transition-colors" href="#assistant">
+<span class="material-symbols-outlined text-base text-secondary">auto_awesome</span>
+<span>AI Assistant (Online)</span>
+</a>
+</div>
+<div class="px-2 py-1 rounded bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-between text-[10px] text-outline">
+<span>Sentinel Heartbeat</span>
+<span class="text-tertiary font-mono">18ms • SYN-OK</span>
+</div>
+</div>
+</aside>
+<!-- ================= MAIN CONTENT VIEWPORT ================= -->
+<main class="md:pl-64 pt-16 pb-12 transition-all">
+<div class="max-w-[1600px] mx-auto p-4 lg:p-6 space-y-6">
+<!-- PAGE TITLE & VIGILANCE BADGE -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-outline-variant/30">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-primary-container/20 text-primary border border-primary-container/30">
+              PRD §14 &amp; §15 EXECUTIVE COMMAND
+            </span>
+<span class="text-outline text-xs">•</span>
+<span class="text-xs text-outline font-medium">Real-Time Autonomous Observation</span>
+</div>
+<h1 class="text-2xl lg:text-3xl font-headline font-extrabold text-on-surface tracking-tight flex items-center gap-3">
+            Reputation &amp; Competitor Intelligence Suite
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-container/30 text-tertiary border border-tertiary/40">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+              94% Sentiment Health
+            </span>
+</h1>
+<p class="text-xs lg:text-body-sm text-outline mt-1 max-w-3xl">
+            Live telemetry cross-correlating Google Business Profiles, verified reviews, conversion friction points, and competitor SERP movements. All remediation responses guarded by multi-tenant cryptographic approval.
+          </p>
+</div>
+<!-- Metric Refresh Controls -->
+<div class="flex items-center gap-2 self-start lg:self-center">
+<div class="flex items-center gap-1 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/40 text-xs">
+<span class="text-outline">Last SERP ping:</span>
+<span class="font-mono text-secondary font-semibold">4 mins ago</span>
+</div>
+<button class="p-2 rounded-lg bg-surface-container-low border border-outline-variant/40 hover:bg-surface-container text-on-surface transition-colors" title="Export Intelligence Brief">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-low border border-outline-variant/40 hover:bg-surface-container text-on-surface transition-colors" title="Real-Time Grid Calibration">
+<span class="material-symbols-outlined text-sm">refresh</span>
+</button>
+</div>
+</div>
+<!-- ================= SECTION 1: TOP EXECUTIVE TELEMETRY BENTO ================= -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- CARD 1: Composite Reputation Index -->
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/40 relative overflow-hidden group hover:border-outline-variant/80 transition-all shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 bg-primary-container/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold text-outline uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-base">verified</span>
+              Reputation Index
+            </span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-tertiary-container/30 text-tertiary border border-tertiary/30">
+              +0.3 pts MoM
+            </span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-3xl lg:text-4xl font-headline font-extrabold text-on-surface tabular-nums">4.8</span>
+<span class="text-sm font-semibold text-outline">/ 5.0</span>
+<span class="text-xs font-semibold text-tertiary flex items-center ml-auto">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> 94% Positive
+            </span>
+</div>
+<div class="space-y-1.5 pt-3 border-t border-outline-variant/30 text-xs">
+<div class="flex justify-between items-center text-outline">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Google Profile</span>
+<span class="font-mono text-on-surface font-medium">4.9★ <span class="text-outline text-[11px]">(312 reviews)</span></span>
+</div>
+<div class="flex justify-between items-center text-outline">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Trustpilot Verified</span>
+<span class="font-mono text-on-surface font-medium">4.7★ <span class="text-outline text-[11px]">(128 reviews)</span></span>
+</div>
+<div class="flex justify-between items-center text-outline">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Facebook Recs</span>
+<span class="font-mono text-on-surface font-medium">96% <span class="text-outline text-[11px]">(42 votes)</span></span>
+</div>
+</div>
+</div>
+<!-- CARD 2: Net Sentiment Velocity -->
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/40 relative overflow-hidden group hover:border-outline-variant/80 transition-all shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold text-outline uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">speed</span>
+              Sentiment Velocity
+            </span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-container/20 text-secondary border border-secondary/30">
+              Weekly Run-Rate
+            </span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-3xl lg:text-4xl font-headline font-extrabold text-on-surface tabular-nums">+14</span>
+<span class="text-sm font-semibold text-tertiary">pos/week</span>
+</div>
+<p class="text-xs text-outline mb-3">
+            Surge in high-intent keyword inquiries following Dubai Creek waterfront showcase release.
+          </p>
+<div class="pt-3 border-t border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+<span class="text-xs font-medium text-error">2 Requiring Attention</span>
+</div>
+<a class="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5" href="#reviews-feed">
+              Triage now <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- CARD 3: Competitor Benchmark Index -->
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/40 relative overflow-hidden group hover:border-outline-variant/80 transition-all shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-semibold text-outline uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-base">query_stats</span>
+              Benchmark Ranks
+            </span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-on-surface border border-outline-variant/50">
+              Dubai Luxury Tier
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-2 mb-2">
+<div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/30">
+<div class="text-[10px] text-outline uppercase font-semibold">Web Perf (LCP)</div>
+<div class="text-xl font-headline font-bold text-tertiary">#1 <span class="text-xs font-normal text-outline">1.4s</span></div>
+<div class="text-[10px] text-outline mt-0.5">vs peer avg 3.8s</div>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/30">
+<div class="text-[10px] text-outline uppercase font-semibold">Organic SERP</div>
+<div class="text-xl font-headline font-bold text-secondary">#2 <span class="text-xs font-normal text-outline">34.2%</span></div>
+<div class="text-[10px] text-outline mt-0.5">Belgravia: 38.1%</div>
+</div>
+</div>
+<div class="text-[11px] text-outline flex items-center justify-between pt-1">
+<span>Market Share Gap:</span>
+<span class="font-mono text-primary font-semibold">-3.9% SERP reach</span>
+</div>
+</div>
+<!-- CARD 4: Live Ad & Offer Intelligence Alert -->
+<div class="bg-surface-container-low rounded-xl p-5 border border-amber-500/30 relative overflow-hidden group shadow-sm bg-gradient-to-br from-surface-container-low to-amber-950/20">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-amber-400 text-base">campaign</span>
+              Ad Intel Signal
+            </span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+              HOT SURGE
+            </span>
+</div>
+<div class="text-xs font-semibold text-on-surface mb-1">
+            Competitor 'Belgravia Estates' deployed 4 campaigns
+          </div>
+<p class="text-[11px] text-outline leading-relaxed mb-3">
+            Targeting keyword: <span class="text-secondary font-mono">luxury penthouse dubai</span> with an aggressive 15% booking incentive.
+          </p>
+<div class="pt-2 border-t border-outline-variant/30 flex items-center justify-between">
+<span class="text-[11px] font-mono text-outline">Est. Spend: $28k/mo</span>
+<button class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-bold flex items-center gap-1 transition-all">
+              Counter-Play <span class="material-symbols-outlined text-xs">rocket_launch</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ================= SECTION 2: MULTI-COLUMN COMMAND GRID ================= -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+<!-- ================= COLUMN A: REPUTATION & GOOGLE BUSINESS INTELLIGENCE (PRD §14) ================= -->
+<div class="xl:col-span-7 space-y-5">
+<!-- Feed Header & Filter Bar -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">reviews</span>
+<div>
+<h2 class="text-base font-headline font-bold text-on-surface">Reputation &amp; Review Sentiment Stream</h2>
+<p class="text-[11px] text-outline">PRD §14 Autonomous Review Triage &amp; Incident Correlator</p>
+</div>
+</div>
+<!-- Filter Pills -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+<button class="px-2.5 py-1 rounded-md text-xs font-semibold bg-primary-container text-white shadow-sm">
+                All (482)
+              </button>
+<button class="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface-container hover:bg-surface-bright text-rose-300 border border-rose-500/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                Unanswered (3)
+              </button>
+<button class="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface-container hover:bg-surface-bright text-amber-300 border border-outline-variant/40">
+                Negative/Neutral (7)
+              </button>
+<button class="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface-container hover:bg-surface-bright text-tertiary border border-outline-variant/40">
+                5-Star (420)
+              </button>
+</div>
+</div>
+<!-- REVIEW CARD 1: URGENT ATTENTION (Root-caused to Tech Incident) -->
+<div class="bg-surface-container-low rounded-xl border border-rose-500/40 p-5 glow-rose relative overflow-hidden transition-all">
+<!-- Alert Accent Tag -->
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+                  Urgent Attention
+                </span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-on-surface border border-outline-variant/40 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary">store</span>
+                  Google Business Profile
+                </span>
+<span class="text-xs font-bold text-amber-400 flex items-center">
+                  ★☆☆☆☆ <span class="text-outline text-[11px] ml-1">(1.0)</span>
+</span>
+</div>
+<span class="text-[11px] font-mono text-outline">Logged 1h 22m ago • Verified Booking Lead</span>
+</div>
+<!-- Reviewer Quote -->
+<div class="mb-4">
+<div class="flex items-center gap-2 mb-1.5">
+<div class="w-6 h-6 rounded-full bg-surface-bright flex items-center justify-center text-xs font-bold text-on-surface">
+                  MK
+                </div>
+<span class="text-xs font-bold text-on-surface">Marcus Kensington</span>
+<span class="text-[10px] px-1.5 rounded bg-surface-container text-outline">Villa #402 Inquiry</span>
+</div>
+<p class="text-xs text-on-surface leading-relaxed pl-8 border-l-2 border-rose-500/40 italic">
+                “Tried calling concierge desk for villa #402 viewing inquiry, phone rang out and booking confirmation email was delayed by 3 hours. For an ultra-luxury portfolio, this communication breakdown was unacceptable.”
+              </p>
+</div>
+<!-- Guardian AI Root Cause Detection Card (PRD §14.3) -->
+<div class="rounded-lg bg-surface-container-lowest p-3.5 border border-primary-container/40 mb-4 space-y-2">
+<div class="flex items-center justify-between text-xs">
+<span class="font-bold text-primary flex items-center gap-1.5 font-headline">
+<span class="material-symbols-outlined text-base">auto_fix_high</span>
+                  Guardian AI Root Cause Correlation Engine
+                </span>
+<span class="text-[10px] font-mono text-tertiary bg-tertiary-container/30 px-2 py-0.5 rounded">99.4% Telemetry Confidence</span>
+</div>
+<div class="text-[11px] text-on-surface-variant flex items-start gap-2 bg-surface-container/60 p-2.5 rounded border border-outline-variant/20">
+<span class="material-symbols-outlined text-rose-400 text-sm mt-0.5">sync_problem</span>
+<div>
+<span class="font-semibold text-rose-300">Cross-Correlated Incident:</span>
+                  Matched to <span class="font-mono text-secondary">#REV-2024-884 (Booking Webhook Timeout)</span> at 14:22 UTC. Server telemetry confirmed 182s queuing bottleneck on SendGrid/Twilio SIP trunk.
+                </div>
+</div>
+<!-- AI Drafted Response Drawer (PRD §14.4) -->
+<div class="mt-3 pt-2 border-t border-outline-variant/20">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-[11px] font-semibold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary">smart_toy</span>
+                    AI Recommended Public Response (SEO &amp; Retention Calibrated):
+                  </span>
+<span class="text-[10px] text-outline">Authorizing Officer: System COO</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-high/60 border border-outline-variant/40 text-xs text-on-surface font-body leading-relaxed">
+                  “Hello Marcus, our sincere apologies for the friction. Our automated VIP concierge gateway underwent a brief 180-second latency spike on Sunday which has now been fully resolved and hardened with failover routing. Our Head of VIP Client Relations has reached out directly to your private mobile to prioritize your Villa #402 private walkthrough.”
+                </div>
+</div>
+</div>
+<!-- Authorization & Action Deck (PRD §14 Strict Governance) -->
+<div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+<div class="flex items-center gap-2">
+<!-- Primary Authorization Action -->
+<button class="px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary-container/90 text-white font-headline text-xs font-bold flex items-center gap-1.5 shadow-sm glow-indigo transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">lock_open</span>
+<span>Approve &amp; Publish to Google Profile</span>
+</button>
+<button class="px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface text-xs font-semibold border border-outline-variant/40 transition-colors">
+                  Edit Response
+                </button>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-bright text-outline hover:text-on-surface text-xs font-medium border border-outline-variant/40 flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xs">flag</span>
+                  Flag to Concierge Ops
+                </button>
+<span class="text-[10px] text-outline font-mono">Auth: Required</span>
+</div>
+</div>
+</div>
+<!-- REVIEW CARD 2: 5-STAR HIGH INTENT -->
+<div class="bg-surface-container-low rounded-xl border border-outline-variant/40 p-5 hover:border-outline-variant/80 transition-all shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-tertiary-container/30 text-tertiary border border-tertiary/40">
+                  5-Star High Intent
+                </span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-on-surface border border-outline-variant/40 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-tertiary">star</span>
+                  Trustpilot Verified
+                </span>
+<span class="text-xs font-bold text-amber-400">
+                  ★★★★★ <span class="text-outline text-[11px] ml-1">(5.0)</span>
+</span>
+</div>
+<span class="text-[11px] font-mono text-outline">Logged 3h 10m ago • Investor Verification Completed</span>
+</div>
+<div class="mb-3">
+<div class="flex items-center gap-2 mb-1">
+<div class="w-6 h-6 rounded-full bg-secondary-container/30 text-secondary flex items-center justify-center text-xs font-bold">
+                  SL
+                </div>
+<span class="text-xs font-bold text-on-surface">Sophia Laurent</span>
+<span class="text-[10px] px-1.5 rounded bg-tertiary-container/20 text-tertiary font-mono">Charter VIP</span>
+</div>
+<p class="text-xs text-on-surface leading-relaxed pl-8 border-l-2 border-tertiary/40 italic">
+                “Exquisite service and seamless private yacht tour booking via website. Stunning properties across the Palm Jumeirah collection.”
+              </p>
+</div>
+<!-- Automated Response Card Ready -->
+<div class="rounded-lg bg-surface-container-lowest p-3 border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5 text-[11px] font-semibold text-secondary">
+<span class="material-symbols-outlined text-xs">auto_awesome</span>
+                  SEO-Enhanced Auto-Draft Queued
+                </div>
+<p class="text-[11px] text-outline leading-tight">
+                  Keywords injected: <span class="font-mono text-on-surface text-[10px]">#PalmJumeirahVillas</span>, <span class="font-mono text-on-surface text-[10px]">#PrivateYachtCharter</span>. Ready for 1-click dispatch.
+                </p>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-bright text-xs text-on-surface font-semibold border border-outline-variant/40 transition-colors">
+                  Review Draft
+                </button>
+<button class="px-3 py-1.5 rounded-lg bg-tertiary/20 hover:bg-tertiary/30 text-tertiary text-xs font-bold border border-tertiary/40 flex items-center gap-1 transition-all">
+<span class="material-symbols-outlined text-xs">done_all</span>
+                  Auto-Approve
+                </button>
+</div>
+</div>
+</div>
+<!-- Review Summary Micro-Strip -->
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-outline-variant/30 flex items-center justify-between text-xs text-outline">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-tertiary">check_circle</span>
+              All 479 historical reviews synchronized via Google Business &amp; Trustpilot Webhooks
+            </span>
+<span class="font-mono text-[11px] text-secondary">Sync Rate: 100%</span>
+</div>
+</div>
+<!-- ================= COLUMN B: COMPETITOR BENCHMARK & COUNTER-STRATEGY MATRIX (PRD §15) ================= -->
+<div class="xl:col-span-5 space-y-5">
+<!-- Competitor Matrix Header -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/40 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl">hub</span>
+<div>
+<h2 class="text-base font-headline font-bold text-on-surface">Competitor Radar &amp; Threat Matrix</h2>
+<p class="text-[11px] text-outline">PRD §15 Real-time SERP, Speed &amp; Campaign Intercept</p>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded text-xs font-semibold bg-surface-container hover:bg-surface-bright text-on-surface border border-outline-variant/40 flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xs">tune</span>
+              Set Thresholds
+            </button>
+</div>
+<!-- COMPETITORS TRACKER CARDS -->
+<div class="space-y-3">
+<!-- Competitor 1: Belgravia (HIGH THREAT) -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-rose-500/30 hover:border-rose-500/60 transition-all space-y-3">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-headline font-bold text-on-surface">Belgravia Prime Estates</span>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                      THREAT: HIGH
+                    </span>
+</div>
+<span class="text-[11px] text-outline">Primary SERP Competitor • Core Keywords Overlap: 81%</span>
+</div>
+<div class="text-right">
+<span class="text-xs font-mono font-bold text-rose-300">#1 SERP (+2 pos)</span>
+<div class="text-[10px] text-outline">Est. Ad: ~$28k/mo</div>
+</div>
+</div>
+<!-- Metrics Row -->
+<div class="grid grid-cols-3 gap-2 text-center text-xs">
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/20">
+<span class="text-[10px] text-outline block">Speed (LCP)</span>
+<span class="font-mono text-rose-400 font-bold">4.1s (Slow)</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/20">
+<span class="text-[10px] text-outline block">Active Campaign</span>
+<span class="font-mono text-amber-300 font-bold">Zero Fee Q3</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/20">
+<span class="text-[10px] text-outline block">Reviews</span>
+<span class="font-mono text-on-surface font-bold">4.4★ (190)</span>
+</div>
+</div>
+<!-- Guardian Counter-Play (PRD §15.2) -->
+<div class="bg-primary-container/10 border border-primary-container/30 rounded-lg p-2.5 flex items-center justify-between text-xs">
+<div class="flex items-center gap-2 overflow-hidden">
+<span class="material-symbols-outlined text-primary text-base shrink-0">military_tech</span>
+<div class="truncate">
+<span class="font-bold text-primary">Guardian Counter-Play:</span>
+<span class="text-on-surface-variant text-[11px]"> Boost luxury penthouse schema to recapture snippet.</span>
+</div>
+</div>
+<button class="px-2 py-1 rounded bg-primary-container hover:bg-primary-container/90 text-white text-[10px] font-bold tracking-wide uppercase shrink-0 transition-all">
+                  Deploy
+                </button>
+</div>
+</div>
+<!-- Competitor 2: Elysian Luxe (MEDIUM THREAT) -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/40 hover:border-outline-variant/80 transition-all space-y-3">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-headline font-bold text-on-surface">Elysian Luxe Properties</span>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      THREAT: MEDIUM
+                    </span>
+</div>
+<span class="text-[11px] text-outline">Vulnerable Support Vector • Review Slip (-0.2★)</span>
+</div>
+<div class="text-right">
+<span class="text-xs font-mono font-bold text-on-surface">#4 SERP (-1 pos)</span>
+<div class="text-[10px] text-outline">Est. Ad: ~$12k/mo</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 text-center text-xs">
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/20">
+<span class="text-[10px] text-outline block">Speed (LCP)</span>
+<span class="font-mono text-tertiary font-bold">2.2s</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/20">
+<span class="text-[10px] text-outline block">Review Rating</span>
+<span class="font-mono text-rose-300 font-bold">4.2★ (-0.2)</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/20">
+<span class="text-[10px] text-outline block">Organic Share</span>
+<span class="font-mono text-on-surface font-bold">18.4%</span>
+</div>
+</div>
+<!-- Opportunity Trigger -->
+<div class="bg-secondary-container/10 border border-secondary-container/30 rounded-lg p-2.5 flex items-center justify-between text-xs">
+<div class="flex items-center gap-2 overflow-hidden">
+<span class="material-symbols-outlined text-secondary text-base shrink-0">crisis_alert</span>
+<div class="truncate">
+<span class="font-bold text-secondary">Aura Growth Opportunity:</span>
+<span class="text-on-surface-variant text-[11px]"> Target disgruntled clientele via conquesting search campaigns.</span>
+</div>
+</div>
+<button class="px-2 py-1 rounded bg-secondary hover:bg-secondary/90 text-on-secondary text-[10px] font-bold tracking-wide uppercase shrink-0 transition-all">
+                  Stage
+                </button>
+</div>
+</div>
+<!-- Competitor 3: Sovereign Realty (LOW THREAT) -->
+<div class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/30 flex items-center justify-between text-xs">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-outline text-xs">
+                  SR
+                </div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-on-surface">Sovereign Realty Global</span>
+<span class="px-1 py-0.2 rounded text-[8px] bg-surface-container text-outline uppercase">Low Threat</span>
+</div>
+<div class="text-[11px] text-outline">Speed: 1.8s • SERP: #6 • Rating: 4.6★</div>
+</div>
+</div>
+<span class="text-[11px] font-mono text-outline">Stable • No Drift</span>
+</div>
+</div>
+<!-- HEAD-TO-HEAD TELEMETRY RADAR & BENCHMARK -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/40 space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-xs font-headline font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-base">bar_chart</span>
+                Head-to-Head Telemetry Comparison
+              </span>
+<span class="text-[10px] text-outline font-mono">Live Benchmarks</span>
+</div>
+<!-- Page Speed Comparison (Core Web Vitals) -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-xs">
+<span class="text-outline">Page Speed (LCP - Lower is better)</span>
+<span class="font-mono text-tertiary font-bold">Aura Leads by 2.7s</span>
+</div>
+<!-- Stacked visual bars -->
+<div class="space-y-1">
+<div class="flex items-center text-[10px]">
+<span class="w-24 text-on-surface font-semibold truncate">Aura Living</span>
+<div class="flex-1 bg-surface-container-lowest h-3 rounded-full overflow-hidden mx-2">
+<div class="bg-tertiary h-full rounded-full" style="width: 25%"></div>
+</div>
+<span class="font-mono text-tertiary font-bold w-10 text-right">1.4s</span>
+</div>
+<div class="flex items-center text-[10px]">
+<span class="w-24 text-outline truncate">Elysian Luxe</span>
+<div class="flex-1 bg-surface-container-lowest h-3 rounded-full overflow-hidden mx-2">
+<div class="bg-outline-variant h-full rounded-full" style="width: 44%"></div>
+</div>
+<span class="font-mono text-outline w-10 text-right">2.2s</span>
+</div>
+<div class="flex items-center text-[10px]">
+<span class="w-24 text-outline truncate">Belgravia</span>
+<div class="flex-1 bg-surface-container-lowest h-3 rounded-full overflow-hidden mx-2">
+<div class="bg-rose-500/80 h-full rounded-full" style="width: 82%"></div>
+</div>
+<span class="font-mono text-rose-400 w-10 text-right">4.1s</span>
+</div>
+</div>
+</div>
+<!-- Share of Voice Keyword Bar -->
+<div class="pt-2 border-t border-outline-variant/30 space-y-1.5">
+<div class="flex justify-between text-xs">
+<span class="text-outline">SERP Share of Voice ("Dubai Luxury Estates")</span>
+<span class="font-mono text-secondary font-semibold">34.2% Total Reach</span>
+</div>
+<div class="h-3 w-full bg-surface-container-lowest rounded-full overflow-hidden flex">
+<div class="bg-primary-container" style="width: 34.2%" title="Aura Living: 34.2%"></div>
+<div class="bg-rose-500/80" style="width: 38.1%" title="Belgravia: 38.1%"></div>
+<div class="bg-secondary/60" style="width: 18.4%" title="Elysian: 18.4%"></div>
+<div class="bg-outline-variant" style="width: 9.3%" title="Others: 9.3%"></div>
+</div>
+<div class="flex justify-between text-[10px] text-outline font-mono">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-primary-container"></span> Aura (34.2%)</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-rose-500/80"></span> Belgravia (38.1%)</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-secondary/60"></span> Elysian (18.4%)</span>
+</div>
+</div>
+</div>
+<!-- AUTONOMOUS DRIFT DETECTOR (PRD §15.4) -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-secondary/40 glow-cyan relative overflow-hidden space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-secondary uppercase tracking-wider flex items-center gap-1.5 font-headline">
+<span class="material-symbols-outlined text-secondary text-base">radar</span>
+                Autonomous Drift Detector
+              </span>
+<span class="text-[10px] font-mono text-secondary bg-secondary-container/20 px-2 py-0.5 rounded border border-secondary/30">
+                Diff Captured 42m ago
+              </span>
+</div>
+<p class="text-xs text-on-surface leading-relaxed">
+<span class="font-semibold text-on-surface">Belgravia Prime</span> restructured their core penthouse landing page:
+            </p>
+<div class="p-2.5 rounded bg-surface-container-lowest border border-outline-variant/30 font-mono text-[11px] space-y-1">
+<div class="text-rose-400">- &lt;H1&gt; "Luxury Penthouse Living in Downtown Dubai"</div>
+<div class="text-tertiary">+ &lt;H1&gt; "Exclusive Dubai Penthouses | 0% Agency Fee Q3 Only"</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="text-[11px] text-outline">Impact: Canonical shift detected.</span>
+<button class="text-xs text-secondary hover:underline font-bold flex items-center gap-1">
+                View Full DOM Diff <span class="material-symbols-outlined text-xs">visibility</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= COMPLIANCE & STATUS BAR (FOOTER ANCHOR) ================= -->
+<footer class="mt-8 pt-4 border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-outline font-mono">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>PRD §14 &amp; §15 Compliant</span>
+<span>•</span>
+<span>Google Business Profile API Synced</span>
+<span>•</span>
+<span>Competitor Crawl Interval: 6h</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary">key</span>
+<span>All Actions Require Cryptographic Authorization</span>
+</div>
+</footer>
+</div>
+</main>
+</body></html>

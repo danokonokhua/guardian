@@ -1,59 +1,175 @@
 import Link from "next/link";
-
-/**
- * Phase 1B development landing page.
- *
- * Public landing page. Authenticated users can enter the dashboard at
- * `/dashboard`; this page never selects or exposes an organization.
- */
+import AuditForm from "@/app/audit/audit-form";
+import { Brand } from "@/components/ui/brand";
+const features = [
+  {
+    n: "01",
+    title: "Protect your digital front door.",
+    text: "Monitor uptime, SSL, broken links, and critical lead forms. Find the failures that can keep customers from reaching you.",
+    tags: ["Website availability", "Lead-form checks"],
+  },
+  {
+    n: "02",
+    title: "Understand what needs attention.",
+    text: "Turn monitoring results into an explainable health score, issue history, and grounded recommendations.",
+    tags: ["Digital health score", "Prioritized issues"],
+  },
+  {
+    n: "03",
+    title: "Build on a healthier foundation.",
+    text: "Check essential SEO, server response time, and security hygiene. Give your team a clear place to start improving.",
+    tags: ["Basic SEO", "Security hygiene"],
+  },
+];
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6">
-      <section className="w-full max-w-xl rounded-2xl border border-neutral-800 bg-neutral-900/60 p-10 text-center shadow-xl">
-        <p className="text-xs font-medium uppercase tracking-[0.3em] text-emerald-400">
-          Digital Business Operations Platform
-        </p>
-        <h1 className="mt-4 text-5xl font-bold tracking-tight">Guardian</h1>
-
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
-          <span className="rounded-full border border-neutral-700 px-3 py-1 text-neutral-300">
-            Phase 1B Foundation
+    <div className="marketing-page">
+      <header className="public-header">
+        <Brand />
+        <nav aria-label="Main navigation">
+          <a href="#features" className="desktop-link">
+            Platform
+          </a>
+          <Link href="/audit" className="desktop-link">
+            Free audit
+          </Link>
+          <Link href="/login">Sign in</Link>
+          <Link href="/signup" className="button-primary compact">
+            Get started <span aria-hidden="true">↗</span>
+          </Link>
+        </nav>
+      </header>
+      <main id="main-content">
+        <section className="hero">
+          <span className="status-pill">
+            <span /> DIGITAL BUSINESS OPERATIONS
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-700/60 bg-emerald-950/40 px-3 py-1 text-emerald-300">
-            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-emerald-400" />
-            Status: Operational
-          </span>
-        </div>
-
-        <p className="mt-6 text-sm leading-relaxed text-neutral-400">
-          Foundation services are operational. Sign in to access your organization dashboard.
-        </p>
-
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/login"
-            className="inline-flex rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
-          >
-            Sign in to Guardian
+          <h1>
+            Never let another
+            <br />
+            silent revenue leak
+            <br />
+            <em>go undetected.</em>
+          </h1>
+          <p>
+            Your website can be online while your business is losing opportunities.
+            <br className="desktop-link" /> Discover what is broken, understand the impact, and know
+            what to fix next.
+          </p>
+          <div className="hero-actions">
+            <a href="#free-audit" className="button-primary">
+              Check my website <span aria-hidden="true">↗</span>
+            </a>
+            <Link href="/signup" className="button-secondary">
+              Create your workspace
+            </Link>
+          </div>
+          <div className="hero-details">
+            <span>Website monitoring</span>
+            <span>Lead-form health</span>
+            <span>Actionable insights</span>
+          </div>
+        </section>
+        <section className="audit-preview section-width" id="free-audit">
+          <div className="panel-heading">
+            <span className="eyebrow">YOUR FIRST HEALTH CHECK</span>
+            <span className="status-pill">NO ACCOUNT REQUIRED</span>
+          </div>
+          <div className="audit-intro">
+            <span className="scan-symbol" aria-hidden="true">
+              ◎
+            </span>
+            <div>
+              <h2>Is your digital business actually working?</h2>
+              <p>
+                Start with a free website audit. Get a snapshot of availability, response time,
+                basic SEO, and security.
+              </p>
+            </div>
+          </div>
+          <AuditForm />
+          <p className="fine-print">
+            A real snapshot of your public website. Results show what was measured and where
+            coverage is limited.
+          </p>
+          <div className="coverage-strip">
+            <span>01 / AVAILABILITY</span>
+            <span>02 / RESPONSE TIME</span>
+            <span>03 / SEO BASICS</span>
+            <span>04 / SECURITY</span>
+          </div>
+        </section>
+        <section className="features section-width" id="features">
+          <span className="eyebrow">PROTECT · UNDERSTAND · GROW</span>
+          <h2>
+            Clarity for the systems
+            <br />
+            your business depends on.
+          </h2>
+          <p className="section-description">
+            Less guesswork. More visibility into what needs your attention.
+          </p>
+          <div className="feature-grid">
+            {features.map((f) => (
+              <article className="feature-card" key={f.n}>
+                <span className="feature-number">{f.n} / GUARDIAN</span>
+                <h3>{f.title}</h3>
+                <p>{f.text}</p>
+                <div className="feature-tags">
+                  {f.tags.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section className="workflow section-width">
+          <div>
+            <span className="eyebrow">FROM SIGNAL TO NEXT STEP</span>
+            <h2>
+              A clearer path
+              <br />
+              from issue to action.
+            </h2>
+            <p>
+              See the evidence behind each finding, understand its business impact, and prioritize
+              what your team should address.
+            </p>
+            <Link href="/signup" className="quiet-link">
+              Bring your operations together ↗
+            </Link>
+          </div>
+          <ol>
+            {["Monitor your website", "Understand the findings", "Prioritize your next action"].map(
+              (s, i) => (
+                <li key={s}>
+                  <span className="step-number">0{i + 1}</span>
+                  <span>{s}</span>
+                  <span aria-hidden="true">↗</span>
+                </li>
+              ),
+            )}
+          </ol>
+        </section>
+        <section className="closing-cta section-width">
+          <span className="eyebrow">YOUR BUSINESS DESERVES VISIBILITY</span>
+          <h2>
+            Stop guessing.
+            <br />
+            Start understanding.
+          </h2>
+          <p>Your first website health check is a good place to start.</p>
+          <Link href="/audit" className="button-primary">
+            Run a free audit ↗
           </Link>
-          <Link
-            href="/signup"
-            className="inline-flex rounded-md border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-950/40 hover:border-emerald-500"
-          >
-            Create an account
-          </Link>
-          <Link
-            href="/audit"
-            className="inline-flex rounded-md border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-200 hover:border-emerald-500 hover:text-emerald-300"
-          >
-            Run a free audit
-          </Link>
-        </div>
-
-        <p className="mt-6 font-mono text-xs text-neutral-500">
-          liveness probe: <span className="text-neutral-300">GET /api/health</span>
-        </p>
-      </section>
-    </main>
+        </section>
+      </main>
+      <footer className="public-footer section-width">
+        <Brand />
+        <p>Protect. Understand. Grow.</p>
+        <Link href="/login">Sign in to your workspace ↗</Link>
+      </footer>
+    </div>
   );
 }

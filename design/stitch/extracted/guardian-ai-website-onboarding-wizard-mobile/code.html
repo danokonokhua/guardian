@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Guardian AI — Website Onboarding &amp; Sentinel Discovery Wizard</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Typography: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#0f131d",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#003640",
+            "error-container": "#93000a",
+            "secondary-fixed": "#acedff",
+            "on-primary": "#1d00a5",
+            "secondary-container": "#03b5d3",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary-fixed-dim": "#4cd7f6",
+            "tertiary": "#4edea3",
+            "surface-tint": "#c3c0ff",
+            "inverse-on-surface": "#2c303b",
+            "outline": "#918fa1",
+            "inverse-surface": "#dfe2f1",
+            "inverse-primary": "#4d44e3",
+            "on-surface-variant": "#c7c4d8",
+            "surface-container-highest": "#313540",
+            "on-tertiary": "#003824",
+            "surface-container-high": "#262a35",
+            "on-tertiary-fixed-variant": "#005236",
+            "surface-container-lowest": "#0a0e18",
+            "surface-container-low": "#171b26",
+            "tertiary-container": "#006e4b",
+            "primary-container": "#4f46e5",
+            "on-surface": "#dfe2f1",
+            "surface-variant": "#313540",
+            "surface-bright": "#353944",
+            "primary": "#c3c0ff",
+            "on-background": "#dfe2f1",
+            "on-primary-container": "#dad7ff",
+            "on-primary-fixed": "#0f0069",
+            "on-secondary-fixed-variant": "#004e5c",
+            "on-tertiary-fixed": "#002113",
+            "secondary": "#4cd7f6",
+            "on-secondary-fixed": "#001f26",
+            "on-error": "#690005",
+            "outline-variant": "#464555",
+            "on-primary-fixed-variant": "#3323cc",
+            "surface-container": "#1c1f2a",
+            "error": "#ffb4ab",
+            "background": "#0f131d",
+            "primary-fixed": "#e2dfff",
+            "on-secondary-container": "#00424e",
+            "surface-dim": "#0f131d",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-tertiary-container": "#67f4b7"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            label: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Smooth Pulse and Radar animations */
+    @keyframes radarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .animate-radar {
+      animation: radarSweep 4s linear infinite;
+    }
+    @keyframes scanGlow {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.9; }
+    }
+    .scan-pulse {
+      animation: scanGlow 2s ease-in-out infinite;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased font-body min-h-screen pb-44 selection:bg-primary-container selection:text-on-primary-container flex justify-center">
+<!-- Mobile Viewport Shell (Strict 390px target container) -->
+<div class="w-full max-w-[390px] relative bg-surface-container-lowest min-h-screen flex flex-col shadow-2xl border-x border-outline-variant/20 overflow-x-hidden">
+<!-- Top Navigation Anchor (Shared Component: TopAppBar applied as wizard header with docked top style) -->
+<header class="fixed top-0 left-0 w-full max-w-[390px] z-50 flex items-center justify-between px-4 py-3 h-14 bg-surface-container-low shadow-sm backdrop-blur-md border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<button aria-label="Cancel onboarding" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[20px]">swap_horizontal_circle</span>
+</button>
+<span class="font-headline text-base font-bold text-on-surface flex items-center gap-1.5 tracking-tight">
+          Aura Luxury Living
+        </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-label font-bold uppercase tracking-wider bg-secondary-container/20 text-secondary border border-secondary/30">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+          LIVE PROBE
+        </span>
+<button aria-label="Incident alerts" class="w-8 h-8 rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[20px]">crisis_alert</span>
+</button>
+</div>
+</header>
+<!-- Main Wizard Content Canvas -->
+<main class="pt-16 px-4 flex flex-col gap-4">
+<!-- Step Progress Header Component -->
+<section class="mt-2 bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/30 relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label text-xs uppercase tracking-wider font-semibold text-primary">PRD §8 &amp; §14 Sentinel Wizard</span>
+</div>
+<span class="font-mono text-[11px] font-semibold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">Step 2 of 4</span>
+</div>
+<h1 class="font-headline text-lg font-bold tracking-tight text-on-surface">
+          Domain &amp; Telemetry Sentinel Probe
+        </h1>
+<p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+          Autonomous discovery &amp; synthetic lead pathway verification.
+        </p>
+<!-- 4-step progress line bar -->
+<div class="mt-3.5 pt-3 border-t border-outline-variant/20">
+<div class="grid grid-cols-4 gap-1.5">
+<!-- Step 1: Complete -->
+<div class="flex flex-col gap-1">
+<div class="h-1.5 w-full rounded-full bg-tertiary"></div>
+<span class="text-[9px] font-label font-semibold text-tertiary truncate">1. Profile</span>
+</div>
+<!-- Step 2: Active -->
+<div class="flex flex-col gap-1">
+<div class="h-1.5 w-full rounded-full bg-primary-container relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/40 animate-pulse"></div>
+</div>
+<span class="text-[9px] font-label font-bold text-primary truncate">2. Probes</span>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex flex-col gap-1">
+<div class="h-1.5 w-full rounded-full bg-surface-container-highest"></div>
+<span class="text-[9px] font-label font-medium text-on-surface-variant/60 truncate">3. Funnels</span>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex flex-col gap-1">
+<div class="h-1.5 w-full rounded-full bg-surface-container-highest"></div>
+<span class="text-[9px] font-label font-medium text-on-surface-variant/60 truncate">4. Launch</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Target Site Preview Card -->
+<section class="bg-surface-container rounded-xl p-3.5 border border-outline-variant/40 relative">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest border border-outline-variant/50 flex items-center justify-center text-primary relative">
+<span class="material-symbols-outlined text-[22px]">domain</span>
+<span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline text-sm font-bold text-on-surface">Aura Luxury Living</h2>
+<span class="material-symbols-outlined text-tertiary text-[14px]">verified</span>
+</div>
+<p class="font-mono text-xs text-secondary-fixed-dim">auraluxuryliving.com</p>
+</div>
+</div>
+<!-- Live Status Chip -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/15 border border-secondary/40 text-[11px] font-label font-semibold text-secondary">
+<span class="material-symbols-outlined text-[13px] animate-spin">sync</span>
+<span>Resolving DNS &amp; SSL</span>
+</div>
+</div>
+<!-- Telemetry Quick Chips -->
+<div class="mt-3 grid grid-cols-3 gap-2 pt-2.5 border-t border-outline-variant/20 text-center">
+<div class="bg-surface-container-lowest/80 rounded-md py-1.5 px-2 border border-outline-variant/20">
+<span class="block text-[10px] font-label uppercase tracking-wider text-on-surface-variant">TLS Status</span>
+<span class="font-mono text-xs font-semibold text-tertiary">v1.3 Active</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded-md py-1.5 px-2 border border-outline-variant/20">
+<span class="block text-[10px] font-label uppercase tracking-wider text-on-surface-variant">DNS TTL</span>
+<span class="font-mono text-xs font-semibold text-on-surface">300ms</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded-md py-1.5 px-2 border border-outline-variant/20">
+<span class="block text-[10px] font-label uppercase tracking-wider text-on-surface-variant">Edge CDN</span>
+<span class="font-mono text-xs font-semibold text-secondary">Cloudflare</span>
+</div>
+</div>
+</section>
+<!-- Automated Scan Simulation Bar -->
+<section class="bg-surface-container-high/60 backdrop-blur-md rounded-xl p-3 border border-secondary/30 relative overflow-hidden">
+<div class="flex items-center justify-between text-xs mb-1.5">
+<div class="flex items-center gap-1.5 text-on-surface font-label font-medium">
+<span class="material-symbols-outlined text-secondary text-[16px] animate-radar">radar</span>
+<span class="truncate">Scanning 48 pages &amp; 14 API hooks...</span>
+</div>
+<span class="font-mono font-bold text-secondary text-xs">78%</span>
+</div>
+<!-- Progress Bar Strip -->
+<div class="h-2 w-full bg-surface-container-lowest rounded-full overflow-hidden p-0.5 border border-outline-variant/30">
+<div class="h-full bg-gradient-to-r from-primary-container via-secondary to-tertiary rounded-full w-[78%] scan-pulse transition-all duration-500"></div>
+</div>
+<div class="mt-2 flex items-center justify-between text-[10px] font-mono text-on-surface-variant">
+<span>Target crawler: Spider-Sentinel-v4</span>
+<span class="text-tertiary flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-tertiary"></span> 38/48 routes mapped
+          </span>
+</div>
+</section>
+<!-- Section Title -->
+<div class="flex items-center justify-between pt-1">
+<h3 class="font-headline text-xs uppercase tracking-wider font-bold text-on-surface-variant">
+          Active Probe Configuration (4 Modules)
+        </h3>
+<span class="text-[11px] font-label font-semibold text-primary">All Sentinels Online</span>
+</div>
+<!-- Checklist Card 1: Synthetic Lead Form Hunter -->
+<article class="bg-surface-container-low rounded-xl p-3.5 border border-primary/30 shadow-sm relative transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[19px]">travel_explore</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline text-sm font-bold text-on-surface">Synthetic Lead Form Hunter</h4>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-bold font-mono bg-tertiary/15 text-tertiary border border-tertiary/30">AUTO-DETECTED</span>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-0.5">
+                3 critical high-value conversion endpoints found on live DOM:
+              </p>
+</div>
+</div>
+</div>
+<!-- Form Items Monitored Checklist -->
+<div class="mt-3 space-y-2 pt-2 border-t border-outline-variant/20">
+<!-- Item A -->
+<label class="flex items-center justify-between p-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer border border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">contact_page</span>
+<span class="font-mono text-xs text-on-surface">/booking/vip-tour</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-label font-semibold text-tertiary uppercase">High Priority</span>
+<input checked="" class="rounded w-4 h-4 bg-surface-container-lowest border-outline-variant/60 text-primary-container focus:ring-0 focus:ring-offset-0 cursor-pointer" type="checkbox"/>
+</div>
+</label>
+<!-- Item B -->
+<label class="flex items-center justify-between p-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer border border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">support_agent</span>
+<span class="font-mono text-xs text-on-surface">/contact-concierge</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-label font-semibold text-on-surface-variant uppercase">VIP Funnel</span>
+<input checked="" class="rounded w-4 h-4 bg-surface-container-lowest border-outline-variant/60 text-primary-container focus:ring-0 focus:ring-offset-0 cursor-pointer" type="checkbox"/>
+</div>
+</label>
+<!-- Item C -->
+<label class="flex items-center justify-between p-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer border border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">payments</span>
+<span class="font-mono text-xs text-on-surface">/checkout-deposit</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-label font-semibold text-tertiary uppercase">Stripe Auth</span>
+<input checked="" class="rounded w-4 h-4 bg-surface-container-lowest border-outline-variant/60 text-primary-container focus:ring-0 focus:ring-offset-0 cursor-pointer" type="checkbox"/>
+</div>
+</label>
+</div>
+<div class="mt-2.5 flex items-center justify-between text-[11px] text-on-surface-variant font-label">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary">check_circle</span>
+            Synthetic ghost inject payload ready
+          </span>
+<span class="text-primary font-semibold">3 of 3 Active</span>
+</div>
+</article>
+<!-- Checklist Card 2: Edge Uptime & Latency Beacon -->
+<article class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/30 shadow-sm relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/20 text-secondary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[19px]">public</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline text-sm font-bold text-on-surface">Edge Uptime &amp; Latency Beacon</h4>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-0.5">
+                Multi-region continuous heartbeat: 30-sec polling cadence.
+              </p>
+</div>
+</div>
+<!-- Toggle -->
+<input checked="" class="rounded-full w-5 h-5 bg-surface-container-lowest border-outline-variant/60 text-secondary-container focus:ring-0 focus:ring-offset-0 mt-1 cursor-pointer" type="checkbox"/>
+</div>
+<!-- 5 Global PoP Pills -->
+<div class="mt-3 pt-2 border-t border-outline-variant/20">
+<div class="text-[10px] font-label uppercase tracking-wider text-on-surface-variant mb-1.5">
+            5 Configured Global Points of Presence (PoPs):
+          </div>
+<div class="flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-[11px] font-mono text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> London (24ms)
+            </span>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-[11px] font-mono text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Frankfurt (19ms)
+            </span>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-[11px] font-mono text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> New York (42ms)
+            </span>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-[11px] font-mono text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Singapore (88ms)
+            </span>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-[11px] font-mono text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Tokyo (94ms)
+            </span>
+</div>
+</div>
+</article>
+<!-- Checklist Card 3: WordPress & Headless CMS Sentinel -->
+<article class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/30 shadow-sm relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/30 text-tertiary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[19px]">security</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline text-sm font-bold text-on-surface">WordPress &amp; Headless CMS</h4>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-0.5">
+                Fingerprinted WP 6.4.2 + ACF Pro core architecture.
+              </p>
+</div>
+</div>
+<!-- Toggle -->
+<input checked="" class="rounded-full w-5 h-5 bg-surface-container-lowest border-outline-variant/60 text-tertiary focus:ring-0 focus:ring-offset-0 mt-1 cursor-pointer" type="checkbox"/>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs">
+<div class="flex items-center gap-1.5 font-mono text-[11px] text-tertiary">
+<span class="material-symbols-outlined text-[15px]">shield</span>
+<span>Security Shield: Zero CVE vulnerabilities</span>
+</div>
+<span class="text-[10px] font-label font-bold text-secondary uppercase bg-secondary/10 px-2 py-0.5 rounded">
+            Protected
+          </span>
+</div>
+</article>
+<!-- Checklist Card 4: WhatsApp & Webhook Bridge -->
+<article class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/30 shadow-sm relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[19px]">hub</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline text-sm font-bold text-on-surface">WhatsApp &amp; Webhook Bridge</h4>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-0.5">
+                Auto-verify instant conversion redirects &amp; CRM webhooks.
+              </p>
+</div>
+</div>
+<!-- Toggle -->
+<input checked="" class="rounded-full w-5 h-5 bg-surface-container-lowest border-outline-variant/60 text-primary-container focus:ring-0 focus:ring-offset-0 mt-1 cursor-pointer" type="checkbox"/>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs">
+<span class="font-mono text-[11px] text-on-surface-variant truncate">
+            Hook: api.auraluxuryliving.com/leads/v1
+          </span>
+<span class="inline-flex items-center gap-1 text-[10px] font-mono text-tertiary shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span> 200 OK
+          </span>
+</div>
+</article>
+<!-- Audit Telemetry Log Note -->
+<div class="p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/20 flex items-center gap-2.5 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[18px]">info</span>
+<span>All 4 sentinels are pre-calibrated to preserve site performance (&lt; 3ms impact).</span>
+</div>
+</main>
+<!-- Floating Bottom Mobile Action Tray (PRD requirement: primary + secondary action stacked for 390px) -->
+<div class="fixed bottom-0 left-0 w-full max-w-[390px] z-50 bg-surface-container-lowest/95 backdrop-blur-xl border-t border-outline-variant/30 p-3.5 space-y-2 shadow-2xl safe-bottom">
+<!-- Primary Continue Button -->
+<button class="w-full py-3 px-4 rounded-lg bg-primary-container hover:bg-primary-container/90 text-white font-headline text-sm font-semibold tracking-tight shadow-lg shadow-primary-container/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span>Continue to Funnel Configuration</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Secondary Test Button -->
+<button class="w-full py-2.5 px-4 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface font-label text-xs font-semibold tracking-wide flex items-center justify-center gap-2 transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-secondary text-[16px]">science</span>
+<span>Test Synthetic Lead Payload</span>
+</button>
+<!-- Micro Status Line -->
+<div class="flex items-center justify-center gap-1.5 text-[10px] text-on-surface-variant font-mono pt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Guardian Digital Operations Core • Connected</span>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { ConflictError } from "@/lib/errors";
 import type { MonitorType } from "@prisma/client";
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
@@ -99,6 +100,8 @@ export function updateMonitor(
       },
     });
     if (!existing) return null;
+    if (existing.type === "DNS" && input.config !== undefined)
+      throw new ConflictError("Use DNS baseline acceptance to change DNS state.");
     const monitor = await tx.monitor.update({ where: { id: monitorId }, data: input, select });
     await upsertMonitorDispatch(tx, {
       monitorId: monitor.id,

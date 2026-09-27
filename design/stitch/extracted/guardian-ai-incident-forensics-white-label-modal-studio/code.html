@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Guardian AI — Incident Forensics &amp; White-Label PDF Export Studio</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary": "#003824",
+            "primary-fixed": "#e2dfff",
+            "surface-container": "#1c1f2a",
+            "surface-container-lowest": "#0a0e18",
+            "on-tertiary-fixed": "#002113",
+            "primary": "#c3c0ff",
+            "error": "#ffb4ab",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-secondary-fixed": "#001f26",
+            "on-primary-container": "#dad7ff",
+            "on-background": "#dfe2f1",
+            "surface-container-highest": "#313540",
+            "inverse-surface": "#dfe2f1",
+            "tertiary-fixed": "#6ffbbe",
+            "inverse-primary": "#4d44e3",
+            "on-tertiary-container": "#67f4b7",
+            "on-secondary-container": "#00424e",
+            "on-tertiary-fixed-variant": "#005236",
+            "secondary": "#4cd7f6",
+            "on-primary-fixed": "#0f0069",
+            "error-container": "#93000a",
+            "secondary-fixed": "#acedff",
+            "tertiary": "#4edea3",
+            "on-primary": "#1d00a5",
+            "outline": "#918fa1",
+            "on-error": "#690005",
+            "background": "#0f131d",
+            "surface-tint": "#c3c0ff",
+            "tertiary-container": "#006e4b",
+            "primary-container": "#4f46e5",
+            "outline-variant": "#464555",
+            "surface-dim": "#0f131d",
+            "on-surface-variant": "#c7c4d8",
+            "on-primary-fixed-variant": "#3323cc",
+            "surface": "#0f131d",
+            "on-secondary": "#003640",
+            "on-secondary-fixed-variant": "#004e5c",
+            "inverse-on-surface": "#2c303b",
+            "surface-container-low": "#171b26",
+            "secondary-fixed-dim": "#4cd7f6",
+            "surface-bright": "#353944",
+            "surface-container-high": "#262a35",
+            "surface-variant": "#313540",
+            "secondary-container": "#03b5d3",
+            "on-surface": "#dfe2f1",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#c3c0ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "display": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0a0e18;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #262a35;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #464555;
+    }
+    .pulse-danger {
+      box-shadow: 0 0 20px -2px rgba(244, 63, 94, 0.35);
+    }
+    .halo-cyan {
+      box-shadow: 0 0 25px -4px rgba(6, 182, 212, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased overflow-hidden select-none">
+<!-- ==================== BACKGROUND COMMAND BRIDGE (BASE CANVAS) ==================== -->
+<div aria-hidden="true" class="h-screen w-screen flex flex-col pointer-events-none opacity-40 blur-[3px] select-none">
+<!-- Top Bar Component -->
+<header class="flex justify-between items-center w-full px-6 py-2 border-b border-outline-variant/30 bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-6">
+<span class="text-xl font-headline font-extrabold text-on-surface tracking-tight">Guardian AI</span>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant/40 text-on-surface-variant text-xs font-mono">
+<span class="material-symbols-outlined text-sm text-outline">search</span>
+<span>node://aura-cluster-us-east.prod...</span>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<nav class="flex gap-6">
+<span class="border-b-2 border-primary-container text-on-surface font-label text-xs py-4">Command Bridge</span>
+<span class="text-on-surface-variant font-label text-xs py-4">Revenue Protection</span>
+<span class="text-on-surface-variant font-label text-xs py-4">Digital Health</span>
+<span class="text-on-surface-variant font-label text-xs py-4">Workflows</span>
+<span class="text-on-surface-variant font-label text-xs py-4">Audit Logs</span>
+</nav>
+<div class="flex items-center gap-3">
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container text-xs font-label">Deploy AI Fix</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface text-xs font-label">Live Telemetry</button>
+</div>
+</div>
+</header>
+<!-- Side Nav & Bridge Canvas Grid -->
+<div class="flex-1 flex overflow-hidden">
+<aside class="w-64 border-r border-outline-variant/30 bg-surface-container-lowest p-4 flex flex-col justify-between">
+<div class="space-y-4">
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center font-bold text-xs text-white">AC</div>
+<div>
+<p class="text-xs font-label font-bold text-on-surface uppercase tracking-wider">Aura Capital Portfolio</p>
+<p class="text-[10px] text-tertiary font-mono">Vigilant • All Nodes Active</p>
+</div>
+</div>
+<div class="space-y-1 pt-2">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface text-xs font-label">
+<span class="material-symbols-outlined text-base">dashboard</span> Operations Deck
+            </div>
+<div class="flex items-center gap-3 px-3 py-2 text-on-surface-variant text-xs font-label">
+<span class="material-symbols-outlined text-base">monitoring</span> Telemetry Grid
+            </div>
+<div class="flex items-center gap-3 px-3 py-2 text-on-surface-variant text-xs font-label">
+<span class="material-symbols-outlined text-base">shield</span> Revenue Guard
+            </div>
+</div>
+</div>
+</aside>
+<!-- Simulated Grid Area -->
+<main class="flex-1 p-8 grid grid-cols-12 gap-6 bg-surface-container-lowest/60">
+<div class="col-span-8 rounded-xl bg-surface-container-low border border-outline-variant/40 p-6 h-64"></div>
+<div class="col-span-4 rounded-xl bg-surface-container-low border border-outline-variant/40 p-6 h-64"></div>
+<div class="col-span-12 rounded-xl bg-surface-container-low border border-outline-variant/40 p-6 h-96"></div>
+</main>
+</div>
+</div>
+<!-- ==================== EXECUTIVE DEEP-DIVE MODAL SUITE OVERLAY ==================== -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-4 sm:p-6 lg:p-8">
+<!-- MASTER MODAL CONTAINER -->
+<section aria-labelledby="modal-title" aria-modal="true" class="w-full max-w-[1540px] h-[92vh] max-h-[960px] bg-surface-container-low border border-outline-variant/40 rounded-xl shadow-2xl flex flex-col overflow-hidden relative" role="dialog">
+<!-- Top Tactical Header & Tab Controller -->
+<div class="h-16 px-6 bg-surface-container border-b border-outline-variant/30 flex items-center justify-between shrink-0">
+<!-- Title and Live Incident Node -->
+<div class="flex items-center gap-4">
+<div class="w-9 h-9 rounded-lg bg-error-container/60 border border-error/40 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-base font-headline font-bold text-on-surface tracking-tight" id="modal-title">Guardian AI — Executive Operations &amp; Forensics Suite</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-error-container/40 border border-error/30 text-[10px] font-label font-bold text-error tracking-wider uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+                ACTIVE P1 INCIDENT
+              </span>
+</div>
+<p class="text-xs text-on-surface-variant font-mono">Cluster: <span class="text-secondary">aura-capital-prod-04</span> • Node ID: <span class="text-on-surface">us-east-edge-99</span></p>
+</div>
+</div>
+<!-- Master Tab Nav -->
+<div class="flex items-center bg-surface-container-lowest p-1 rounded-lg border border-outline-variant/30">
+<button class="flex items-center gap-2 px-4 py-1.5 rounded text-xs font-label font-bold transition-all bg-primary-container text-on-primary-container shadow-sm" id="tab-btn-p1" onclick="switchSuiteTab('p1')">
+<span class="material-symbols-outlined text-sm">troubleshoot</span>
+<span>P1 Forensics &amp; Failover Gate</span>
+<span class="px-1.5 py-0.2 rounded-full bg-error text-[10px] font-mono font-bold text-on-error">1</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-1.5 rounded text-xs font-label font-medium text-on-surface-variant hover:text-on-surface transition-all" id="tab-btn-pdf" onclick="switchSuiteTab('pdf')">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+<span>White-Label PDF Export Studio</span>
+<span class="text-[10px] font-mono text-secondary bg-surface-container-high px-1.5 py-0.2 rounded">PRD §18</span>
+</button>
+</div>
+<!-- Trailing System Actions & Hotline -->
+<div class="flex items-center gap-3">
+<div class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
+<span class="material-symbols-outlined text-tertiary text-sm">verified_user</span>
+<span>Zero-Trust Enclave Verified</span>
+</div>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-error-container/30 border border-error/40 text-error hover:bg-error-container/50 text-xs font-label font-bold transition-all">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">phone_in_talk</span>
+<span>Incident Bridge Hotline</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all" title="Dismiss Modal">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- TAB 1: P1 INCIDENT FORENSICS & ROLLBACK AUTHORIZATION GATE -->
+<!-- ======================================================== -->
+<div class="flex-1 flex overflow-hidden" id="panel-p1">
+<!-- Left 8-Cols: Forensic Trace, Diff & Telemetry Stream -->
+<div class="w-2/3 border-r border-outline-variant/30 flex flex-col bg-surface-container-lowest overflow-y-auto custom-scrollbar">
+<!-- Alert Banner & Immediate Impact Summary -->
+<div class="p-6 bg-gradient-to-r from-error-container/20 via-surface-container-lowest to-surface-container-lowest border-b border-outline-variant/30">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-xs font-mono text-error">
+<span class="material-symbols-outlined text-base">emergency_home</span>
+<span>HTTP 500 INTERNAL_SERVER_ERROR CASCADE</span>
+</div>
+<h2 class="text-xl font-headline font-extrabold text-on-surface">Target: <code class="text-error font-mono text-lg bg-surface-container-high/60 px-2 py-0.5 rounded">/villas/skyline-penthouse</code></h2>
+<p class="text-xs text-on-surface-variant max-w-2xl leading-relaxed">
+                  Booking conversion funnel failure triggered by catastrophic PostgreSQL connection leak during concurrent high-net-worth checkout sessions. Lead drop rate currently 100%.
+                </p>
+</div>
+<!-- Impact Metric Cards -->
+<div class="flex gap-3">
+<div class="px-4 py-2.5 rounded-lg bg-surface-container border border-error/30 text-right">
+<span class="text-[10px] font-label uppercase tracking-wider text-on-surface-variant block">Revenue at Risk</span>
+<span class="text-2xl font-headline font-extrabold text-error font-mono tracking-tight">$18,500</span>
+<span class="text-[10px] text-error/80 block mt-0.5">3 active high-intent carts</span>
+</div>
+<div class="px-4 py-2.5 rounded-lg bg-surface-container border border-outline-variant/30 text-right">
+<span class="text-[10px] font-label uppercase tracking-wider text-on-surface-variant block">Incident Duration</span>
+<span class="text-2xl font-headline font-bold text-on-surface font-mono tracking-tight" id="incident-timer">04m 18s</span>
+<span class="text-[10px] text-secondary block mt-0.5">148 requests dropped</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Forensic Diagnostic Modules -->
+<div class="p-6 space-y-6 flex-1">
+<!-- Bento Row 1: HTTP Payload Trace & Stack Frame -->
+<div class="grid grid-cols-12 gap-4">
+<!-- HTTP Trace Log -->
+<div class="col-span-7 bg-surface-container rounded-lg border border-outline-variant/30 p-4 flex flex-col">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary">terminal</span>
+<span class="text-xs font-label font-bold text-on-surface">HTTP Request Ingress &amp; Trace Vector</span>
+</div>
+<span class="text-[10px] font-mono text-outline">TRACE_ID: 8fa99c01-7ec9</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded font-mono text-[11px] text-on-surface-variant space-y-1.5 overflow-x-auto">
+<div class="text-on-surface"><span class="text-tertiary">POST</span> /api/v2/reservations/checkout-intent HTTP/2.0</div>
+<div class="text-outline">Host: auracapital.luxury • Origin: 198.51.100.44</div>
+<div class="text-outline">User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 17_4) Mobile/15E148</div>
+<div class="text-secondary">Payload: {"property_id":"skyline-penthouse","dates":["2025-04-10","2025-04-18"],"deposit":18500,"currency":"USD"}</div>
+<div class="text-error pt-1">◄ HTTP/2.0 500 Internal Server Error (412ms)</div>
+<div class="text-error/80 bg-error-container/20 p-2 rounded border border-error/20">
+                    FATAL: org.postgresql.util.PSQLException: Timeout: Pool empty. Unable to fetch connection in 30.00s (Pool size: 100/100 exhausted, 42 queued).
+                  </div>
+</div>
+</div>
+<!-- Root Cause Analysis AI Card -->
+<div class="col-span-5 bg-surface-container rounded-lg border border-secondary/30 halo-cyan p-4 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-xs font-label font-bold text-secondary mb-2">
+<span class="material-symbols-outlined text-base">psychology</span>
+<span>Guardian AI COO Root Cause Analysis</span>
+</div>
+<p class="text-xs text-on-surface leading-relaxed mb-3">
+                    Algorithmic scan detected unindexed cursor leak in recent commit <code class="text-secondary bg-surface-container-lowest px-1.5 py-0.5 rounded font-mono">c781fe9</code> deployed 18 mins ago by developer payload.
+                  </p>
+<div class="space-y-2 text-[11px] font-mono bg-surface-container-lowest/80 p-2.5 rounded border border-outline-variant/20">
+<div class="flex justify-between">
+<span class="text-outline">Anomaly Type:</span>
+<span class="text-error font-semibold">Pool Connection Starvation</span>
+</div>
+<div class="flex justify-between">
+<span class="text-outline">Confidence Score:</span>
+<span class="text-tertiary font-semibold">99.4% (Deterministic)</span>
+</div>
+<div class="flex justify-between">
+<span class="text-outline">Healthy Baseline:</span>
+<span class="text-on-surface">12 / 100 connections</span>
+</div>
+<div class="flex justify-between">
+<span class="text-outline">Current Active:</span>
+<span class="text-error font-semibold">100 / 100 (Deadlock)</span>
+</div>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/20 flex items-center justify-between text-[11px]">
+<span class="text-on-surface-variant">Recommended Action:</span>
+<span class="text-secondary font-bold">Autonomous Micro-Rollback</span>
+</div>
+</div>
+</div>
+<!-- Bento Row 2: Database Connection Pool Exhaustion Diff -->
+<div class="bg-surface-container rounded-lg border border-outline-variant/30 p-4">
+<div class="flex items-center justify-between mb-3 pb-2 border-b border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">difference</span>
+<span class="text-xs font-label font-bold text-on-surface">Differential Analysis: Production vs. Last Known Healthy Snapshot (v2.14.8)</span>
+</div>
+<span class="text-[10px] font-mono text-tertiary">Verified Safe Rollback Target: git:sha256@99e120f</span>
+</div>
+<!-- Diff Viewport -->
+<div class="grid grid-cols-2 gap-3 font-mono text-[11px]">
+<!-- Broken Snapshot -->
+<div class="bg-surface-container-lowest p-3 rounded border border-error/30">
+<div class="flex items-center justify-between text-[10px] text-error font-bold pb-1.5 border-b border-outline-variant/20 mb-2">
+<span>DEPLOYED BROKEN (HEAD: commit c781fe9)</span>
+<span>LEAK DETECTED</span>
+</div>
+<pre class="text-on-surface-variant overflow-x-auto leading-relaxed"><span class="text-outline">12  async function fetchPenthousePricing(id) {</span>
+<span class="text-error bg-error-container/30 block">-   const client = await dbPool.connect();</span>
+<span class="text-error bg-error-container/30 block">-   const res = await client.query(UNCACHED_QUERY);</span>
+<span class="text-error bg-error-container/30 block">-   // Missing client.release(); [ORPHANED_SOCKET]</span>
+<span class="text-outline">16    return res.rows[0];</span>
+<span class="text-outline">17  }</span></pre>
+</div>
+<!-- Rollback Solution -->
+<div class="bg-surface-container-lowest p-3 rounded border border-tertiary/30">
+<div class="flex items-center justify-between text-[10px] text-tertiary font-bold pb-1.5 border-b border-outline-variant/20 mb-2">
+<span>ROLLBACK CANDIDATE (TAG: v2.14.8-verified)</span>
+<span>IMMUTABLE SAFE</span>
+</div>
+<pre class="text-on-surface-variant overflow-x-auto leading-relaxed"><span class="text-outline">12  async function fetchPenthousePricing(id) {</span>
+<span class="text-tertiary bg-tertiary-container/30 block">+   using client = await dbPool.connectDisposable();</span>
+<span class="text-tertiary bg-tertiary-container/30 block">+   const res = await redis.cachedOrQuery(id, client);</span>
+<span class="text-tertiary bg-tertiary-container/30 block">+   // Strict auto-disposal upon promise settlement</span>
+<span class="text-outline">16    return res;</span>
+<span class="text-outline">17  }</span></pre>
+</div>
+</div>
+</div>
+<!-- Cryptographic Verification & Signature Row -->
+<div class="flex items-center justify-between px-4 py-3 rounded-lg bg-surface-container border border-outline-variant/30 text-xs">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-base">encrypted</span>
+<div>
+<span class="font-label font-bold text-on-surface block">Cryptographic Hash Signature Verification</span>
+<span class="text-[10px] font-mono text-outline">SHA256: 4b22c7104e1fa62a26563c683bdcdde3408f65e21950e3bb44fe01a24d06a928</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 text-[10px] font-mono text-tertiary bg-tertiary-container/20 border border-tertiary/30 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-xs">verified</span> ED25519 SIGNED
+                </span>
+<span class="text-[10px] font-mono text-on-surface-variant">Validated by Guardian Enclave v4.2</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right 4-Cols: Decision Engine, Voice Bridge & Authorization Gate -->
+<div class="w-1/3 flex flex-col bg-surface-container p-6 justify-between overflow-y-auto custom-scrollbar">
+<div class="space-y-6">
+<!-- Header for Action Deck -->
+<div>
+<div class="flex items-center gap-2 text-xs font-label uppercase tracking-widest text-secondary mb-1">
+<span class="material-symbols-outlined text-sm">lock_clock</span>
+<span>Authorization Gate • PRD §11 &amp; §17</span>
+</div>
+<h3 class="text-lg font-headline font-bold text-on-surface">Deterministic Action Required</h3>
+<p class="text-xs text-on-surface-variant mt-1 leading-normal">
+                Autonomous failover will swap ingress proxy traffic from node <code class="text-error font-mono">edge-99</code> to hot-standby container cluster <code class="text-tertiary font-mono">standby-02</code> without dropping client TCP handshakes.
+              </p>
+</div>
+<!-- Safety Impact Projection Matrix -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-4 space-y-3">
+<span class="text-[11px] font-label font-bold text-on-surface uppercase tracking-wider block">Estimated Recovery Trajectory</span>
+<div class="space-y-2 text-xs">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Estimated MTTR:</span>
+<span class="text-tertiary font-bold font-mono">1.4 seconds</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Revenue Protected:</span>
+<span class="text-on-surface font-bold font-mono">+$18,500 pending</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Conversion Funnel Status:</span>
+<span class="text-tertiary font-bold font-mono">100% Restored</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Database Pool Strain:</span>
+<span class="text-on-surface font-mono">100% ➔ 8% (Flushed)</span>
+</div>
+</div>
+<!-- Automated Safety Checks Bar -->
+<div class="pt-2 border-t border-outline-variant/20">
+<div class="flex justify-between text-[10px] text-outline font-mono mb-1">
+<span>Pre-flight Enclave Safety Check</span>
+<span class="text-tertiary">3 / 3 PASSED</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden flex">
+<div class="bg-tertiary w-full h-full"></div>
+</div>
+</div>
+</div>
+<!-- Emergency Audio Voice Bridge Trigger Panel -->
+<div class="bg-surface-container-lowest rounded-lg border border-secondary/20 p-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span class="text-xs font-label font-bold text-on-surface">Emergency Audio Voice Bridge</span>
+</div>
+<span class="text-[10px] font-mono text-secondary">WebRTC LOW-LATENCY</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mb-3">
+                Connect executive stakeholders, lead site reliability engineer, and Guardian AI synthetic voice agent for synchronized triage dispatch.
+              </p>
+<div class="flex items-center gap-2">
+<button class="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-xs font-label font-semibold text-on-surface transition-all">
+<span class="material-symbols-outlined text-sm text-secondary">mic</span>
+<span>Connect Audio Channel</span>
+</button>
+<div class="px-2 py-1.5 rounded-lg bg-surface-container-high text-[10px] font-mono text-outline">
+                  3 On Call
+                </div>
+</div>
+</div>
+<!-- Multi-Operator Safety Slider Toggle -->
+<div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div>
+<span class="text-xs font-label font-semibold text-on-surface block">Bypass Secondary Quorum</span>
+<span class="text-[10px] text-outline block">Emergency single-operator override</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<!-- Bottom Action Buttons: Authorize vs Simulate -->
+<div class="space-y-3 pt-6 border-t border-outline-variant/20">
+<!-- 1-Tap Primary Action -->
+<button class="w-full py-3.5 px-4 rounded-lg bg-primary-container hover:bg-inverse-primary text-white font-label font-bold text-sm tracking-wide shadow-lg hover:shadow-primary-container/40 transition-all flex items-center justify-center gap-2 group" id="btn-authorize-failover" onclick="triggerFailoverExecution()">
+<span class="material-symbols-outlined text-lg group-hover:rotate-180 transition-transform duration-500">bolt</span>
+<span>1-Tap Authorize Autonomous Failover</span>
+</button>
+<!-- Secondary Staging Simulation Action -->
+<button class="w-full py-2.5 px-4 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-label font-medium text-xs transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm text-outline">science</span>
+<span>Simulate Staging Dry-Run (Sandboxed Ephemeral DB)</span>
+</button>
+<p class="text-[10px] text-center text-outline font-mono">
+              Audit log hash will be permanently written to tamper-proof ledger.
+            </p>
+</div>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- TAB 2: WHITE-LABEL EXECUTIVE PDF EXPORT STUDIO (PRD §18) -->
+<!-- ======================================================== -->
+<div class="flex-1 flex overflow-hidden hidden" id="panel-pdf">
+<!-- Left Column: Customization Controls & Report Configuration -->
+<div class="w-2/5 border-r border-outline-variant/30 bg-surface-container p-6 flex flex-col justify-between overflow-y-auto custom-scrollbar">
+<div class="space-y-6">
+<!-- Section Title -->
+<div>
+<div class="flex items-center gap-2 text-xs font-label uppercase tracking-widest text-secondary mb-1">
+<span class="material-symbols-outlined text-sm">tune</span>
+<span>Agency White-Label Engine • PRD §18</span>
+</div>
+<h2 class="text-xl font-headline font-extrabold text-on-surface">Client PDF Report Studio</h2>
+<p class="text-xs text-on-surface-variant mt-1 leading-normal">
+                Generate board-level, pixel-perfect executive reports with custom agency branding, dynamic client telemetry, and audit summaries.
+              </p>
+</div>
+<!-- Client Identity Customizer -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-4 space-y-4">
+<span class="text-xs font-label font-bold text-on-surface uppercase tracking-wider block">1. Client &amp; Agency Identity</span>
+<!-- Client Name Input -->
+<div>
+<label class="text-[11px] font-label text-on-surface-variant block mb-1">Client Entity Name</label>
+<div class="relative">
+<input class="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-body text-on-surface focus:outline-none focus:border-primary-container" id="cfg-client-name" oninput="updatePdfPreview()" type="text" value="Aura Capital Portfolio"/>
+<span class="absolute right-3 top-2.5 material-symbols-outlined text-xs text-tertiary">check_circle</span>
+</div>
+</div>
+<!-- Brand Logo Selector -->
+<div>
+<label class="text-[11px] font-label text-on-surface-variant block mb-1.5">Client &amp; Agency Brand Emblem</label>
+<div class="flex items-center gap-4 bg-surface-container p-3 rounded-lg border border-outline-variant/30">
+<div class="w-12 h-12 rounded-lg bg-surface-container-lowest border border-outline-variant/40 overflow-hidden flex items-center justify-center shrink-0">
+<img alt="Guardian AI Brand Emblem" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIvk4eBe68babXCrlgwQpr0VCFRtTsWwtLXXKWSjyPMpsfBTYEPGylrC5ZlBEk4WGyE2dDMEUYrqIFXQI_MMm2lmYyopMWcWppEyP6eLJLs1r51nbMRpzl_HOLGV8u_z-uW9y73r0lG4Jq4ZBcVvrDi1swsNUIUEN7osE3aKPDmdCDRO6CHpPizZCy8KMYaZ8OYZ-JreV-dX0pyMNZNngKikEGGCh0GzzMA1eMG1LFv33AtHJdpjvZ78p6wrNeOQUYsQ"/>
+</div>
+<div class="flex-1">
+<span class="text-xs font-label font-semibold text-on-surface block">guardian_shield_logo.png</span>
+<span class="text-[10px] text-outline font-mono block">1024x1024 • Verified Brand Asset</span>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-container-high text-[11px] font-label text-secondary hover:text-on-surface transition-colors border border-outline-variant/30">
+                    Swap
+                  </button>
+</div>
+</div>
+<!-- Custom Color Picker Matrix -->
+<div>
+<label class="text-[11px] font-label text-on-surface-variant block mb-1.5">Report Theme Accent Token</label>
+<div class="flex items-center gap-2">
+<button class="w-7 h-7 rounded-full bg-[#4f46e5] ring-2 ring-white/80 flex items-center justify-center transition-all" onclick="setThemeAccent('#4f46e5', 'Electric Indigo')"></button>
+<button class="w-7 h-7 rounded-full bg-[#06b6d4] opacity-70 hover:opacity-100 transition-all" onclick="setThemeAccent('#06b6d4', 'Executive Cyan')"></button>
+<button class="w-7 h-7 rounded-full bg-[#10b981] opacity-70 hover:opacity-100 transition-all" onclick="setThemeAccent('#10b981', 'Emerald Growth')"></button>
+<button class="w-7 h-7 rounded-full bg-[#f43f5e] opacity-70 hover:opacity-100 transition-all" onclick="setThemeAccent('#f43f5e', 'Critical Rose')"></button>
+<div class="ml-2 pl-3 border-l border-outline-variant/30 flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="text-xs font-mono text-on-surface" id="theme-color-name">Electric Indigo (#4f46e5)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Dynamic Section Toggles -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-4 space-y-3">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-label font-bold text-on-surface uppercase tracking-wider block">2. Report Inclusion Modules</span>
+<span class="text-[10px] text-secondary font-mono">4 Selected</span>
+</div>
+<!-- Module Toggle 1: Health Score -->
+<label class="flex items-center justify-between p-2 rounded hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="rounded bg-surface-container-highest border-outline-variant text-primary-container focus:ring-0" id="toggle-health" onchange="togglePdfSection('sec-preview-health', this.checked)" type="checkbox"/>
+<span class="text-xs text-on-surface font-medium">Executive Digital Health Score</span>
+</div>
+<span class="text-[10px] font-mono text-tertiary bg-tertiary-container/20 px-2 py-0.5 rounded">86 / 100</span>
+</label>
+<!-- Module Toggle 2: Revenue Protected -->
+<label class="flex items-center justify-between p-2 rounded hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="rounded bg-surface-container-highest border-outline-variant text-primary-container focus:ring-0" id="toggle-revenue" onchange="togglePdfSection('sec-preview-revenue', this.checked)" type="checkbox"/>
+<span class="text-xs text-on-surface font-medium">Verified Revenue Protected (30-Day)</span>
+</div>
+<span class="text-[10px] font-mono text-on-surface font-semibold bg-surface-container-high px-2 py-0.5 rounded">$420,000</span>
+</label>
+<!-- Module Toggle 3: SEO Rankings & Conversion Heartbeat -->
+<label class="flex items-center justify-between p-2 rounded hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="rounded bg-surface-container-highest border-outline-variant text-primary-container focus:ring-0" id="toggle-seo" onchange="togglePdfSection('sec-preview-seo', this.checked)" type="checkbox"/>
+<span class="text-xs text-on-surface font-medium">SEO SERP Drift &amp; Conversion Funnel</span>
+</div>
+<span class="text-[10px] font-mono text-secondary bg-surface-container-high px-2 py-0.5 rounded">99.98% Uptime</span>
+</label>
+<!-- Module Toggle 4: Security Shield CVEs -->
+<label class="flex items-center justify-between p-2 rounded hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="rounded bg-surface-container-highest border-outline-variant text-primary-container focus:ring-0" id="toggle-cve" onchange="togglePdfSection('sec-preview-cve', this.checked)" type="checkbox"/>
+<span class="text-xs text-on-surface font-medium">Security Vulnerabilities &amp; CVE Audit</span>
+</div>
+<span class="text-[10px] font-mono text-tertiary bg-tertiary-container/20 px-2 py-0.5 rounded">0 Critical</span>
+</label>
+</div>
+<!-- PDF Security & Compliance Watermark -->
+<div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div>
+<span class="text-xs font-label font-semibold text-on-surface block">Embed Tamper-Proof Hash &amp; Seal</span>
+<span class="text-[10px] text-outline block">Enables verifiable client portal validation</span>
+</div>
+<input checked="" class="rounded bg-surface-container-highest border-outline-variant text-primary-container focus:ring-0" type="checkbox"/>
+</div>
+</div>
+<!-- Bottom Action Buttons: Generate & Download -->
+<div class="space-y-3 pt-6 border-t border-outline-variant/20">
+<button class="w-full py-3.5 px-4 rounded-lg bg-primary-container hover:bg-inverse-primary text-white font-label font-bold text-sm tracking-wide shadow-lg hover:shadow-primary-container/40 transition-all flex items-center justify-center gap-2" onclick="simulatePdfDownload()">
+<span class="material-symbols-outlined text-lg">download</span>
+<span>Generate &amp; Download Executive PDF (Vector Print)</span>
+</button>
+<div class="flex items-center justify-between text-[11px] text-outline font-mono">
+<span>Ready in 1.2s</span>
+<span>Estimated file size: 1.8 MB</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Real-time Live Interactive PDF Sheet Preview -->
+<div class="w-3/5 bg-surface-container-lowest p-8 flex flex-col items-center justify-center overflow-y-auto custom-scrollbar">
+<!-- Virtual Document Viewport (Letter/A4 Aspect) -->
+<div class="w-full max-w-[580px] min-h-[750px] bg-surface-container-low rounded-lg border border-outline-variant/40 shadow-2xl p-8 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
+<!-- Top Watermark & Ambient Branding -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-container/5 rounded-full blur-3xl pointer-events-none"></div>
+<div>
+<!-- PDF Header -->
+<div class="flex items-start justify-between pb-6 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant/40 bg-surface-container-lowest flex items-center justify-center shrink-0">
+<img alt="Guardian Logo Preview" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Gw3Tnm0gSwaLWHhx1HyPKB1XtCutJUsM0OjEF5HDMpgvJ62I1U9qvJC2B18UMiq7KnGAsPcSg8sgrZHc7ZHG3rq2VqYlqMgo07gaOG7uRVeBZybxBEK4EhSjd5Goj26xBC7UK7-7XrZG9Us1h7-vgWo5Mt1qMZ1-xUxV3GxyR0OoF2AKADxR8s-_6_NqgsQKR470GeVmYa_TEhW_BWaIv6W2ojfY7D1AUGEIREcSplobYJ2ykxlil1fuWZqrFX7vvA"/>
+</div>
+<div>
+<span class="text-[10px] font-mono text-secondary tracking-widest uppercase block">MONTHLY REVENUE PROTECTION AUDIT</span>
+<h3 class="text-base font-headline font-extrabold text-on-surface" id="pdf-view-client">Aura Capital Portfolio</h3>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-mono text-outline block">AUDIT ID: GRD-2025-04</span>
+<span class="text-[10px] font-mono text-tertiary">CONFIDENTIAL • C-SUITE</span>
+</div>
+</div>
+<!-- PDF Body Content -->
+<div class="py-6 space-y-5">
+<!-- Section: Executive Digital Health Score -->
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/30 transition-all" id="sec-preview-health">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-label font-bold text-on-surface uppercase tracking-wider">Executive Digital Health Score</span>
+<span class="text-xs font-mono text-tertiary font-bold">OPTIMAL</span>
+</div>
+<div class="flex items-end gap-4">
+<div class="text-4xl font-headline font-extrabold text-tertiary tracking-tight font-mono">
+                      86<span class="text-sm font-normal text-on-surface-variant font-body">/100</span>
+</div>
+<div class="flex-1 pb-1">
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden flex">
+<div class="bg-tertiary w-[86%] h-full"></div>
+</div>
+<div class="flex justify-between text-[9px] text-outline font-mono mt-1">
+<span>Lead Velocity: 94%</span>
+<span>Uptime Integrity: 99.98%</span>
+<span>Conversion Health: 89%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Revenue Protected -->
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/30 transition-all" id="sec-preview-revenue">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[11px] font-label font-bold text-on-surface uppercase tracking-wider">Autonomous Revenue Safeguard</span>
+<span class="text-[10px] font-mono text-secondary">30-DAY REPORT</span>
+</div>
+<div class="flex items-baseline justify-between">
+<div>
+<span class="text-2xl font-headline font-extrabold text-on-surface font-mono tracking-tight">$420,000.00</span>
+<span class="text-[10px] text-tertiary block font-mono">▲ 14.2% higher than previous period</span>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-mono text-outline block">Cart Abandons Recovered: 14</span>
+<span class="text-[10px] font-mono text-outline block">Lead Forms Protected: 192</span>
+</div>
+</div>
+</div>
+<!-- Section: SEO & Funnel Heartbeat -->
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/30 transition-all" id="sec-preview-seo">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-label font-bold text-on-surface uppercase tracking-wider">SEO Visibility &amp; Conversion Pathways</span>
+<span class="text-[10px] font-mono text-tertiary">ZERO LEAKS</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+<div class="bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-outline block">Top 3 Keywords</span>
+<span class="font-bold text-on-surface">48 (+6)</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-outline block">Checkout Speed</span>
+<span class="font-bold text-tertiary">0.82s</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-outline block">Availability</span>
+<span class="font-bold text-on-surface">99.98%</span>
+</div>
+</div>
+</div>
+<!-- Section: Security CVEs -->
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/30 transition-all" id="sec-preview-cve">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-[11px] font-label font-bold text-on-surface uppercase tracking-wider">Vulnerability &amp; CVE Surface Audit</span>
+<span class="text-[10px] font-mono text-tertiary bg-tertiary-container/30 px-2 py-0.5 rounded">HARDENED</span>
+</div>
+<p class="text-[10px] text-on-surface-variant font-mono">
+                    0 Critical vulnerabilities detected. SSL/TLS cipher suites verified valid for 288 days. 12 automated bot scraper injection attacks mitigated.
+                  </p>
+</div>
+</div>
+</div>
+<!-- PDF Footer -->
+<div class="pt-4 border-t border-outline-variant/20 flex items-center justify-between text-[9px] font-mono text-outline">
+<span>Prepared autonomously by Guardian AI Operations System</span>
+<span>SHA256: 8a93bf409... • Page 1 of 1</span>
+</div>
+</div>
+<!-- Bottom Visual Indicator -->
+<div class="mt-4 flex items-center gap-3 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-secondary">visibility</span>
+<span>Real-time print layout mirror (100% Vector resolution output)</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Notification Toast Container for Interactive Polish -->
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none" id="toast-container"></div>
+<!-- Inline Vanilla Interactions Script -->
+<script>
+    // Tab Controller
+    function switchSuiteTab(tab) {
+      const p1Panel = document.getElementById('panel-p1');
+      const pdfPanel = document.getElementById('panel-pdf');
+      const p1Btn = document.getElementById('tab-btn-p1');
+      const pdfBtn = document.getElementById('tab-btn-pdf');
+
+      if (tab === 'p1') {
+        p1Panel.classList.remove('hidden');
+        pdfPanel.classList.add('hidden');
+        
+        p1Btn.className = 'flex items-center gap-2 px-4 py-1.5 rounded text-xs font-label font-bold transition-all bg-primary-container text-on-primary-container shadow-sm';
+        pdfBtn.className = 'flex items-center gap-2 px-4 py-1.5 rounded text-xs font-label font-medium text-on-surface-variant hover:text-on-surface transition-all';
+      } else {
+        pdfPanel.classList.remove('hidden');
+        p1Panel.classList.add('hidden');
+
+        pdfBtn.className = 'flex items-center gap-2 px-4 py-1.5 rounded text-xs font-label font-bold transition-all bg-primary-container text-on-primary-container shadow-sm';
+        p1Btn.className = 'flex items-center gap-2 px-4 py-1.5 rounded text-xs font-label font-medium text-on-surface-variant hover:text-on-surface transition-all';
+      }
+    }
+
+    // White-Label Live Name Update
+    function updatePdfPreview() {
+      const nameInput = document.getElementById('cfg-client-name').value;
+      const previewTitle = document.getElementById('pdf-view-client');
+      previewTitle.textContent = nameInput || 'Client Entity Name';
+    }
+
+    // Dynamic Section Visibility in PDF Preview
+    function togglePdfSection(sectionId, isVisible) {
+      const el = document.getElementById(sectionId);
+      if (isVisible) {
+        el.style.display = 'block';
+        el.style.opacity = '1';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+
+    // Theme Accent Selector
+    function setThemeAccent(hexColor, name) {
+      const label = document.getElementById('theme-color-name');
+      label.textContent = `${name} (${hexColor})`;
+      showToast(`Applied Theme Accent: ${name}`);
+    }
+
+    // 1-Tap Failover Execution Handler
+    function triggerFailoverExecution() {
+      const btn = document.getElementById('btn-authorize-failover');
+      btn.innerHTML = `
+        <span class="material-symbols-outlined text-lg animate-spin">refresh</span>
+        <span>Routing Ingress to Standby Cluster...</span>
+      `;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.className = 'w-full py-3.5 px-4 rounded-lg bg-tertiary-container border border-tertiary/40 text-on-tertiary-container font-label font-bold text-sm tracking-wide shadow-lg flex items-center justify-center gap-2';
+        btn.innerHTML = `
+          <span class="material-symbols-outlined text-lg">check_circle</span>
+          <span>Failover Executed: Funnel Restored</span>
+        `;
+        showToast('Autonomous Failover Complete: 0 dropped TCP sockets');
+      }, 1400);
+    }
+
+    // PDF Download Simulation
+    function simulatePdfDownload() {
+      showToast('Rendering Vector PDF for Aura Capital Portfolio...');
+      setTimeout(() => {
+        showToast('Executive PDF generated and downloaded successfully.');
+      }, 1200);
+    }
+
+    // Toast Utility
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-high border border-outline-variant text-on-surface text-xs font-mono shadow-xl transition-all duration-300 transform translate-y-2 opacity-0';
+      toast.innerHTML = `
+        <span class="material-symbols-outlined text-sm text-secondary">info</span>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Live Incident Timer Increment
+    let seconds = 258;
+    setInterval(() => {
+      seconds++;
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = (seconds % 60).toString().padStart(2, '0');
+      const timer = document.getElementById('incident-timer');
+      if (timer) timer.textContent = `${m}m ${s}s`;
+    }, 1000);
+  </script>
+</body></html>

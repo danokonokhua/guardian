@@ -1,0 +1,480 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Guardian AI - Mobile Executive Operations Command Center</title>
+<!-- Typography: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim as mandated -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#1c1f2a",
+            "tertiary-fixed": "#6ffbbe",
+            "on-tertiary-container": "#67f4b7",
+            "primary": "#c3c0ff",
+            "on-secondary-fixed-variant": "#004e5c",
+            "outline-variant": "#464555",
+            "inverse-on-surface": "#2c303b",
+            "primary-fixed-dim": "#c3c0ff",
+            "surface-dim": "#0f131d",
+            "surface-tint": "#c3c0ff",
+            "surface-bright": "#353944",
+            "secondary-fixed": "#acedff",
+            "surface-container-low": "#171b26",
+            "tertiary-container": "#006e4b",
+            "surface-container-highest": "#313540",
+            "on-tertiary-fixed": "#002113",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#4cd7f6",
+            "on-error": "#690005",
+            "on-secondary": "#003640",
+            "on-secondary-fixed": "#001f26",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-secondary-container": "#00424e",
+            "secondary-container": "#03b5d3",
+            "surface-container-lowest": "#0a0e18",
+            "on-primary-fixed-variant": "#3323cc",
+            "background": "#0f131d",
+            "inverse-primary": "#4d44e3",
+            "primary-fixed": "#e2dfff",
+            "on-primary": "#1d00a5",
+            "inverse-surface": "#dfe2f1",
+            "on-primary-fixed": "#0f0069",
+            "surface": "#0f131d",
+            "on-surface": "#dfe2f1",
+            "error": "#ffb4ab",
+            "outline": "#918fa1",
+            "secondary": "#4cd7f6",
+            "tertiary": "#4edea3",
+            "on-primary-container": "#dad7ff",
+            "surface-variant": "#313540",
+            "on-error-container": "#ffdad6",
+            "on-surface-variant": "#c7c4d8",
+            "primary-container": "#4f46e5",
+            "error-container": "#93000a",
+            "on-background": "#dfe2f1",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-high": "#262a35"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {},
+          "fontFamily": {
+            "headline": [
+              "Plus Jakarta Sans"
+            ],
+            "display": [
+              "Plus Jakarta Sans"
+            ],
+            "body": [
+              "Inter"
+            ],
+            "label": [
+              "Inter"
+            ],
+            "mono": [
+              "JetBrains Mono"
+            ]
+          },
+          "fontSize": {}
+        },
+      },
+    }
+  </script>
+<style>
+    /* Smooth native scroll and touch behavior */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+    /* Subtle pulse animation for incident halo */
+    @keyframes alertPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.4), 0 0 20px -2px rgba(244, 63, 94, 0.25);
+      }
+      50% {
+        box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.7), 0 0 28px 2px rgba(244, 63, 94, 0.45);
+      }
+    }
+    .incident-halo {
+      animation: alertPulse 2.4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen pb-24 selection:bg-primary-container selection:text-on-primary-container flex justify-center">
+<!-- Mobile Viewport Container (portrait 390px-scaled container) -->
+<div class="w-full max-w-[420px] min-h-screen bg-background relative flex flex-col shadow-2xl">
+<!-- SHARED COMPONENT: TopAppBar (Strict JSON Blueprint & Style Injection) -->
+<!-- Matches keys: style_bg_color, style_separation_logic, style_shadows_and_elevation, style_shell_layout -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-3 h-14 bg-surface-container-low dark:bg-surface-container-low border-b border-outline-variant/30 shadow-sm backdrop-blur-md max-w-[420px] left-1/2 -translate-x-1/2">
+<!-- Tenant Selector & Brand Anchor -->
+<div class="flex items-center gap-2">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi0JjyyKgPio-iF70owfYn4igNvLuZV0Aiie7fFOvMANY1AWzHlIBvxdRJ_-AboUMCCoNwhNcmyeyi4jqEmvq_UwMXGAuUe-bPAnxqXk45MBtY6ZO26LKZB7UlO-uyK7OUtvUej_7EJDkD-MFuVUwS1i7L8g1zz93DPEmFEFB2YyotWlCuhdz3awi_Ed11VHY7KgrlFJ-mBQ43GFdp_ok22dmj7gfmIZ6iXpsY5lVSIQVFVdn16-0nwNGwkOqsU1TYIA" alt="Guardian Logo" class="w-7 h-7 rounded-lg object-cover ring-1 ring-primary/30 mr-2 inline-block shadow-sm">
+<div class="flex flex-col">
+<div class="font-headline text-base font-bold text-on-surface dark:text-on-surface flex items-center gap-1.5 leading-tight">
+<span class="">Aura Luxury Living</span>
+<span class="material-symbols-outlined text-xs text-outline" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Node Ping Status Indicator -->
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary -ml-3"></span>
+<span class="font-label text-[10px] text-tertiary-fixed tracking-wider uppercase font-semibold">12 Nodes Live</span>
+</div>
+</div>
+</div>
+<!-- Trailing Action: Critical Incident Bell -->
+<div class="flex items-center gap-2">
+<button class="relative p-2 rounded-lg text-primary hover:bg-surface-container-high transition-colors active:scale-95 duration-100 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="crisis_alert" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+<!-- Live Critical Notification Pill -->
+<span class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-error-container border border-surface-container-low"></span>
+</span>
+</button>
+</div>
+</header>
+<!-- MAIN SCROLLABLE CONTENT CANVAS (Offset for docked headers & navigation) -->
+<main class="flex-1 px-4 pt-16 pb-6 space-y-4">
+<!-- AI COO Morning Micro-Briefing Snippet (§10) -->
+<section class="bg-surface-container-low/80 backdrop-blur-md rounded-xl p-3 border border-outline-variant/30 flex items-start gap-3 relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 bg-secondary-container/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="relative shrink-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high border border-secondary/40 flex items-center justify-center text-secondary shadow-inner">
+<span class="material-symbols-outlined text-xl" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<span class="absolute -bottom-1 -right-1 px-1 rounded bg-secondary-container text-[8px] font-mono font-bold text-on-secondary-container">#084</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label text-[10px] uppercase font-bold text-secondary tracking-wider">AI Executive Brief</span>
+<span class="font-label text-[10px] text-outline">08:14 AM</span>
+</div>
+<p class="font-body text-xs text-on-surface-variant mt-1 leading-snug">
+            Good morning. Overnight, SEO indexing surged <span class="text-tertiary font-semibold">+12 keywords</span>, but <span class="text-error font-medium">VIP Tour form</span> needs immediate failover intervention.
+          </p>
+</div>
+</section>
+<!-- URGENT INCIDENT CARD (Critical Revenue Alert) -->
+<section class="rounded-xl bg-surface-container-lowest border border-error/50 p-4 incident-halo relative overflow-hidden">
+<!-- Top alert band -->
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/20">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="font-label text-[10px] font-bold tracking-wider text-error uppercase">CRITICAL REVENUE ALERT</span>
+</div>
+<span class="font-mono text-[10px] text-outline font-medium">#REV-2024-884</span>
+</div>
+<!-- Failure Title -->
+<div class="mt-3">
+<h2 class="font-headline text-sm font-bold text-on-surface leading-tight">
+            Conversion Path Failure Detected on <span class="font-mono text-secondary text-xs">/villas/skyline-penthouse</span>
+</h2>
+<p class="font-body text-xs text-on-surface-variant mt-1">
+            Enquiry &amp; Booking Form API returning <span class="text-error font-mono font-bold">HTTP 500</span>. VIP leads dropping off.
+          </p>
+</div>
+<!-- Impact Metrics Cluster -->
+<div class="grid grid-cols-2 gap-2 mt-3 p-2.5 rounded-lg bg-surface-container-low/90 border border-outline-variant/20">
+<div>
+<span class="font-label text-[10px] text-outline uppercase font-semibold">Est. Pipeline At Risk</span>
+<div class="font-headline text-base font-extrabold text-error mt-0.5 tracking-tight">~$18,500</div>
+</div>
+<div class="border-l border-outline-variant/20 pl-2.5">
+<span class="font-label text-[10px] text-outline uppercase font-semibold">Ad Spend Leakage</span>
+<div class="font-headline text-xs font-bold text-on-surface mt-0.5">
+<span class="text-error font-mono">$340.00</span> / hr
+            </div>
+<span class="font-label text-[9px] text-outline">Meta &amp; Google Luxury PPC</span>
+</div>
+</div>
+<!-- Live Stack Trace Telemetry Box -->
+<div class="mt-3 bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/30 font-mono text-[10px] text-on-surface-variant/90 overflow-x-auto leading-relaxed">
+<div class="text-error flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-xs" data-icon="bug_report">bug_report</span>
+            POST /api/v2/leads/vip-reserve failed (500 Internal Error)
+          </div>
+<div class="text-outline-variant text-[9px] mt-0.5 truncate">
+            at NodeMailerGateway.dispatch (connection timeout 15000ms: smtp.luxuryliving.internal)
+          </div>
+</div>
+<!-- One-Tap Urgent Action Buttons -->
+<div class="mt-3.5 space-y-2">
+<button class="w-full py-2.5 px-3 bg-primary-container hover:bg-primary-container/90 text-on-primary font-headline text-xs font-bold rounded-lg shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+<span class="">1-Tap Emergency Fix: Reroute to Serverless Fallback</span>
+</button>
+<button class="w-full py-2 px-3 bg-surface-container-high/60 hover:bg-surface-container-high text-on-surface font-label text-xs font-semibold rounded-lg border border-outline-variant/30 flex items-center justify-center gap-1.5 active:scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="play_circle">play_circle</span>
+<span class="">Simulate Synthetic Lead Test</span>
+</button>
+</div>
+</section>
+<!-- EXECUTIVE HEALTH & REVENUE TRIAGE HERO CARD (§5, §8) -->
+<section class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 shadow-md relative">
+<!-- Section Header -->
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="monitoring">monitoring</span>
+<h3 class="font-headline text-xs font-bold text-on-surface uppercase tracking-wider">Executive Triage Deck</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-[10px] font-label font-semibold text-secondary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            Real-Time
+          </span>
+</div>
+<!-- Score Gauge & Revenue Summary Bento -->
+<div class="grid grid-cols-12 gap-3 mt-3.5 items-center">
+<!-- Circular Health Score -->
+<div class="col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/20 relative">
+<div class="relative w-20 h-20 flex items-center justify-center">
+<svg class="w-20 h-20 -rotate-90 transform" viewBox="0 0 36 36">
+<!-- Background track -->
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<!-- Active stroke (86%) -->
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="86, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-headline text-xl font-extrabold text-on-surface tracking-tighter leading-none">86</span>
+<span class="font-label text-[9px] text-outline uppercase font-semibold mt-0.5">/ 100</span>
+</div>
+</div>
+<div class="text-center mt-1">
+<div class="font-headline text-xs font-bold text-on-surface">Grade A-</div>
+<div class="font-label text-[9px] text-tertiary flex items-center justify-center gap-0.5 font-semibold">
+<span class="material-symbols-outlined text-[10px]" data-icon="trending_up">trending_up</span>
+                +4 pts this wk
+              </div>
+</div>
+</div>
+<!-- Revenue Pipeline & Edge Telemetry -->
+<div class="col-span-7 space-y-2">
+<!-- Protected Pipeline Card -->
+<div class="bg-surface-container-lowest/80 p-2.5 rounded-xl border border-outline-variant/20">
+<div class="flex items-center justify-between">
+<span class="font-label text-[10px] text-outline uppercase font-semibold">Protected Pipeline</span>
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="font-headline text-base font-extrabold text-on-surface tracking-tight mt-0.5">
+                $420,000
+              </div>
+<div class="flex items-center justify-between text-[10px] text-tertiary-fixed font-label mt-1">
+<span class="">30-Day Safe Flow</span>
+<span class="font-mono text-tertiary font-bold">100% Guarded</span>
+</div>
+<!-- Micro sparkline mockup -->
+<div class="flex items-end gap-1 h-3 mt-1.5">
+<div class="w-1.5 h-1.5 bg-primary-container/40 rounded-t-sm"></div>
+<div class="w-1.5 h-2 bg-primary-container/60 rounded-t-sm"></div>
+<div class="w-1.5 h-2.5 bg-primary-container/80 rounded-t-sm"></div>
+<div class="w-1.5 h-2 bg-primary-container/60 rounded-t-sm"></div>
+<div class="w-1.5 h-3 bg-primary-container rounded-t-sm"></div>
+<div class="w-1.5 h-2.5 bg-primary-container/90 rounded-t-sm"></div>
+<div class="w-1.5 h-3 bg-tertiary rounded-t-sm"></div>
+</div>
+</div>
+<!-- Global Latency & Uptime -->
+<div class="bg-surface-container-lowest/80 p-2 rounded-xl border border-outline-variant/20 flex items-center justify-between px-2.5">
+<div>
+<span class="font-label text-[9px] text-outline uppercase">Global Latency</span>
+<div class="font-mono text-xs font-bold text-secondary">184ms ping</div>
+</div>
+<div class="text-right">
+<span class="font-label text-[9px] text-outline uppercase">Edge Uptime</span>
+<div class="font-mono text-xs font-bold text-tertiary">99.98%</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Progress Bars Sub-matrix -->
+<div class="mt-4 pt-3 border-t border-outline-variant/20 space-y-2.5">
+<div class="font-label text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">
+            Subsystem Vectors
+          </div>
+<!-- Website 96% -->
+<div>
+<div class="flex justify-between text-xs font-label mb-1">
+<span class="text-on-surface-variant text-[11px]">Website Infrastructure</span>
+<span class="text-on-surface font-semibold text-[11px]">96%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary h-1.5 rounded-full" style="width: 96%"></div>
+</div>
+</div>
+<!-- Lead Gen 68% (Attention) -->
+<div>
+<div class="flex justify-between text-xs font-label mb-1">
+<span class="text-error font-medium text-[11px] flex items-center gap-1">
+                Lead Flow Funnels
+                <span class="px-1 py-0.2 rounded bg-error-container text-[8px] font-bold text-on-error-container uppercase">Attention</span>
+</span>
+<span class="text-error font-bold text-[11px]">68%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-error h-1.5 rounded-full" style="width: 68%"></div>
+</div>
+</div>
+<!-- Performance 91% -->
+<div>
+<div class="flex justify-between text-xs font-label mb-1">
+<span class="text-on-surface-variant text-[11px]">Core Web Vitals &amp; CDN</span>
+<span class="text-on-surface font-semibold text-[11px]">91%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 91%"></div>
+</div>
+</div>
+<!-- SEO 88% -->
+<div>
+<div class="flex justify-between text-xs font-label mb-1">
+<span class="text-on-surface-variant text-[11px]">Organic SEO &amp; SERP Indexing</span>
+<span class="text-on-surface font-semibold text-[11px]">88%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-1.5 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<!-- Security 99% -->
+<div>
+<div class="flex justify-between text-xs font-label mb-1">
+<span class="text-on-surface-variant text-[11px]">Firewall, WAF &amp; Compliance</span>
+<span class="text-on-surface font-semibold text-[11px]">99%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary h-1.5 rounded-full" style="width: 99%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- QUICK TELEMETRY & ENDPOINTS GRID (Touch 2-col cards) -->
+<section class="space-y-2">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline text-xs font-bold text-on-surface uppercase tracking-wider">Live Monitored Endpoints</h3>
+<span class="font-label text-[10px] text-outline">4 Critical Hooks</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Card 1: VIP Tour Request (Failing) -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-error/40 relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-7 h-7 rounded-lg bg-error-container/30 border border-error/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-error-container text-on-error-container uppercase">500 ERR</span>
+</div>
+<div class="mt-2.5">
+<div class="font-headline text-xs font-bold text-on-surface leading-tight">VIP Tour Request</div>
+<div class="font-body text-[11px] text-error font-medium mt-0.5">0% Submit Rate</div>
+</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[9px] text-outline font-mono">
+<span class="">POST /leads</span>
+<span class="text-error">TIMEOUT</span>
+</div>
+</div>
+<!-- Card 2: WhatsApp Concierge (Healthy) -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant/30 relative flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-7 h-7 rounded-lg bg-tertiary-container/30 border border-tertiary/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-tertiary-container/50 text-tertiary-fixed uppercase">100% OK</span>
+</div>
+<div class="mt-2.5">
+<div class="font-headline text-xs font-bold text-on-surface leading-tight">WhatsApp Concierge</div>
+<div class="font-body text-[11px] text-tertiary font-medium mt-0.5">302 Active Chats</div>
+</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[9px] text-outline font-mono">
+<span class="">Webhook API</span>
+<span class="text-tertiary">42ms</span>
+</div>
+</div>
+<!-- Card 3: Stripe Reserve Deposit (Healthy) -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant/30 relative flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-7 h-7 rounded-lg bg-secondary-container/20 border border-secondary/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="payments">payments</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-secondary-container/40 text-secondary-fixed uppercase">100% OK</span>
+</div>
+<div class="mt-2.5">
+<div class="font-headline text-xs font-bold text-on-surface leading-tight">Stripe Deposit</div>
+<div class="font-body text-[11px] text-on-surface-variant mt-0.5">Gateway Verified</div>
+</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[9px] text-outline font-mono">
+<span class="">Checkout API</span>
+<span class="text-on-surface">210ms</span>
+</div>
+</div>
+<!-- Card 4: SSL Certificate (Valid) -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant/30 relative flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-7 h-7 rounded-lg bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-surface-container-highest text-on-surface-variant uppercase">VALID</span>
+</div>
+<div class="mt-2.5">
+<div class="font-headline text-xs font-bold text-on-surface leading-tight">SSL Certificate</div>
+<div class="font-body text-[11px] text-tertiary font-medium mt-0.5">84 Days Remaining</div>
+</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[9px] text-outline font-mono">
+<span class="">Auto-Renew</span>
+<span class="text-tertiary">Armed</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- SHARED COMPONENT: BottomNavBar (Exact JSON Specification & Style Injection) -->
+<!-- Matches keys: style_bg_color, style_separation_logic, style_shadows_and_elevation, style_shell_layout, style_active_navigation, style_inactive_navigation -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex items-center justify-around px-2 py-2 safe-bottom bg-surface-container-lowest/95 dark:bg-surface-container-lowest/95 border-t border-outline-variant/30 shadow-lg backdrop-blur-xl max-w-[420px] left-1/2 -translate-x-1/2">
+<!-- Destination 1: Operations (CURRENT ACTIVE SCREEN per Intent) -->
+<!-- Injected style_active_navigation: flex flex-col items-center justify-center text-primary-fixed dark:text-primary-fixed bg-primary-container/20 dark:bg-primary-container/20 rounded-xl px-3 py-1.5 font-bold transition-all -->
+<button class="flex flex-col items-center justify-center text-primary-fixed dark:text-primary-fixed bg-primary-container/20 dark:bg-primary-container/20 rounded-xl px-3 py-1.5 font-bold transition-all active:scale-95 duration-100">
+<span class="material-symbols-outlined text-xl" data-icon="monitoring" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">Operations</span>
+</button>
+<!-- Destination 2: Revenue (Inactive) -->
+<!-- Injected style_inactive_navigation: flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-xl" data-icon="verified_user">verified_user</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">Revenue</span>
+</button>
+<!-- Destination 3: AI Briefs (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-xl" data-icon="smart_toy">smart_toy</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">AI Briefs</span>
+</button>
+<!-- Destination 4: Settings (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-xl" data-icon="tune">tune</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">Settings</span>
+</button>
+</nav>
+</div>
+
+
+</body></html>

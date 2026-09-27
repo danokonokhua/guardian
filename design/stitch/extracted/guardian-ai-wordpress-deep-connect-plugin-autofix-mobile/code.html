@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Guardian AI — WordPress Deep Connect &amp; Plugin AutoFix</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration with Design System Tokens -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-fixed": "#e2dfff",
+            "on-surface": "#dfe2f1",
+            "on-primary-container": "#dad7ff",
+            "surface-container-lowest": "#0a0e18",
+            "surface-variant": "#313540",
+            "primary-container": "#4f46e5",
+            "on-secondary-fixed-variant": "#004e5c",
+            "surface-container-high": "#262a35",
+            "surface-bright": "#353944",
+            "error": "#ffb4ab",
+            "on-background": "#dfe2f1",
+            "surface": "#0f131d",
+            "secondary-fixed-dim": "#4cd7f6",
+            "tertiary-fixed-dim": "#4edea3",
+            "outline-variant": "#464555",
+            "background": "#0f131d",
+            "secondary-container": "#03b5d3",
+            "on-error": "#690005",
+            "on-secondary-fixed": "#001f26",
+            "primary-fixed-dim": "#c3c0ff",
+            "on-tertiary": "#003824",
+            "surface-container-low": "#171b26",
+            "outline": "#918fa1",
+            "surface-container": "#1c1f2a",
+            "on-secondary-container": "#00424e",
+            "on-primary": "#1d00a5",
+            "tertiary": "#4edea3",
+            "inverse-on-surface": "#2c303b",
+            "surface-tint": "#c3c0ff",
+            "secondary-fixed": "#acedff",
+            "error-container": "#93000a",
+            "surface-container-highest": "#313540",
+            "on-tertiary-fixed": "#002113",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#003640",
+            "inverse-primary": "#4d44e3",
+            "inverse-surface": "#dfe2f1",
+            "on-error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#3323cc",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary-fixed": "#0f0069",
+            "surface-dim": "#0f131d",
+            "tertiary-container": "#006e4b",
+            "primary": "#c3c0ff",
+            "on-surface-variant": "#c7c4d8",
+            "secondary": "#4cd7f6",
+            "on-tertiary-container": "#67f4b7"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            label: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom subtle glow & micro-animations */
+    .glow-cyan {
+      box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.25);
+    }
+    .glow-rose {
+      box-shadow: 0 0 24px -2px rgba(244, 63, 94, 0.3);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 16px -2px rgba(16, 185, 129, 0.2);
+    }
+    .tab-num {
+      font-variant-numeric: tabular-nums;
+    }
+    .safe-bottom {
+      padding-bottom: max(env(safe-area-inset-bottom), 12px);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased selection:bg-primary-container selection:text-white min-h-screen pb-32">
+<!-- TOP APP BAR (Shared Components Tokenized Implementation) -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-3 h-14 bg-surface-container-low shadow-sm backdrop-blur-md border-b border-outline-variant/30">
+<div class="flex items-center gap-2.5">
+<!-- Shield Logo Mark -->
+<div class="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-surface-container-lowest border border-outline-variant/40 shadow-sm">
+<img alt="Guardian AI" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrWDKwAD3IUXqUrrZOueI3KViGWROaHERU84M7mC-c2_vC80nqACtS3BVUCwe5yW-okAKl3CoJQHt2YlB9UvOt01LsoCopjziN9SJhSxTuYwqtSZLNph9uCzstdjZZG4r6UPHzQ_hYBHEDxQlpxz4O1Ut5kKlfx7H9Mgy9GiIbmzmCDn0QVMkwJVnkfVQnP-wj9D5_KWs2PzSLSlHDqosGPGyvlPt3_x2k5B_drE0cH3480ncVBBUUnDkdu_PbLjqDqw"/>
+</div>
+<div>
+<div class="font-headline text-base font-bold text-on-surface flex items-center gap-1.5 leading-none">
+<span>Guardian AI</span>
+<span class="text-outline text-xs">•</span>
+<span class="text-secondary text-xs font-semibold tracking-wide">WP Connect</span>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="font-label text-xs uppercase tracking-wider text-on-surface-variant font-medium">Aura Luxury Living</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary inline-block animate-pulse"></span>
+<span class="text-[10px] text-tertiary-fixed-dim font-mono tab-num">24ms</span>
+</div>
+</div>
+</div>
+<!-- Right Controls: Telemetry Mode & Live Crisis Sentinel -->
+<div class="flex items-center gap-1.5">
+<button class="p-1.5 rounded-lg text-secondary bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95" title="WP Live Daemon" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="swap_horizontal_circle">swap_horizontal_circle</span>
+</button>
+<button class="p-1.5 rounded-lg text-primary bg-primary-container/20 border border-primary/30 hover:bg-primary-container/30 transition-colors active:scale-95" title="Security Sentinel" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="crisis_alert" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+</button>
+</div>
+</header>
+<!-- MAIN SCROLLABLE CONTENT CANVAS -->
+<main class="pt-16 px-3.5 space-y-3.5 max-w-md mx-auto">
+<!-- 1. HEALTH TELEMETRY RIBBON & SYSTEM SPECS -->
+<section class="bg-surface-container-low rounded-xl p-3 border border-outline-variant/25 space-y-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="developer_board">developer_board</span>
+<span class="font-headline text-xs font-bold uppercase tracking-wider text-on-surface">Runtime Telemetry</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary border border-tertiary/30 font-label text-[10px] font-bold tracking-wide flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ACTIVE DAEMON
+        </span>
+</div>
+<!-- Compact Metrix Grid -->
+<div class="grid grid-cols-3 gap-2 pt-0.5">
+<div class="bg-surface-container-lowest/80 rounded-lg p-2 border border-outline-variant/15 flex flex-col">
+<span class="text-[10px] font-label uppercase text-on-surface-variant tracking-wider">WordPress</span>
+<span class="text-xs font-bold text-on-surface mt-0.5 font-headline">v6.5.3 LTS</span>
+<span class="text-[9px] text-tertiary font-mono">Core Verified</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded-lg p-2 border border-outline-variant/15 flex flex-col">
+<span class="text-[10px] font-label uppercase text-on-surface-variant tracking-wider">PHP Engine</span>
+<span class="text-xs font-bold text-on-surface mt-0.5 font-headline">8.2.18 FPM</span>
+<span class="text-[9px] text-secondary font-mono">OPcache 98.4%</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded-lg p-2 border border-outline-variant/15 flex flex-col">
+<span class="text-[10px] font-label uppercase text-on-surface-variant tracking-wider">Memory Alloc</span>
+<span class="text-xs font-bold text-on-surface mt-0.5 font-headline tab-num">512 MB</span>
+<span class="text-[9px] text-on-surface-variant font-mono">148MB Used</span>
+</div>
+</div>
+<!-- Quick Status Badges -->
+<div class="flex items-center gap-2 pt-1 border-t border-outline-variant/15 text-[11px]">
+<div class="flex-1 flex items-center gap-1.5 bg-error-container/30 border border-error/30 text-error px-2.5 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm shrink-0" data-icon="gpp_bad">gpp_bad</span>
+<span class="font-semibold truncate">2 Vulnerable Plugins (1 High CVE)</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant bg-surface-container px-2 py-1.5 rounded-lg border border-outline-variant/20 whitespace-nowrap text-[10px] font-mono">
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="cloud_sync">cloud_sync</span>
+<span>S3 #BKP-9941 (14m ago)</span>
+</div>
+</div>
+</section>
+<!-- 2. CRITICAL VULNERABILITY TRIAGE HERO (Bento Card with Rose Aura) -->
+<section class="bg-surface-container-low rounded-xl p-3.5 border border-error/40 glow-rose relative overflow-hidden">
+<!-- Ambient Glow Spot -->
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-error/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Header Triage Badge -->
+<div class="flex items-start justify-between gap-2 mb-2.5">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-error-container text-error text-[10px] font-bold tracking-wider uppercase border border-error/30">
+              CRITICAL CVE-2024-31210
+            </span>
+<span class="text-xs font-mono text-outline">CVSS 8.8</span>
+</div>
+<h2 class="font-headline text-base font-bold text-on-surface mt-1">Elementor Pro v3.19.2</h2>
+</div>
+<span class="w-8 h-8 rounded-lg bg-error-container/40 text-error flex items-center justify-center shrink-0 border border-error/30">
+<span class="material-symbols-outlined text-xl" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+</span>
+</div>
+<!-- Vulnerability Details -->
+<p class="text-xs text-on-surface-variant leading-relaxed mb-3">
+        Authenticated Arbitrary File Upload via Template Library allowing Stored XSS &amp; Remote Code Execution. Direct threat to conversion flow on 4 client landing pages.
+      </p>
+<!-- Sandbox Validation Deck -->
+<div class="bg-surface-container-lowest/90 rounded-lg p-2.5 border border-outline-variant/30 space-y-2 mb-3">
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="deployed_code">deployed_code</span>
+            Ephemeral Sandbox Status
+          </span>
+<span class="text-tertiary font-bold text-[11px] flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+            100% Passed
+          </span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-outline-variant/20">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>0 Visual Drift (Cypress)</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>5/5 Lead Forms Verified</span>
+</div>
+</div>
+</div>
+<!-- Remediation Actions -->
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container border border-outline hover:bg-surface-container-high text-xs font-semibold text-on-surface transition active:scale-95" type="button">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="science">science</span>
+<span>Inspect Sandbox</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-primary-container text-white text-xs font-bold shadow-md hover:brightness-110 transition active:scale-95 glow-cyan" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+<span>AutoFix in Staging</span>
+</button>
+</div>
+</section>
+<!-- 3. AUTONOMOUS ROLLBACK & GUARDRAILS PIPELINE (Visual Stepper) -->
+<section class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/25">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-base" data-icon="verified_user">verified_user</span>
+<h3 class="font-headline text-xs font-bold uppercase tracking-wider text-on-surface">Zero-Downtime Pipeline</h3>
+</div>
+<span class="text-[10px] font-mono text-tertiary bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/30">
+          &lt;45s Auto-Rollback SLA
+        </span>
+</div>
+<!-- 5-Step Progress Indicators -->
+<div class="relative flex items-center justify-between px-1 py-2">
+<div class="absolute left-3 right-3 top-1/2 -translate-y-1/2 h-0.5 bg-surface-container-high z-0"></div>
+<div class="absolute left-3 w-3/4 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-tertiary via-secondary to-primary z-0"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-6 h-6 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center text-[10px] font-bold">
+<span class="material-symbols-outlined text-xs" data-icon="check">check</span>
+</div>
+<span class="text-[9px] text-on-surface-variant font-medium">Snapshot</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-6 h-6 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center text-[10px] font-bold">
+<span class="material-symbols-outlined text-xs" data-icon="check">check</span>
+</div>
+<span class="text-[9px] text-on-surface-variant font-medium">Sandbox</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[10px] font-bold animate-pulse">
+<span class="material-symbols-outlined text-xs" data-icon="flaky">flaky</span>
+</div>
+<span class="text-[9px] text-secondary font-bold">E2E Tests</span>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-6 h-6 rounded-full bg-surface-container-high border border-outline text-outline flex items-center justify-center text-[10px] font-medium">
+            4
+          </div>
+<span class="text-[9px] text-outline font-medium">Symlink</span>
+</div>
+<!-- Step 5 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-6 h-6 rounded-full bg-surface-container-high border border-outline text-outline flex items-center justify-center text-[10px] font-medium">
+            5
+          </div>
+<span class="text-[9px] text-outline font-medium">Guard</span>
+</div>
+</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/15 flex items-center justify-between text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="shield_with_heart">shield_with_heart</span>
+          Telemetry Sentinel Armed: 5xx Spikes &gt; 1% triggers revert
+        </span>
+</div>
+</section>
+<!-- 4. PLUGIN & THEME SENTINEL LIST (Modular Telemetry Cards) -->
+<section class="space-y-2">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline text-xs font-bold uppercase tracking-wider text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="extension">extension</span>
+          Plugin Fleet Telemetry
+        </h3>
+<span class="text-[11px] text-on-surface-variant font-mono">4 Inspected / 3 Upgrades</span>
+</div>
+<!-- Card 1: Elementor Pro -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-outline-variant/30 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-error border border-error/30">
+<span class="material-symbols-outlined text-lg" data-icon="layers">layers</span>
+</div>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface flex items-center gap-1.5">
+                Elementor Pro
+                <span class="px-1.5 py-0.2 rounded bg-error/20 text-error text-[9px] font-bold">CVE PATCH</span>
+</div>
+<div class="text-[11px] text-on-surface-variant font-mono">
+                3.19.2 <span class="text-secondary">→ 3.20.1</span>
+</div>
+</div>
+</div>
+<button class="py-1 px-2.5 rounded-lg bg-primary-container text-white text-[11px] font-semibold flex items-center gap-1 shadow hover:brightness-110 active:scale-95" type="button">
+<span class="material-symbols-outlined text-xs" data-icon="published_with_changes">published_with_changes</span>
+            Patch Now
+          </button>
+</div>
+<div class="flex items-center justify-between text-[10px] text-on-surface-variant bg-surface-container-lowest/60 px-2 py-1 rounded">
+<span class="text-tertiary">Sandbox: 0 visual diff detected</span>
+<span class="font-mono text-outline">Assets: 4.8MB</span>
+</div>
+</div>
+<!-- Card 2: WooCommerce Bookings (Revenue Engine) -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-outline-variant/30 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-secondary/30">
+<span class="material-symbols-outlined text-lg" data-icon="payments">payments</span>
+</div>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface flex items-center gap-1.5">
+                WooCommerce Bookings
+                <span class="px-1.5 py-0.2 rounded bg-secondary/15 text-secondary text-[9px] font-bold">REVENUE PATH</span>
+</div>
+<div class="text-[11px] text-on-surface-variant font-mono">
+                5.8.1 <span class="text-secondary">→ 5.8.4</span>
+</div>
+</div>
+</div>
+<button class="py-1 px-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant text-[11px] font-semibold text-on-surface flex items-center gap-1 active:scale-95" type="button">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="sync">sync</span>
+            Stage
+          </button>
+</div>
+<div class="flex items-center justify-between text-[10px] text-on-surface-variant bg-surface-container-lowest/60 px-2 py-1 rounded">
+<span class="text-tertiary font-mono">12 Synthetic Bookings Simulated OK</span>
+<span class="text-secondary font-mono">Checkout 0.9s</span>
+</div>
+</div>
+<!-- Card 3: WP Rocket -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-outline-variant/30 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary border border-primary/30">
+<span class="material-symbols-outlined text-lg" data-icon="speed">speed</span>
+</div>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface flex items-center gap-1.5">
+                WP Rocket
+                <span class="px-1.5 py-0.2 rounded bg-primary/20 text-primary text-[9px] font-bold">PERF OPT</span>
+</div>
+<div class="text-[11px] text-on-surface-variant font-mono">
+                3.15.8 <span class="text-secondary">→ 3.16.0</span>
+</div>
+</div>
+</div>
+<button class="py-1 px-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant text-[11px] font-semibold text-on-surface flex items-center gap-1 active:scale-95" type="button">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="sync">sync</span>
+            Stage
+          </button>
+</div>
+<div class="flex items-center justify-between text-[10px] text-on-surface-variant bg-surface-container-lowest/60 px-2 py-1 rounded">
+<span class="text-tertiary">Estimated Impact: LCP -70ms</span>
+<span class="font-mono text-outline">Cache Cleared</span>
+</div>
+</div>
+<!-- Card 4: Advanced Custom Fields PRO (Verified) -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-outline-variant/20 flex items-center justify-between opacity-85">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-tertiary border border-tertiary/20">
+<span class="material-symbols-outlined text-lg" data-icon="task_alt">task_alt</span>
+</div>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface">Advanced Custom Fields PRO</div>
+<div class="text-[11px] text-on-surface-variant font-mono">v6.2.7 • Clean &amp; Verified</div>
+</div>
+</div>
+<span class="text-[10px] text-tertiary font-bold px-2 py-0.5 rounded bg-tertiary/10 border border-tertiary/20">
+          SECURE
+        </span>
+</div>
+</section>
+<!-- 5. REVENUE PROTECTION ASSURANCE ACCORDION / HIGHLIGHT -->
+<section class="bg-surface-container-lowest border border-outline-variant/25 rounded-xl p-3 text-xs">
+<div class="flex items-center gap-2 text-on-surface font-semibold">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="lock_clock">lock_clock</span>
+<span>Cryptographic Rollback Hash Ready</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-relaxed">
+        Snapshot SHA-256: <code class="text-secondary font-mono">9f4d...31ea</code> created on secure ephemeral AWS volume. Immediate one-touch instant restoration if transaction anomaly exceeds threshold.
+      </p>
+</section>
+</main>
+<!-- STICKY BOTTOM FLOATING EXECUTION ACTION BAR -->
+<div class="fixed bottom-14 left-0 w-full px-4 py-2.5 z-40 bg-gradient-to-t from-background via-surface-container-lowest/90 to-transparent pointer-events-none">
+<div class="max-w-md mx-auto pointer-events-auto">
+<button class="w-full py-3 px-4 rounded-xl bg-primary-container text-white font-headline text-xs font-bold uppercase tracking-wider flex items-center justify-between shadow-xl hover:brightness-110 active:scale-[0.99] transition-all glow-cyan border border-primary/40" type="button">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="verified">verified</span>
+<span>Execute Autonomous Multi-Patch</span>
+</div>
+<span class="bg-white/20 text-white px-2 py-0.5 rounded-full text-[10px] font-mono tracking-normal">
+          3 Updates
+        </span>
+</button>
+</div>
+</div>
+<!-- FIXED BOTTOM NAVIGATION BAR (Shared Components Exact Blueprint & Token Rules) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex items-center justify-around px-2 py-2 safe-bottom bg-surface-container-lowest/95 shadow-lg backdrop-blur-xl border-t border-outline-variant/30">
+<!-- Operations -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface px-3 py-1.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="monitoring">monitoring</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">Operations</span>
+</a>
+<!-- Revenue -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface px-3 py-1.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="verified_user">verified_user</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">Revenue</span>
+</a>
+<!-- AI Briefs -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface px-3 py-1.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="smart_toy">smart_toy</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">AI Briefs</span>
+</a>
+<!-- Settings (ACTIVE TAB for WP Deep Connect & Configurations) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-primary-container/20 rounded-xl px-3 py-1.5 font-bold transition-all" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="tune" style="font-variation-settings: 'FILL' 1;">tune</span>
+<span class="font-label text-xs font-semibold tracking-wide mt-0.5">Settings</span>
+</a>
+</nav>
+<!-- Interactive Demo Script -->
+<script>
+    // Micro-interaction feedbacks
+    document.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const text = btn.innerText;
+        if (text.includes('Patch Now') || text.includes('AutoFix')) {
+          const original = btn.innerHTML;
+          btn.innerHTML = `<span class="material-symbols-outlined text-xs animate-spin" data-icon="progress_activity">progress_activity</span> Staging...`;
+          setTimeout(() => {
+            btn.innerHTML = `<span class="material-symbols-outlined text-xs text-tertiary" data-icon="check">check</span> Complete`;
+            btn.classList.add('bg-tertiary-container');
+          }, 1200);
+        }
+      });
+    });
+  </script>
+</body></html>

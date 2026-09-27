@@ -1,6 +1,6 @@
 # Guardian — Master Product Requirements
 
-**Version:** 2.0  
+**Version:** 2.1
 **Status:** Canonical project product requirements  
 **Category:** AI Digital Business Operations Platform  
 **Target sequence:** SMBs → agencies → enterprise  
@@ -118,6 +118,15 @@ Guardian creates one understandable score while retaining drill-down metrics. Th
 
 Scores must be explainable and traceable to measurable signals. The architecture must allow industry-specific weighting later.
 
+### 10.1 Infrastructure and domain monitoring roadmap
+
+- **DNS monitoring:** Monitor A, AAAA, MX, NS, and TXT record sets for an explicitly configured hostname on a verified domain. Persist a baseline and observation history; display added/removed records, first detection time, and affected record type. Ignore answer ordering and equivalent representation; preserve TXT value case. DNS propagation and legitimate rotation must not be labelled outages automatically. Failed lookups must not overwrite the last valid baseline. Distinguish missing records, nonexistent domains, resolver failures, and timeouts. Authorized users can acknowledge a change and accept a new baseline, with an audit trail.
+- **Domain expiry:** Track registration expiry separately from TLS certificate expiry. Default advance alerts at 90, 30, and 7 days, plus an expired state. Make thresholds configurable; deduplicate alerts per domain, expiry date, and threshold. Use registration-domain-aware RDAP/provider data, recording source and last successful refresh. Unknown, redacted, unsupported, or conflicting expiry data remains unknown rather than healthy. Reset the alert cycle when a confirmed renewal changes the expiry date.
+- **Email-domain health:** Check SPF, DMARC, and MTA-STS configuration and changes. Show missing, invalid, weak-policy, healthy, and unknown results with supporting evidence. SPF checks need bounded DNS expansion and loop/lookup-limit handling; DMARC must account for organizational-domain policy discovery; MTA-STS must inspect DNS policy identifiers and safely fetch/validate HTTPS policies. These checks assess configuration, not guaranteed deliverability or inbox placement. No email or DNS changes occur automatically.
+- **Basic accessibility:** Add bounded automated checks for issues such as missing document language, image alternatives, form labels, accessible control names, and obvious semantic problems. Store affected page, rule, evidence, severity, and suggested fix; distinguish decorative images and intentionally hidden controls. State scan scope and tool/version. Automated checks are not a complete accessibility audit or certification; keyboard, assistive-technology and manual review remain necessary. Rendered-browser checks run in isolated, resource-limited workers.
+
+All new adapters must use verified tenant-owned targets, bounded work, persisted evidence, issue deduplication, recovery/history, and configurable alerts. Extend the score only after category mapping and false-positive behavior are validated; retain current weights and explicitly mark unsupported coverage pending.
+
 ## 11. Revenue protection
 
 Monitor forms, checkout, booking, contact, enquiry, WhatsApp, phone calls-to-action, and payment workflows. Ultimately, Guardian should know when a business can no longer receive customers.
@@ -177,6 +186,10 @@ Agency capabilities include multiple clients, team members, permissions, bulk mo
 
 White-label capabilities include custom logo, colors, domain, email branding, reports, and dashboard branding.
 
+### 18.1 Client-facing status pages
+
+Provide organization-owned status pages for agencies and client accounts: named service components, current operational/degraded/outage/maintenance states, incident timelines, resolution updates, and scheduled maintenance. Support authenticated private pages and explicitly published public pages; branding and custom domains follow the white-label roadmap. Pages are private/unpublished by default. Require role-authorized publication and component selection. Public responses expose only approved summaries, never internal diagnostics, tokens, customer data, or cross-tenant details. Mark stale/unknown observations explicitly. Audit publication and incident edits; define redaction, unpublish, caching, and history behavior. Notifications must reflect actual incident transitions and maintenance settings.
+
 ## 19. Reporting, billing, and API
 
 Reports should include health score, critical and resolved issues, trends, leads, SEO, performance, security, reputation, opportunities, and recommended actions.
@@ -195,7 +208,9 @@ Background jobs include website scans, uptime, SSL, broken links, SEO, performan
 
 ## 21. Notifications and security
 
-Initial notification channels are email and in-app. Future channels include WhatsApp, SMS, Slack, Teams, and push notifications. Users need per-user preferences.
+Required notification roadmap channels are email, in-app, Slack, Microsoft Teams, Discord, and generic webhook. WhatsApp, SMS, and push remain later extensions. Users need per-user preferences; administrators need tenant-scoped destination configuration, event/severity routing, quiet hours, recovery notifications, and test deliveries. Email/in-app foundations exist; external channel adapters remain implementation work.
+
+External delivery must include encrypted destination credentials, masked secrets, outbound URL validation, signed generic webhook payloads, bounded retries with backoff, rate-limit handling, deduplication, delivery logs, and failed-delivery visibility. Test deliveries require an explicit user action. Respect provider-specific message formats and limits; never include raw secrets or sensitive technical evidence in messages.
 
 Mandatory security properties include secure authentication, RBAC, tenant isolation, input validation, output encoding, CSRF protection where applicable, rate limiting, secure cookies, encrypted secrets, encryption in transit, audit logs, webhook verification, dependency scanning, security headers, backup strategy, least privilege, and OWASP-aligned practices.
 
@@ -234,6 +249,12 @@ Required testing includes unit, integration, API, authorization, tenant-isolatio
 25. Marketplace
 26. Predictive Intelligence
 27. AI COO
+
+### 23.1 Approved roadmap adjustment (27 September 2026)
+
+Billing implementation is paused by the product owner. Continue the monitoring expansion in this order: (1) DNS record change monitoring; (2) domain expiry; (3) email-domain health; (4) Slack, Teams, Discord and webhook delivery; (5) agency/client status pages; (6) basic accessibility monitoring. This supplements the numbered phase sequence rather than claiming earlier phases complete. Implement and verify each vertical slice before moving to the next. Preserve the MVP validation requirement and deferred visual-QA follow-up.
+
+Acceptance evidence must include record reordering/noise and resolver failure tests; expiry boundary/renewal deduplication tests; email-policy malformed/missing/timeout cases; destination authorization and delivery retry tests; status-page public-data isolation tests; and accessibility fixtures including legitimate decorative/hidden elements.
 
 ## 24. MVP exit criteria
 

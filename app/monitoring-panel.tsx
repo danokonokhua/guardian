@@ -8,6 +8,11 @@ type Monitor = {
   type: string;
   enabled: boolean;
   frequencyMinutes: number;
+  config?: {
+    baseline?: Record<string, string[]>;
+    latest?: Record<string, { state: string; records?: string[]; reason?: string }>;
+    observedAt?: string;
+  };
   results?: Array<{
     status: string;
     checkedAt: string;
@@ -17,6 +22,7 @@ type Monitor = {
 };
 
 const monitorOptions = [
+  { value: "DNS", label: "DNS record changes" },
   { value: "UPTIME", label: "Website uptime" },
   { value: "SSL", label: "SSL certificate" },
   { value: "SECURITY", label: "Security headers" },
@@ -201,6 +207,30 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
     }
   }
 
+  async function acceptDnsBaseline(monitor: Monitor) {
+    if (
+      !window.confirm(
+        "Accept the displayed DNS records as the new baseline? Review all changes first.",
+      )
+    )
+      return;
+    setActionError(null);
+    try {
+      const response = await fetch(
+        `/api/v1/organizations/${organizationId}/monitors/${monitor.id}/dns-baseline`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ observedAt: monitor.config?.observedAt }),
+        },
+      );
+      if (!response.ok)
+        throw new Error("Unable to accept baseline. Refresh and check the latest DNS evidence.");
+      setReloadToken((value) => value + 1);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Unable to accept baseline");
+    }
+  }
   async function updateMonitor(monitor: Monitor, enabled: boolean) {
     setActionError(null);
     try {
@@ -313,6 +343,30 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="font-medium">{monitorLabel(monitor.type)}</h3>
+                  {monitor.type === "DNS" && (
+                    <details className="mt-3 text-xs">
+                      <summary>DNS records and baseline</summary>
+                      <p className="my-2">
+                        A, AAAA, MX, NS and TXT on the verified website hostname. Changes are not
+                        automatically outages. Accepted changes clear on the next successful check.
+                      </p>
+                      <pre className="max-h-72 overflow-auto whitespace-pre-wrap">
+                        {JSON.stringify(
+                          { baseline: monitor.config?.baseline, latest: monitor.config?.latest },
+                          null,
+                          2,
+                        )}
+                      </pre>
+                      {monitor.config?.observedAt && (
+                        <button
+                          className="button-secondary compact mt-3"
+                          onClick={() => void acceptDnsBaseline(monitor)}
+                        >
+                          Accept displayed baseline
+                        </button>
+                      )}
+                    </details>
+                  )}
                   <p className="mt-1 text-sm text-neutral-400">Website {monitor.websiteId}</p>
                 </div>
                 <span

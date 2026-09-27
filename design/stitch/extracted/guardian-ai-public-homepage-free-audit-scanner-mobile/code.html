@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Guardian AI — Autonomous Revenue &amp; Ops Guard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#0f131d",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#003640",
+            "error-container": "#93000a",
+            "secondary-fixed": "#acedff",
+            "on-primary": "#1d00a5",
+            "secondary-container": "#03b5d3",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary-fixed-dim": "#4cd7f6",
+            "tertiary": "#4edea3",
+            "surface-tint": "#c3c0ff",
+            "inverse-on-surface": "#2c303b",
+            "outline": "#918fa1",
+            "inverse-surface": "#dfe2f1",
+            "inverse-primary": "#4d44e3",
+            "on-surface-variant": "#c7c4d8",
+            "surface-container-highest": "#313540",
+            "on-tertiary": "#003824",
+            "surface-container-high": "#262a35",
+            "on-tertiary-fixed-variant": "#005236",
+            "surface-container-lowest": "#0a0e18",
+            "surface-container-low": "#171b26",
+            "tertiary-container": "#006e4b",
+            "primary-container": "#4f46e5",
+            "on-surface": "#dfe2f1",
+            "surface-variant": "#313540",
+            "surface-bright": "#353944",
+            "primary": "#c3c0ff",
+            "on-background": "#dfe2f1",
+            "on-primary-container": "#dad7ff",
+            "on-primary-fixed": "#0f0069",
+            "on-secondary-fixed-variant": "#004e5c",
+            "on-tertiary-fixed": "#002113",
+            "secondary": "#4cd7f6",
+            "on-secondary-fixed": "#001f26",
+            "on-error": "#690005",
+            "outline-variant": "#464555",
+            "on-primary-fixed-variant": "#3323cc",
+            "surface-container": "#1c1f2a",
+            "error": "#ffb4ab",
+            "background": "#0f131d",
+            "primary-fixed": "#e2dfff",
+            "on-secondary-container": "#00424e",
+            "surface-dim": "#0f131d",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-tertiary-container": "#67f4b7"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "display": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Tabular numeric lining for mission critical scores */
+    .tabular-score {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen flex flex-col justify-between selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Ambient Glow -->
+<div class="fixed top-0 left-1/2 -translate-x-1/2 w-[390px] h-72 bg-gradient-to-b from-primary-container/20 via-secondary-container/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
+<!-- Shared Component: TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-3 h-14 bg-surface-container-low/90 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-[20px]" data-icon="swap_horizontal_circle">swap_horizontal_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline text-base font-bold text-on-surface tracking-tight">Guardian AI</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-primary-container/30 text-primary border border-primary/30">Ops</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-xs font-semibold px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors">
+        Log In
+      </button>
+<button class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary-container shadow-sm active:scale-95 transition-all flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="crisis_alert">crisis_alert</span>
+<span>Free Scan</span>
+</button>
+</div>
+</header>
+<!-- Main Content Viewport (Mobile 390px Optimized Canvas) -->
+<main class="w-full max-w-[420px] mx-auto pt-20 pb-28 px-4 flex flex-col gap-6">
+<!-- Mission Sub-badge -->
+<div class="inline-flex items-center self-start gap-1.5 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/50 text-[11px] font-semibold text-secondary-fixed tracking-wide">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+      Autonomous Revenue &amp; Ops Guard
+    </div>
+<!-- Mobile Hero Header -->
+<section class="flex flex-col gap-3">
+<h1 class="font-headline text-[32px] leading-[38px] font-extrabold tracking-tight text-on-surface">
+        Is your digital business <span class="bg-gradient-to-r from-primary-fixed via-secondary to-tertiary-fixed bg-clip-text text-transparent">actually working?</span>
+</h1>
+<p class="font-body text-sm leading-relaxed text-on-surface-variant">
+        Guardian AI continuously tests your lead forms, booking checkouts, SEO, and uptime. Catch silent revenue leaks before customers bounce.
+      </p>
+</section>
+<!-- Interactive Touch Free Audit Scanner Input Card -->
+<section class="bg-surface-container-low border border-outline-variant/40 rounded-xl p-4 shadow-xl relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-primary-container/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<label class="font-label text-xs uppercase font-bold tracking-wider text-on-surface-variant flex items-center gap-1.5" for="audit-url">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="monitoring">monitoring</span>
+          Enter Domain URL
+        </label>
+<span class="text-[10px] uppercase font-bold text-tertiary tracking-wide flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Ready 24/7
+        </span>
+</div>
+<div class="space-y-3">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]" data-icon="travel_explore">travel_explore</span>
+</div>
+<input class="w-full pl-9 pr-3 py-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/60 text-sm font-body text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/30 transition-all" id="audit-url" placeholder="e.g. yourcompany.com" type="text" value="aura-villas.com"/>
+</div>
+<button class="w-full py-3 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline font-bold text-sm tracking-wide shadow-lg shadow-primary-container/25 flex items-center justify-center gap-2 active:scale-95 transition-all" id="scan-btn">
+<span class="material-symbols-outlined text-lg" data-icon="smart_toy">smart_toy</span>
+<span>Run Instant Free Audit (30s)</span>
+</button>
+<div class="flex items-center justify-center gap-3 pt-1 text-center">
+<div class="flex items-center gap-1 text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-icon="verified_user">verified_user</span>
+<span>Zero-setup</span>
+</div>
+<span class="text-outline text-xs">•</span>
+<div class="flex items-center gap-1 text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="lock_open_right">lock_open_right</span>
+<span>100% Non-invasive scan</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Real-time Sample Audit Live Card (PRD §9) -->
+<section class="bg-surface-container rounded-xl border border-error/30 shadow-2xl p-4 flex flex-col gap-4 relative">
+<!-- Top header bar for target site -->
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-md bg-surface-container-high flex items-center justify-center text-primary text-xs font-bold">
+            AV
+          </div>
+<div>
+<div class="text-xs font-bold text-on-surface tracking-tight leading-none">aura-villas.com</div>
+<div class="text-[10px] text-outline mt-0.5">Live Snapshot • Verified 2m ago</div>
+</div>
+</div>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-error-container/40 text-error border border-error/30 tracking-wider">
+          LEAK DETECTED
+        </span>
+</div>
+<!-- Health Score Hero Row -->
+<div class="flex items-center justify-between gap-4">
+<!-- SVG Ring Meter -->
+<div class="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-highest stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3.5"></path>
+<path class="text-secondary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="82, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<div class="absolute flex flex-col items-center justify-center text-center">
+<span class="text-xl font-extrabold font-headline text-on-surface tabular-score leading-none">82</span>
+<span class="text-[9px] uppercase font-bold text-secondary">Grade B</span>
+</div>
+</div>
+<div class="flex-1 space-y-1">
+<div class="text-xs font-semibold text-on-surface-variant">Digital Health Index</div>
+<div class="text-lg font-bold font-headline text-error tabular-score">
+            -$18,500<span class="text-xs font-normal text-on-surface-variant">/mo est. leak</span>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-tight">
+            Checkout bottleneck causing severe checkout drop-offs on high-value bookings.
+          </p>
+</div>
+</div>
+<!-- Critical Warning Banner -->
+<div class="bg-error-container/30 border border-error/50 rounded-lg p-3 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-error text-[20px] flex-shrink-0 mt-0.5" data-icon="crisis_alert">crisis_alert</span>
+<div class="space-y-0.5">
+<div class="text-xs font-bold text-error leading-snug">Postgres Connection Timeout on /booking</div>
+<div class="text-[11px] font-mono text-on-error-container/90">HTTP 500 — dropped 14 reservation attempts today</div>
+</div>
+</div>
+<!-- Category Micro Gauges -->
+<div class="grid grid-cols-3 gap-2 pt-1">
+<!-- Gauge 1 -->
+<div class="bg-surface-container-lowest/80 border border-error/30 p-2.5 rounded-lg flex flex-col justify-between">
+<div class="flex items-center justify-between text-[10px] text-error font-bold mb-1">
+<span>Forms</span>
+<span class="material-symbols-outlined text-[13px]" data-icon="error">error</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5 mb-1.5 overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 45%"></div>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-[10px] text-outline">Checkout</span>
+<span class="text-xs font-bold text-error tabular-score">45%</span>
+</div>
+</div>
+<!-- Gauge 2 -->
+<div class="bg-surface-container-lowest/80 border border-outline-variant/30 p-2.5 rounded-lg flex flex-col justify-between">
+<div class="flex items-center justify-between text-[10px] text-tertiary font-bold mb-1">
+<span>Uptime</span>
+<span class="material-symbols-outlined text-[13px]" data-icon="speed">speed</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5 mb-1.5 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 96%"></div>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-[10px] text-outline">Speed</span>
+<span class="text-xs font-bold text-tertiary tabular-score">96%</span>
+</div>
+</div>
+<!-- Gauge 3 -->
+<div class="bg-surface-container-lowest/80 border border-outline-variant/30 p-2.5 rounded-lg flex flex-col justify-between">
+<div class="flex items-center justify-between text-[10px] text-secondary font-bold mb-1">
+<span>Security</span>
+<span class="material-symbols-outlined text-[13px]" data-icon="lock">lock</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5 mb-1.5 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 92%"></div>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-[10px] text-outline">SSL/Certs</span>
+<span class="text-xs font-bold text-secondary tabular-score">92%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Key Value Pillars Accordion / Card Deck -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h2 class="font-headline text-sm font-bold uppercase tracking-wider text-on-surface-variant">
+          Autonomous Protection Engine
+        </h2>
+<span class="text-[11px] text-primary font-semibold">3 Layer Defense</span>
+</div>
+<!-- Pillar Card 1 -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-3.5 space-y-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[20px]" data-icon="verified_user">verified_user</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline text-sm font-bold text-on-surface">1. 24/7 Conversion &amp; Form Sentry</h3>
+<p class="text-[11px] text-tertiary font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Active synthetic form tests every 180s
+            </p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant pl-12 leading-relaxed">
+          Simulates real user inputs, Stripe checkouts, and CRM hooks. The instant an API fails or a form freezes, you are notified within 15 seconds.
+        </p>
+</div>
+<!-- Pillar Card 2 -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-3.5 space-y-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-secondary-container/20 border border-secondary/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline text-sm font-bold text-on-surface">2. AI COO Morning Briefings</h3>
+<p class="text-[11px] text-secondary-fixed font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 07:30 AM Executive Telegram / Slack
+            </p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant pl-12 leading-relaxed">
+          Get plain-English business telemetry without checking dashboards. Learn exactly which pages drove revenue and what technical friction was suppressed.
+        </p>
+</div>
+<!-- Pillar Card 3 -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-3.5 space-y-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container/30 border border-tertiary/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]" data-icon="tune">tune</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline text-sm font-bold text-on-surface">3. One-Tap Autonomous Remediations</h3>
+<p class="text-[11px] text-tertiary-fixed font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Auto-healing Cloudflare &amp; Server routes
+            </p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant pl-12 leading-relaxed">
+          Pre-generated hotfixes ready to deploy. Purge CDN caches, restart failing webhook workers, or fall back to reserve mail gateways with a single tap.
+        </p>
+</div>
+</section>
+<!-- Testimonial Snippet Card -->
+<section class="bg-gradient-to-br from-surface-container-high/90 to-surface-container-low border border-outline-variant/40 rounded-xl p-4 shadow-lg space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1 text-secondary text-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] uppercase font-bold text-tertiary-fixed bg-tertiary-container/30 px-2 py-0.5 rounded-full border border-tertiary/20">
+          Verified Impact
+        </span>
+</div>
+<blockquote class="text-xs leading-relaxed text-on-surface italic">
+        "Our high-end villa reservation flow died on a Sunday evening due to an invisible gateway update. Guardian intercepted it within 40 seconds and re-routed to backup checkout."
+      </blockquote>
+<div class="p-2 rounded-lg bg-surface-container-lowest/90 border border-outline-variant/30 flex items-center justify-between">
+<span class="text-[11px] text-on-surface-variant">Quantified Result:</span>
+<span class="text-xs font-bold text-tertiary tabular-score">Intercepted $42,500 in dropped leads in week 1</span>
+</div>
+<div class="flex items-center gap-3 pt-1">
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="Close up professional portrait of a distinguished male luxury real estate CEO in modern executive attire with dark atmospheric lighting and subtle cyan reflections, perfectly harmonizing with the dark mission-critical command deck aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuF_75NF0clsK2Zt4nWtTJ752lAFStIYjXx8o29nYGrOM-6GLa0P7c_wmE_ty0-4J0qnSHzI-SIeG4iNsrJpKs0zujX0sDUjGNpRPCDREiN3rQaPm5ixljOo43BfAJdpD9SSkomQ5JNzws0uidO7YYrInC3BNl0HXB6tyyIMGd5Pq7jNgd3G86jQYXv6q3QfXWFXErt1hAEihc2mkSpc77aDyo8Y01dymN645y4z5_Nd81eaSuKbyh"/>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface">Marcus Vance</div>
+<div class="text-[10px] text-on-surface-variant">CEO, Aura Luxury Living Group</div>
+</div>
+</div>
+</section>
+<!-- Trust Markers & Non-invasive verification badges -->
+<div class="py-2 flex items-center justify-around border-t border-outline-variant/20 text-center">
+<div class="space-y-0.5">
+<div class="text-xs font-bold text-on-surface">99.98%</div>
+<div class="text-[10px] text-outline">Telemetry SLA</div>
+</div>
+<div class="h-6 w-px bg-outline-variant/30"></div>
+<div class="space-y-0.5">
+<div class="text-xs font-bold text-secondary">Zero SDK</div>
+<div class="text-[10px] text-outline">No Code Needed</div>
+</div>
+<div class="h-6 w-px bg-outline-variant/30"></div>
+<div class="space-y-0.5">
+<div class="text-xs font-bold text-tertiary">SOC2 / ISO</div>
+<div class="text-[10px] text-outline">Encrypted Edge</div>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Conversion Bar for Mobile (PRD §9) -->
+<aside class="fixed bottom-0 left-0 w-full z-40 bg-surface-container-lowest/95 backdrop-blur-xl border-t border-outline-variant/30 p-3 shadow-2xl safe-bottom">
+<div class="max-w-[420px] mx-auto flex items-center gap-3">
+<div class="flex-1">
+<div class="text-[10px] uppercase font-bold text-outline tracking-wider">Continuous Coverage</div>
+<div class="text-xs font-bold text-on-surface flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> 14-Day Free Evaluation
+        </div>
+</div>
+<button class="py-2.5 px-4 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap" id="protect-btn">
+<span>Protect My Business Now</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</aside>
+<!-- Interactive Demo Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const scanBtn = document.getElementById('scan-btn');
+      const input = document.getElementById('audit-url');
+      const protectBtn = document.getElementById('protect-btn');
+
+      if (scanBtn && input) {
+        scanBtn.addEventListener('click', () => {
+          const originalText = scanBtn.innerHTML;
+          scanBtn.disabled = true;
+          scanBtn.innerHTML = `
+            <span class="material-symbols-outlined text-lg animate-spin" data-icon="progress_activity">progress_activity</span>
+            <span>Synthesizing Lead Paths...</span>
+          `;
+          setTimeout(() => {
+            scanBtn.disabled = false;
+            scanBtn.innerHTML = originalText;
+            alert('Live Diagnostic Complete for ' + input.value + ': Found 1 critical PostgreSQL timeout on /booking and 2 broken CRM webhooks.');
+          }, 1200);
+        });
+      }
+
+      if (protectBtn) {
+        protectBtn.addEventListener('click', () => {
+          alert('Initializing Guardian Sentry Engine. Starting zero-setup onboarding wizard...');
+        });
+      }
+    });
+  </script>
+</body></html>

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Guardian AI — WordPress Deep Connect &amp; Plugin AutoFix Cockpit</title>
+<!-- Material Symbols Font -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with custom config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-fixed": "#e2dfff",
+            "on-surface": "#dfe2f1",
+            "on-primary-container": "#dad7ff",
+            "surface-container-lowest": "#0a0e18",
+            "surface-variant": "#313540",
+            "primary-container": "#4f46e5",
+            "on-secondary-fixed-variant": "#004e5c",
+            "surface-container-high": "#262a35",
+            "surface-bright": "#353944",
+            "error": "#ffb4ab",
+            "on-background": "#dfe2f1",
+            "surface": "#0f131d",
+            "secondary-fixed-dim": "#4cd7f6",
+            "tertiary-fixed-dim": "#4edea3",
+            "outline-variant": "#464555",
+            "background": "#0f131d",
+            "secondary-container": "#03b5d3",
+            "on-error": "#690005",
+            "on-secondary-fixed": "#001f26",
+            "primary-fixed-dim": "#c3c0ff",
+            "on-tertiary": "#003824",
+            "surface-container-low": "#171b26",
+            "outline": "#918fa1",
+            "surface-container": "#1c1f2a",
+            "on-secondary-container": "#00424e",
+            "on-primary": "#1d00a5",
+            "tertiary": "#4edea3",
+            "inverse-on-surface": "#2c303b",
+            "surface-tint": "#c3c0ff",
+            "secondary-fixed": "#acedff",
+            "error-container": "#93000a",
+            "surface-container-highest": "#313540",
+            "on-tertiary-fixed": "#002113",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#003640",
+            "inverse-primary": "#4d44e3",
+            "inverse-surface": "#dfe2f1",
+            "on-error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#3323cc",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary-fixed": "#0f0069",
+            "surface-dim": "#0f131d",
+            "tertiary-container": "#006e4b",
+            "primary": "#c3c0ff",
+            "on-surface-variant": "#c7c4d8",
+            "secondary": "#4cd7f6",
+            "on-tertiary-container": "#67f4b7"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            label: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Command deck refined styles */
+    .glow-indigo {
+      box-shadow: 0 0 20px -3px rgba(79, 70, 229, 0.4);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 20px -3px rgba(76, 215, 246, 0.35);
+    }
+    .glow-critical {
+      box-shadow: 0 0 24px -2px rgba(244, 63, 94, 0.25);
+    }
+    .tabular-digits {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e18;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #262a35;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #464555;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
+<!-- Top Global Header / Command Bridge -->
+<header class="sticky top-0 z-50 bg-surface-container-low/90 backdrop-blur-md border-b border-outline-variant/30 px-6 py-2.5 transition-all">
+<div class="max-w-[1720px] mx-auto flex items-center justify-between gap-6">
+<!-- Brand & Tenant Scope -->
+<div class="flex items-center gap-5">
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-lg overflow-hidden ring-1 ring-secondary/40 shadow-sm flex items-center justify-center bg-surface-container-high">
+<img alt="Guardian AI Security Shield" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_uTnr2MU7d4mjxPy2CCgqI1I8ZfxZ5P9DvjT_IyX7l74xtaFMk_RprdgvIf9XK-yZbnbXgqdJFxRdmpJrp_PggufDIK0YnP27ycWeDcZzOkDZMrrv1-68MLp5QEmw4u27eajQu8RVjqlBpLFq-b7lyDy_eZ8-zhNXfkZ-qLY1a7_L3Oc_g81W74JfaQvSVvt-fQWVFNG6JmfEKK8g-RXieSy_29tKVJpYjy-b1cH_MLKLqs0SQrcB0y9tCYZPZadktg"/>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline font-extrabold text-base tracking-tight text-white flex items-center gap-1.5">
+                Guardian AI
+              </span>
+<span class="bg-primary-container/20 text-primary-fixed border border-primary-container/40 text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded">
+                WP SENTINEL v4.2
+              </span>
+</div>
+<p class="text-[11px] text-on-surface-variant/80 font-mono leading-none mt-0.5">Autonomous Ops &amp; Revenue Shield</p>
+</div>
+</div>
+<div class="h-6 w-px bg-outline-variant/40 hidden md:block"></div>
+<!-- Tenant Selector Pill -->
+<div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline-variant/60 cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">apartment</span>
+<div class="flex flex-col text-left">
+<div class="flex items-center gap-1.5">
+<span class="text-xs font-semibold text-white tracking-tight">Aura Luxury Living - Real Estate Group</span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 bg-tertiary-container/30 text-tertiary border border-tertiary/20 rounded">PROD #WP-8821</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-base group-hover:text-white transition-colors">unfold_more</span>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="hidden xl:flex items-center gap-1">
+<a class="text-on-surface-variant hover:text-white text-xs font-medium px-3 py-2 rounded-lg hover:bg-surface-container-high/50 transition-all" href="#">Command Bridge</a>
+<a class="text-on-surface-variant hover:text-white text-xs font-medium px-3 py-2 rounded-lg hover:bg-surface-container-high/50 transition-all" href="#">Revenue Protection</a>
+<a class="text-on-surface-variant hover:text-white text-xs font-medium px-3 py-2 rounded-lg hover:bg-surface-container-high/50 transition-all" href="#">Digital Health</a>
+<a class="text-on-surface-variant hover:text-white text-xs font-medium px-3 py-2 rounded-lg hover:bg-surface-container-high/50 transition-all" href="#">Workflows</a>
+<a class="text-on-surface-variant hover:text-white text-xs font-medium px-3 py-2 rounded-lg hover:bg-surface-container-high/50 transition-all" href="#">Audit Logs</a>
+<!-- Active Tab: WordPress Connect -->
+<a class="text-white text-xs font-semibold px-3 py-2 rounded-lg bg-surface-container border-b-2 border-primary-container text-white flex items-center gap-1.5 shadow-inner" href="#">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">hub</span>
+          WordPress Connect
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+</a>
+</nav>
+<!-- Trailing Status & Primary Actions -->
+<div class="flex items-center gap-3">
+<!-- Live Telemetry Badge -->
+<div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container-high/80 border border-outline-variant/30 text-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-ping"></span>
+<span class="text-[11px] font-mono text-tertiary uppercase tracking-wider font-semibold">Live Daemon</span>
+<span class="text-on-surface-variant text-[11px] font-mono border-l border-outline-variant/40 pl-2">24ms</span>
+</div>
+<!-- Trailing Icon Actions -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high hover:text-white transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-lg">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-low"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high hover:text-white transition-colors" title="AI Copilot">
+<span class="material-symbols-outlined text-lg text-secondary">smart_toy</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high hover:text-white transition-colors" title="Settings">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+</div>
+<div class="h-6 w-px bg-outline-variant/40"></div>
+<!-- Primary CTA: Trigger AutoFix Routine -->
+<button class="bg-primary-container hover:bg-primary-container/90 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-2 transition-all glow-indigo active:scale-95">
+<span class="material-symbols-outlined text-base">auto_fix_high</span>
+<span>Trigger AutoFix Routine</span>
+</button>
+<!-- Executive Avatar -->
+<div class="w-8 h-8 rounded-full ring-1 ring-outline-variant/50 overflow-hidden bg-surface-container-high flex items-center justify-center text-xs font-bold text-primary-fixed">
+          EO
+        </div>
+</div>
+</div>
+</header>
+<!-- Sub-bar & Environment Banner -->
+<div class="bg-surface-container-lowest border-b border-outline-variant/20 px-6 py-2">
+<div class="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4 text-xs">
+<!-- Breadcrumb & Engine Sync -->
+<div class="flex items-center gap-2.5 text-on-surface-variant">
+<span class="font-medium text-white/90">Guardian</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant">Integrations</span>
+<span class="text-outline-variant">/</span>
+<span class="text-secondary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">terminal</span>
+          WordPress Deep Connect Cockpit
+        </span>
+<span class="mx-2 text-outline-variant/40">•</span>
+<div class="flex items-center gap-1.5 text-tertiary font-mono text-[11px]">
+<span class="material-symbols-outlined text-xs">lock</span>
+<span>REST API &amp; WP-CLI Daemon Securely Synced</span>
+</div>
+</div>
+<!-- Backup Sentinel Info & Staging Trigger -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-on-surface-variant text-[11px] font-mono">
+<span class="material-symbols-outlined text-xs text-on-surface-variant">history</span>
+<span>Last Immutable Snapshot: <strong class="text-white font-semibold">14 mins ago</strong></span>
+<span class="px-1.5 py-0.5 bg-surface-container text-[10px] text-on-surface-variant rounded border border-outline-variant/30">#BKP-9941</span>
+</div>
+<button class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30 hover:border-outline-variant/60 transition-colors">
+<span class="material-symbols-outlined text-sm text-secondary">alt_route</span>
+<span>Create Staging Sandbox</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main Content Viewport -->
+<main class="flex-1 max-w-[1720px] w-full mx-auto px-6 py-6 space-y-6">
+<!-- SECTION 1: Executive Environment & Health Telemetry Grid (4 Bento Cards) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: WP Core & PHP Runtime -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 hover:border-outline-variant/60 transition-all flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-fixed border border-outline-variant/30">
+<span class="material-symbols-outlined text-base">dns</span>
+</div>
+<div>
+<h2 class="text-xs font-bold text-white font-headline tracking-wide uppercase">Core Runtime &amp; Engine</h2>
+<p class="text-[11px] text-on-surface-variant font-mono">Nginx Edge • PHP-FPM</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-tertiary-container/30 text-tertiary border border-tertiary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> OPTIMAL
+          </span>
+</div>
+<div class="my-3 space-y-1.5">
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">WordPress Core:</span>
+<span class="font-mono font-semibold text-white">v6.5.3 (Latest)</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">PHP Runtime:</span>
+<span class="font-mono font-semibold text-white">8.2.18 (OPcache 98.4%)</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Memory Limit / DB:</span>
+<span class="font-mono font-semibold text-white">512M / MySQL 8.0.36</span>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-mono text-on-surface-variant">
+<span class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-xs">check_circle</span> All modules compliant
+          </span>
+<span class="text-white/60">0 PHP Fatal Warnings</span>
+</div>
+</div>
+<!-- Card 2: Vulnerability & CVE Threat Index -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-error/40 hover:border-error/70 transition-all flex flex-col justify-between relative overflow-hidden group glow-critical">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-error-container/40 flex items-center justify-center text-error border border-error/30">
+<span class="material-symbols-outlined text-base">gshield</span>
+</div>
+<div>
+<h2 class="text-xs font-bold text-white font-headline tracking-wide uppercase">CVE Threat Sentinel</h2>
+<p class="text-[11px] text-error font-mono font-medium">1 High Severity Detected</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-error-container/60 text-error border border-error/40 animate-pulse">
+            ATTENTION
+          </span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-extrabold text-white font-headline tabular-digits">2</span>
+<span class="text-xs text-on-surface-variant">Vulnerable Plugins (1 Critical CVE)</span>
+</div>
+<p class="text-[11px] text-on-surface-variant/90 mt-1 line-clamp-1 font-mono">
+            Elementor Pro 3.19.2 (CVE-2024-31210 - XSS / Arbitrary Upload)
+          </p>
+</div>
+<div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-mono">
+<span class="text-secondary flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-xs">healing</span> AutoFix Patch Available
+          </span>
+<span class="text-on-surface-variant">Target: v3.20.1</span>
+</div>
+</div>
+<!-- Card 3: AutoFix Staging Sandbox Status -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-secondary/30 hover:border-secondary/60 transition-all flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary border border-secondary/30">
+<span class="material-symbols-outlined text-base">science</span>
+</div>
+<div>
+<h2 class="text-xs font-bold text-white font-headline tracking-wide uppercase">Staging Sandbox Health</h2>
+<p class="text-[11px] text-secondary font-mono">Ephemeral Test Container</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-tertiary-container/30 text-tertiary border border-tertiary/20">
+            SANDBOX SYNCD
+          </span>
+</div>
+<div class="my-3 space-y-1.5">
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">E2E Synthetic Pass Rate:</span>
+<span class="font-mono font-semibold text-tertiary">100% (24/24 Suites)</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Visual Regression Diff:</span>
+<span class="font-mono font-semibold text-white">0.00% (No Layout Drift)</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Simulated Transactions:</span>
+<span class="font-mono font-semibold text-secondary">12 Bookings Verified</span>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-mono text-on-surface-variant">
+<span class="truncate text-white/70">staging-sandbox.aura.internal</span>
+<span class="text-tertiary">Dry-Run Ready</span>
+</div>
+</div>
+<!-- Card 4: Backup & Rollback Sentinel -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 hover:border-outline-variant/60 transition-all flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-tertiary border border-outline-variant/30">
+<span class="material-symbols-outlined text-base">restore_page</span>
+</div>
+<div>
+<h2 class="text-xs font-bold text-white font-headline tracking-wide uppercase">Zero-Downtime Rollback</h2>
+<p class="text-[11px] text-on-surface-variant font-mono">Atomic Symlink Guard</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-primary-container/20 text-primary-fixed border border-primary-container/30">
+            ARMED
+          </span>
+</div>
+<div class="my-3 space-y-1.5">
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Snapshot State:</span>
+<span class="font-mono font-semibold text-white">AES-256 S3 Verified</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Instant Revert SLA:</span>
+<span class="font-mono font-semibold text-tertiary">&lt; 45 Seconds</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Fail-Safe Threshold:</span>
+<span class="font-mono font-semibold text-white">5xx Error Spike &gt; 0.1%</span>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-mono text-on-surface-variant">
+<span class="text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">verified</span> Auto-Revert Protected
+          </span>
+<span class="text-white/60">DB Hot-Swap Ready</span>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Two-Column Deep Cockpit (Left Main 7 cols, Right Sidebar 5 cols) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: Plugin & Theme Sentinel Matrix (7 Columns) -->
+<div class="lg:col-span-7 space-y-4">
+<!-- Critical Vulnerability Remediation Banner -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-error/50 bg-gradient-to-r from-error-container/20 via-surface-container-low to-surface-container-low relative overflow-hidden">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-error-container flex items-center justify-center text-error mt-0.5 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">warning</span>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-xs font-bold font-headline text-white uppercase tracking-wider">Critical Remediation Directive</span>
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-mono text-[10px] font-bold">CVE-2024-31210</span>
+<span class="text-xs text-on-surface-variant font-mono">CVSS 8.8 (High)</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+<strong class="text-white">Elementor Pro v3.19.2</strong> contains an authenticated arbitrary file upload &amp; stored XSS vulnerability. Guardian AutoFix has safely patched, validated, and verified this fix in your isolated staging container with <span class="text-tertiary font-semibold">zero booking regressions</span>.
+                </p>
+</div>
+</div>
+<div class="flex sm:flex-col items-center sm:items-end gap-2 flex-shrink-0 w-full sm:w-auto">
+<button class="w-full sm:w-auto bg-error-container hover:bg-error-container/80 text-white border border-error/40 text-xs font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm">shield</span>
+<span>AutoFix in Staging</span>
+</button>
+<button class="w-full sm:w-auto bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-white border border-outline-variant/30 text-[11px] font-mono px-3 py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all">
+<span>View CVE Details</span>
+<span class="material-symbols-outlined text-xs">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Filter & Header Matrix Bar -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-outline-variant/30 flex flex-wrap items-center justify-between gap-3">
+<!-- Category Tabs -->
+<div class="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-white text-xs font-medium border border-outline-variant/40 flex items-center gap-1.5">
+<span>All Plugins</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] font-mono text-on-surface-variant">28</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5">
+<span class="text-error font-semibold">Vulnerabilities &amp; Updates</span>
+<span class="px-1.5 py-0.2 rounded-full bg-error-container/40 text-error text-[10px] font-mono font-bold">4</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5">
+<span>Clean &amp; Verified</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] font-mono text-on-surface-variant">24</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5">
+<span>Must-Use / MU</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] font-mono text-on-surface-variant">3</span>
+</button>
+</div>
+<!-- Quick Search & Table Tools -->
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<div class="relative flex-1 sm:w-48">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container text-white placeholder-on-surface-variant/60 text-xs rounded-lg pl-8 pr-3 py-1.5 border border-outline-variant/30 focus:border-primary focus:outline-none font-mono" placeholder="Search plugins..." type="text"/>
+</div>
+<button class="p-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-white border border-outline-variant/30" title="Filter columns">
+<span class="material-symbols-outlined text-base">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Matrix Item 1: Elementor Pro (Critical CVE) -->
+<div class="bg-surface-container-low rounded-xl p-4 border-l-4 border-l-error border border-outline-variant/30 hover:border-outline-variant/50 transition-all space-y-3">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-fixed border border-outline-variant/40 flex-shrink-0">
+<span class="material-symbols-outlined text-lg">widgets</span>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-sm font-bold text-white font-headline">Elementor Pro</h3>
+<span class="text-[10px] font-mono text-on-surface-variant">v3.19.2</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
+<span class="text-[10px] font-mono text-tertiary font-bold bg-tertiary-container/30 px-1.5 py-0.5 rounded border border-tertiary/20">v3.20.1 Available</span>
+<span class="px-2 py-0.5 rounded bg-error-container/50 text-error border border-error/30 text-[10px] font-mono font-bold uppercase">Critical CVE</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5">Author: Elementor.com • Visual Builder Core • High Impact Revenue Surface</p>
+</div>
+</div>
+<!-- Action cluster -->
+<div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+<button class="px-3 py-1.5 rounded-lg bg-secondary-container/20 hover:bg-secondary-container/30 text-secondary border border-secondary/40 text-xs font-semibold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-xs">science</span>
+<span>Test in Staging</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 text-white text-xs font-semibold flex items-center gap-1.5 transition-all glow-indigo">
+<span class="material-symbols-outlined text-xs">flash_on</span>
+<span>AutoFix with Rollback Guard</span>
+</button>
+</div>
+</div>
+<!-- Telemetry & Diff Details Tray -->
+<div class="bg-surface-container/60 rounded-lg p-3 border border-outline-variant/20 grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] font-mono">
+<div>
+<span class="text-on-surface-variant block">Staging Test Status:</span>
+<span class="text-tertiary font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs">check_circle</span> 18 Visual Viewports Passed
+              </span>
+</div>
+<div>
+<span class="text-on-surface-variant block">Booking Form Verification:</span>
+<span class="text-tertiary font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs">verified</span> Form Submission 200 OK (0ms drift)
+              </span>
+</div>
+<div>
+<span class="text-on-surface-variant block">Vulnerability Threat Vector:</span>
+<span class="text-error font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs">bug_report</span> Arbitrary File Upload Patch
+              </span>
+</div>
+</div>
+</div>
+<!-- Matrix Item 2: WooCommerce Booking & Reservation Engine -->
+<div class="bg-surface-container-low rounded-xl p-4 border-l-4 border-l-secondary border border-outline-variant/30 hover:border-outline-variant/50 transition-all space-y-3">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/40 flex-shrink-0">
+<span class="material-symbols-outlined text-lg">calendar_month</span>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-sm font-bold text-white font-headline">WooCommerce Bookings &amp; Luxury Escapes</h3>
+<span class="text-[10px] font-mono text-on-surface-variant">v5.8.1</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
+<span class="text-[10px] font-mono text-tertiary font-bold bg-tertiary-container/30 px-1.5 py-0.5 rounded border border-tertiary/20">v5.8.4 Stable</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed border border-primary-container/30 text-[10px] font-mono font-medium">Revenue Vector Critical</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5">Payment gateway integrations &amp; real-time villa availability reservation pipeline</p>
+</div>
+</div>
+<!-- Action cluster -->
+<div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-white border border-outline-variant/30 text-xs font-semibold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-xs">play_arrow</span>
+<span>Re-run Synthetic Checkout</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 text-white text-xs font-semibold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-xs">check</span>
+<span>Stage For AutoDeploy</span>
+</button>
+</div>
+</div>
+<!-- Telemetry & Diff Details Tray -->
+<div class="bg-surface-container/60 rounded-lg p-3 border border-outline-variant/20 grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] font-mono">
+<div>
+<span class="text-on-surface-variant block">Staging Checkout Simulation:</span>
+<span class="text-tertiary font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs">check_circle</span> 12 Synthetic Inquiries (100% OK)
+              </span>
+</div>
+<div>
+<span class="text-on-surface-variant block">Stripe Webhook Compatibility:</span>
+<span class="text-white font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs text-secondary">cable</span> Tested with Stripe API v2023-10
+              </span>
+</div>
+<div>
+<span class="text-on-surface-variant block">Estimated Revenue Impact:</span>
+<span class="text-tertiary font-semibold flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs">trending_up</span> $0 Risk • Friction Index 0.0
+              </span>
+</div>
+</div>
+</div>
+<!-- Matrix Item 3: WP Rocket Cache & Asset Optimization -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 hover:border-outline-variant/50 transition-all space-y-3">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-fixed border border-outline-variant/40 flex-shrink-0">
+<span class="material-symbols-outlined text-lg">bolt</span>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-sm font-bold text-white font-headline">WP Rocket Performance Engine</h3>
+<span class="text-[10px] font-mono text-on-surface-variant">v3.15.8</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_forward</span>
+<span class="text-[10px] font-mono text-tertiary font-bold bg-tertiary-container/30 px-1.5 py-0.5 rounded border border-tertiary/20">v3.16.0</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant/30 text-[10px] font-mono">Performance Update</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5">Page caching, Critical Path CSS extraction &amp; Redis object cache binding</p>
+</div>
+</div>
+<!-- Action cluster -->
+<div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-white border border-outline-variant/30 text-xs font-semibold flex items-center gap-1.5 transition-all">
+<span>Diff Check</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-white border border-outline-variant/40 text-xs font-semibold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-xs">done</span>
+<span>Select for Batch</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-container/60 rounded-lg p-2.5 border border-outline-variant/20 flex flex-wrap items-center justify-between text-[11px] font-mono gap-2">
+<span class="text-on-surface-variant">Core Web Vitals Impact: <strong class="text-tertiary">LCP -70ms improvement (1.42s → 1.35s)</strong></span>
+<span class="text-on-surface-variant">Critical CSS Engine: <span class="text-white">Regeneration verified</span></span>
+</div>
+</div>
+<!-- Matrix Item 4: Advanced Custom Fields Pro & Theme Child (Clean & Verified) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<!-- ACF Pro -->
+<div class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/25 flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-tertiary border border-outline-variant/30">
+<span class="material-symbols-outlined text-base">data_object</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-white font-headline">ACF Pro</h4>
+<p class="text-[10px] font-mono text-on-surface-variant">v6.2.7 • Schema &amp; Fields</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-tertiary-container/20 text-tertiary border border-tertiary/20">
+<span class="material-symbols-outlined text-[10px]">check</span> VERIFIED
+              </span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 text-[10px] font-mono text-on-surface-variant flex justify-between items-center">
+<span>Database Integrity</span>
+<span class="text-tertiary">0 Deprecations</span>
+</div>
+</div>
+<!-- Custom Theme Child -->
+<div class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/25 flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/30">
+<span class="material-symbols-outlined text-base">palette</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-white font-headline">Aura Luxury Theme Child</h4>
+<p class="text-[10px] font-mono text-on-surface-variant">v2.4.1 • Bespoke Real Estate</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-tertiary-container/20 text-tertiary border border-tertiary/20">
+<span class="material-symbols-outlined text-[10px]">code</span> PHP 8.2 CLEAN
+              </span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 text-[10px] font-mono text-on-surface-variant flex justify-between items-center">
+<span>AST Static Analysis</span>
+<span class="text-white font-semibold">100% Type-Safe</span>
+</div>
+</div>
+</div>
+<!-- Batch Operations Footer Bar -->
+<div class="bg-surface-container-low/95 rounded-xl p-3.5 border border-primary-container/40 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">checklist</span>
+</div>
+<div>
+<span class="text-xs font-bold text-white tracking-wide">3 Updates Pre-Validated in Staging</span>
+<p class="text-[11px] text-on-surface-variant font-mono">Zero synthetic regressions detected across 42 endpoints</p>
+</div>
+</div>
+<button class="bg-primary-container hover:bg-primary-container/90 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition-all glow-indigo">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+<span>Execute Autonomous Multi-Patch Sequence</span>
+</button>
+</div>
+</div>
+<!-- RIGHT COLUMN: Staging Sandbox Simulation & Rollback Assurance Deck (5 Columns) -->
+<div class="lg:col-span-5 space-y-4">
+<!-- Card: Staging Sandbox Visual & Form Regression Inspector -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">view_in_ar</span>
+<h3 class="text-xs font-bold text-white font-headline uppercase tracking-wider">Staging Regression Inspector</h3>
+</div>
+<div class="flex items-center gap-1.5 text-[11px] font-mono text-tertiary bg-tertiary-container/20 px-2 py-0.5 rounded border border-tertiary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>SYNTHETIC LIVE CHECK</span>
+</div>
+</div>
+<!-- Split View Sandbox Mock Simulation -->
+<div class="space-y-2">
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant font-mono text-[11px]">Simulated Target Viewport:</span>
+<span class="text-white font-mono text-[11px] bg-surface-container px-2 py-0.5 rounded border border-outline-variant/30">
+                /villas/skyline-penthouse (Desktop &amp; Mobile)
+              </span>
+</div>
+<!-- Simulated Visual Inspection Card -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden relative group">
+<!-- Browser Chrome Simulation -->
+<div class="bg-surface-container px-3 py-1.5 border-b border-outline-variant/30 flex items-center justify-between text-[10px] font-mono text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error/60"></span>
+<span class="w-2 h-2 rounded-full bg-surface-variant"></span>
+<span class="w-2 h-2 rounded-full bg-tertiary/60"></span>
+<span class="ml-2 text-white/70">https://staging-sandbox.aura.internal/booking-enquiry</span>
+</div>
+<span class="text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">format_image_left</span> TLS 1.3
+                </span>
+</div>
+<!-- Viewport Content Wireframe & Diff Overlay -->
+<div class="p-3 bg-surface-container-high/30 space-y-3">
+<div class="flex items-center justify-between">
+<div class="h-4 w-28 bg-surface-container rounded"></div>
+<div class="h-3 w-16 bg-tertiary/20 rounded border border-tertiary/30 text-[9px] font-mono text-tertiary flex items-center justify-center font-bold">
+                    DIFF: 0.00%
+                  </div>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="h-14 bg-surface-container rounded border border-outline-variant/20 flex flex-col justify-between p-1.5">
+<span class="text-[9px] text-on-surface-variant font-mono">Villa Hero</span>
+<span class="text-[10px] font-mono text-white font-semibold">Matched (1:1)</span>
+</div>
+<div class="h-14 bg-surface-container rounded border border-outline-variant/20 flex flex-col justify-between p-1.5">
+<span class="text-[9px] text-on-surface-variant font-mono">Calendar Form</span>
+<span class="text-[10px] font-mono text-tertiary font-semibold">Interactive OK</span>
+</div>
+<div class="h-14 bg-surface-container rounded border border-outline-variant/20 flex flex-col justify-between p-1.5">
+<span class="text-[9px] text-on-surface-variant font-mono">Payment Hook</span>
+<span class="text-[10px] font-mono text-tertiary font-semibold">Stripe Auth 200</span>
+</div>
+</div>
+<!-- Regression Indicators Bar -->
+<div class="p-2 rounded bg-surface-container-lowest/80 border border-outline-variant/20 flex items-center justify-between text-[10px] font-mono">
+<span class="text-on-surface-variant">Synthetic Inquiries Injected:</span>
+<span class="text-tertiary font-bold">5/5 Completed (&lt; 210ms)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Metric Comparison Rows -->
+<div class="space-y-2 pt-1 font-mono text-xs">
+<div class="flex justify-between items-center p-2 rounded bg-surface-container border border-outline-variant/20">
+<span class="text-on-surface-variant text-[11px]">Largest Contentful Paint (LCP)</span>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant/70 line-through text-[11px]">1.42s</span>
+<span class="material-symbols-outlined text-xs text-tertiary">arrow_forward</span>
+<span class="text-tertiary font-bold text-[11px]">1.35s (-70ms)</span>
+</div>
+</div>
+<div class="flex justify-between items-center p-2 rounded bg-surface-container border border-outline-variant/20">
+<span class="text-on-surface-variant text-[11px]">DOM Mutation Drift</span>
+<span class="text-tertiary font-bold text-[11px]">0 Breaking Nodes</span>
+</div>
+<div class="flex justify-between items-center p-2 rounded bg-surface-container border border-outline-variant/20">
+<span class="text-on-surface-variant text-[11px]">JavaScript Console Errors</span>
+<span class="text-tertiary font-bold text-[11px]">0 Uncaught Exceptions</span>
+</div>
+</div>
+</div>
+<!-- Card: Autonomous AutoFix Safety Guardrails (PRD §17 Compliance Protocol) -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 space-y-3.5">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed">verified_user</span>
+<h3 class="text-xs font-bold text-white font-headline uppercase tracking-wider">Autonomous Deployment Guardrails</h3>
+</div>
+<span class="text-[10px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded border border-outline-variant/30">PRD §17 / §18</span>
+</div>
+<!-- Step Progression Timeline -->
+<div class="space-y-2.5">
+<!-- Step 1 -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<div class="w-5 h-5 rounded-full bg-tertiary-container/30 text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-xs">check</span>
+</div>
+<span class="text-white text-xs font-medium">1. Immutable Database &amp; WP-Content S3 Snapshot</span>
+</div>
+<span class="text-[10px] font-mono text-tertiary font-semibold">COMPLETED</span>
+</div>
+<!-- Step 2 -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<div class="w-5 h-5 rounded-full bg-tertiary-container/30 text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-xs">check</span>
+</div>
+<span class="text-white text-xs font-medium">2. Ephemeral Sandbox Container Spun</span>
+</div>
+<span class="text-[10px] font-mono text-tertiary font-semibold">READY</span>
+</div>
+<!-- Step 3 -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<div class="w-5 h-5 rounded-full bg-tertiary-container/30 text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-xs">check</span>
+</div>
+<span class="text-white text-xs font-medium">3. Patch Dry-Run &amp; E2E Cypress Suites</span>
+</div>
+<span class="text-[10px] font-mono text-tertiary font-semibold">100% PASSED</span>
+</div>
+<!-- Step 4 -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<div class="w-5 h-5 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0 animate-pulse">
+<span class="material-symbols-outlined text-xs">sync</span>
+</div>
+<span class="text-white text-xs font-semibold">4. Atomic Symlink Switchover (Zero Downtime)</span>
+</div>
+<span class="text-[10px] font-mono text-primary-fixed font-bold bg-primary-container/20 px-1.5 py-0.5 rounded border border-primary-container/30">PENDING TAP</span>
+</div>
+<!-- Step 5 -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<div class="w-5 h-5 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-xs">shield</span>
+</div>
+<span class="text-on-surface-variant text-xs">5. Telemetry Revert Guard (5xx Spike &gt; 0.1%)</span>
+</div>
+<span class="text-[10px] font-mono text-on-surface-variant">ARMED</span>
+</div>
+</div>
+</div>
+<!-- Action Card: Authorize Production AutoFix Deployment -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-secondary/40 bg-gradient-to-b from-secondary-container/10 to-surface-container-low space-y-4">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="text-sm font-bold text-white font-headline flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">security_update_good</span>
+                Authorize Live Remediation
+              </h3>
+<p class="text-xs text-on-surface-variant mt-1">
+                Zero interruption to guest reservations. Instant automated rollback triggered if synthetic heartbeat deviates.
+              </p>
+</div>
+<div class="w-7 h-7 rounded bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base">bolt</span>
+</div>
+</div>
+<div class="space-y-2">
+<button class="w-full bg-primary-container hover:bg-primary-container/90 text-white font-headline font-semibold text-xs py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all glow-indigo active:scale-98">
+<span class="material-symbols-outlined text-base">flash_on</span>
+<span>Deploy Patches to Live (Zero Downtime)</span>
+</button>
+<button class="w-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-white border border-outline-variant/30 text-xs font-mono py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span>Inspect Full Git Diff &amp; Cypress Video Logs</span>
+</button>
+</div>
+<div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[10px] font-mono text-on-surface-variant">
+<span>Signed by Guardian Autonomous Sentinel</span>
+<span class="text-secondary">Signature #SEC-9844-PROD</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3: Live WP-CLI Daemon Execution Terminal (Collapsible Footer Drawer) -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant/30 overflow-hidden">
+<!-- Terminal Header -->
+<div class="bg-surface-container px-4 py-2.5 border-b border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-sm">terminal</span>
+<span class="text-xs font-mono font-semibold text-white">WP-CLI &amp; Daemon Real-Time Remediation Stream</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/30 text-tertiary text-[10px] font-mono font-bold">CONNECTED: aura-wp-prod-01</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-mono text-on-surface-variant">Auto-scroll: ON</span>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant hover:text-white">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant hover:text-white">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Terminal Body -->
+<div class="p-4 bg-surface-container-lowest font-mono text-[11px] space-y-1 text-on-surface-variant leading-relaxed select-text overflow-x-auto">
+<div class="text-white/60">
+<span class="text-secondary">[15:32:01.041 UTC]</span> [WP-DAEMON] Initialized socket connection to WordPress container via unix:///var/run/wp-guardian.sock
+        </div>
+<div>
+<span class="text-secondary">[15:32:01.112 UTC]</span> [SENTINEL] Running vulnerability scan on 28 registered plugins...
+        </div>
+<div class="text-error">
+<span class="text-secondary">[15:32:02.408 UTC]</span> [ALERT] High Severity CVE detected: <span class="text-white font-bold">Elementor Pro v3.19.2</span> (Arbitrary File Upload / Stored XSS) -&gt; Reference CVE-2024-31210
+        </div>
+<div>
+<span class="text-secondary">[15:32:03.119 UTC]</span> [SANDBOX] Spawning isolated ephemeral staging environment: <span class="text-tertiary">staging-sandbox.aura.internal</span>
+</div>
+<div>
+<span class="text-secondary">[15:32:05.892 UTC]</span> [SANDBOX] Running: <span class="text-primary-fixed">wp plugin update elementor-pro --version=3.20.1 --path=/staging/aura</span>
+</div>
+<div class="text-tertiary">
+<span class="text-secondary">[15:32:08.314 UTC]</span> [SANDBOX] Plugin updated successfully. Executing synthetic Cypress headless suite (18 visual viewports, 5 form submissions)...
+        </div>
+<div class="text-tertiary">
+<span class="text-secondary">[15:32:12.781 UTC]</span> [VERIFIED] All 24 assertions passed. Pixel drift: 0.00%. Revenue reservation hook: HTTP 200 OK.
+        </div>
+<div class="text-white font-semibold">
+<span class="text-secondary">[15:32:13.002 UTC]</span> [STANDBY] Ready for atomic zero-downtime symlink deployment to production cluster. Awaiting Operator 1-Tap Authorization.
+        </div>
+</div>
+</section>
+</main>
+<!-- Global Footer Bar -->
+<footer class="mt-auto border-t border-outline-variant/20 bg-surface-container-lowest px-6 py-3 text-xs text-on-surface-variant">
+<div class="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4 font-mono text-[11px]">
+<div class="flex items-center gap-3">
+<span class="text-white font-semibold">Guardian AI Security &amp; WP Fleet Engine</span>
+<span>•</span>
+<span>Active Node: <span class="text-secondary">us-east-1a-prod-aura</span></span>
+<span>•</span>
+<span>Telemetry Latency: <span class="text-tertiary font-semibold">24ms</span></span>
+</div>
+<div class="flex items-center gap-4">
+<a class="hover:text-white transition-colors" href="#">Documentation (PRD §18)</a>
+<a class="hover:text-white transition-colors" href="#">Incident Hotline</a>
+<a class="hover:text-white transition-colors" href="#">API Keys &amp; Webhooks</a>
+<span class="text-outline-variant">|</span>
+<span class="text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> All Systems Operational
+        </span>
+</div>
+</div>
+</footer>
+</body></html>
