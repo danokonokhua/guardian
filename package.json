@@ -26,7 +26,8 @@
     "format:check": "prettier --check .",
     "worker": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/worker.ts",
     "reporting:smoke": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/reporting-smoke.ts",
-    "test:integration": "vitest run tests/db/rls.integration.test.ts tests/jobs/system-ping.integration.test.ts tests/jobs/monitor-check.integration.test.ts"
+    "test:integration": "vitest run tests/db/rls.integration.test.ts tests/jobs/system-ping.integration.test.ts tests/jobs/monitor-check.integration.test.ts",
+    "test:visual": "node --env-file=.env node_modules/@playwright/test/cli.js test"
   },
   "dependencies": {
     "@prisma/client": "6.19.2",
@@ -40,6 +41,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

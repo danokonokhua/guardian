@@ -1,16 +1,12 @@
 ﻿# UI implementation handoff
 
-## Open follow-up: visual browser verification
+## Visual browser verification: resolved for the current Chromium baseline
 
-User explicitly asked on 2026-09-27 to preserve this issue and revisit it later, while continuing UI implementation now.
-
-Browser automation failed at initialization: "Failed to write kernel assets: The system cannot find the path specified." No rendered desktop/mobile review has been completed. Type checks, unit tests, lint and HTTP 200 responses are not visual verification.
-
-Before declaring the Stitch implementation visually complete, restore browser access and check all implemented routes against design/stitch/extracted screenshots at desktop and mobile sizes. Check spacing, overflow, typography, logo legibility, keyboard focus, navigation, errors, empty/loading states, and authenticated interactions. Record actual screenshots and fixes. Do not repeatedly attempt the blocked browser during the deferred period unless requested or needed.
+On 2026-09-27, Playwright restored browser-based verification independently of the unavailable computer-use connector. Desktop (1440x1000), tablet (768x1024), and mobile (390x844) runs passed across 17 implemented routes, with authenticated DNS/settings interactions and loading/error checks. Screenshot review found and fixed mobile assignee-dropdown overflow and cramped tablet signup layout. See [the QA report](qa/2026-09-27/REPORT.md) for evidence, reproduction steps and scope limits. Earlier deferred-status entries below are historical.
 
 ## Current implementation
 
-Shared branding (user-supplied shield JPG), homepage/audit, authentication, dashboard, onboarding/verification, health/SEO/security/lead-form views, notifications/preferences, SLA controls, and incident detail disclosures are implemented. They remain awaiting visual QA.
+Shared branding (user-supplied shield JPG), homepage/audit, authentication, dashboard, onboarding/verification, health/SEO/security/lead-form views, notifications/preferences, SLA controls, and incident detail disclosures are implemented. The current Chromium desktop/tablet/mobile baseline has now been reviewed.
 
 Executive overview and operational briefings are now implemented using existing health/recommendation evidence. Type checking and lint passed; automated empty-state and dashboard checks are included. Do not fabricate AI generation, audio, financial telemetry, automated remediation, or action ledgers. Remaining unsupported product areas include billing, reputation, agency workflows, WordPress and orchestration.
 

@@ -474,6 +474,11 @@
     gap: 50px;
   }
 }
+@media (max-width: 900px) {
+  .auth-signup .auth-story {
+    display: none;
+  }
+}
 @media (max-width: 700px) {
   .desktop-link {
     display: none;

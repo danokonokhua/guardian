@@ -44,7 +44,7 @@ export function DnsEvidence({
           : !complete
             ? "Some records could not be checked. Your baseline is preserved."
             : changed.length
-              ? `${changed.length} record types changed`
+              ? `${changed.length} record ${changed.length === 1 ? "type" : "types"} changed`
               : "No changes detected"}
       </p>
       {observed && !Number.isNaN(observed.getTime()) && (

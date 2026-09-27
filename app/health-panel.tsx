@@ -971,11 +971,11 @@ export function HealthPanel({
                       </button>
                     )}
                     {members.length > 0 && (
-                      <label className="flex items-center gap-2 text-xs text-neutral-400">
+                      <label className="flex min-w-0 max-w-full items-center gap-2 text-xs text-neutral-400">
                         <span className="sr-only">Assign issue</span>
                         <select
                           aria-label="Assign issue"
-                          className="rounded border border-neutral-700 bg-neutral-950 px-2 py-1 text-xs text-neutral-300"
+                          className="min-w-0 max-w-full rounded border border-neutral-700 bg-neutral-950 px-2 py-1 text-xs text-neutral-300"
                           value={issue.assignedToId ?? ""}
                           disabled={busyIssueId === issue.id}
                           onChange={(event) =>

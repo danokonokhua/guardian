@@ -20,6 +20,8 @@ const eslintConfig = [
       "build/**",
       "dist/**",
       "coverage/**",
+      "playwright-report/**",
+      "test-results/**",
       "guardian-cpanel-release/**",
       "next-env.d.ts",
       "package-lock.json",
