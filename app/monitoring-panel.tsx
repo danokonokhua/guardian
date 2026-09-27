@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { DnsEvidence } from "@/components/dashboard/dns-evidence";
 
 type Monitor = {
   id: string;
@@ -338,35 +339,11 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
           {result.monitors.map((monitor) => (
             <li
               key={monitor.id}
-              className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-4"
+              className="min-w-0 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="font-medium">{monitorLabel(monitor.type)}</h3>
-                  {monitor.type === "DNS" && (
-                    <details className="mt-3 text-xs">
-                      <summary>DNS records and baseline</summary>
-                      <p className="my-2">
-                        A, AAAA, MX, NS and TXT on the verified website hostname. Changes are not
-                        automatically outages. Accepted changes clear on the next successful check.
-                      </p>
-                      <pre className="max-h-72 overflow-auto whitespace-pre-wrap">
-                        {JSON.stringify(
-                          { baseline: monitor.config?.baseline, latest: monitor.config?.latest },
-                          null,
-                          2,
-                        )}
-                      </pre>
-                      {monitor.config?.observedAt && (
-                        <button
-                          className="button-secondary compact mt-3"
-                          onClick={() => void acceptDnsBaseline(monitor)}
-                        >
-                          Accept displayed baseline
-                        </button>
-                      )}
-                    </details>
-                  )}
                   <p className="mt-1 text-sm text-neutral-400">Website {monitor.websiteId}</p>
                 </div>
                 <span
@@ -375,6 +352,12 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   {monitor.enabled ? "Enabled" : "Paused"}
                 </span>
               </div>
+              {monitor.type === "DNS" && (
+                <DnsEvidence
+                  evidence={monitor.config}
+                  onAccept={() => acceptDnsBaseline(monitor)}
+                />
+              )}
               <div className="mt-4 flex items-end gap-2">
                 <label className="text-xs text-neutral-500">
                   Runs every (minutes)
