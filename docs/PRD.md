@@ -258,6 +258,8 @@ Acceptance evidence must include record reordering/noise and resolver failure te
 
 Implementation checkpoint (28 September 2026): domain registration expiry now has RDAP collection, persistent observations, scheduled worker integration, configurable 90/30/7-day defaults, expired incidents, renewal-aware alert deduplication and dashboard evidence. Local database/queue integration and Chromium desktop/tablet/mobile checks pass; see [domain expiry delivery notes](DOMAIN_EXPIRY.md). This completes the previously deferred Chromium visual-QA follow-up for this slice. Email inbox delivery still depends on resolving the existing provider quota restriction. Email-domain health is next; billing remains paused.
 
+Email-domain health checkpoint (28 September 2026): SPF, DMARC and MTA-STS now have bounded collection, tenant-scoped observations/change history, per-protocol issues, existing SLA/preference-based alerts, and dashboard evidence. Unit and real database/queue integration checks passed; Chromium desktop/tablet/mobile QA is complete for this slice. See [implementation scope and verification](EMAIL_DOMAIN_HEALTH.md), including sender-dependent SPF limitations. Slack, Teams, Discord and webhook delivery is next; billing remains paused.
+
 ## 24. MVP exit criteria
 
 Before major expansion, the MVP must create an account, organization, business, and website; scan a website; monitor uptime; check SSL and HTTP; measure response time; detect broken links; perform basic SEO and security checks; monitor critical lead forms; create issues; calculate a health score; explain issues; provide recommendations; send alerts; and maintain history.

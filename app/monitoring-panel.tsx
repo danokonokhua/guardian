@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { DnsEvidence } from "@/components/dashboard/dns-evidence";
+import { EmailHealthEvidence } from "@/components/dashboard/email-health-evidence";
+import type { EmailHealthConfig } from "@/lib/email-health/types";
 import {
   DomainExpiryEvidence,
   type ExpiryEvidence,
@@ -13,7 +15,7 @@ type Monitor = {
   type: string;
   enabled: boolean;
   frequencyMinutes: number;
-  config?: {
+  config?: EmailHealthConfig & {
     thresholds?: number[];
     expiry?: ExpiryEvidence;
     lastSuccessful?: ExpiryEvidence;
@@ -30,6 +32,7 @@ type Monitor = {
 };
 
 const monitorOptions = [
+  { value: "EMAIL_HEALTH", label: "Email-domain health (SPF, DMARC, MTA-STS)" },
   { value: "DOMAIN_EXPIRY", label: "Domain registration expiry" },
   { value: "DNS", label: "DNS record changes" },
   { value: "UPTIME", label: "Website uptime" },
@@ -72,6 +75,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
   const [frequencyMinutes, setFrequencyMinutes] = useState("5");
   const [frequencyDrafts, setFrequencyDrafts] = useState<Record<string, string>>({});
   const [formId, setFormId] = useState("");
+  const [emailDomainScope, setEmailDomainScope] = useState("REGISTERED");
   const [formPagePath, setFormPagePath] = useState("");
   const [formProbePath, setFormProbePath] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
@@ -154,7 +158,9 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   ...(formPagePath.trim() === "" ? {} : { pagePath: formPagePath.trim() }),
                   ...(formProbePath.trim() === "" ? {} : { probePath: formProbePath.trim() }),
                 }
-              : {},
+              : type === "EMAIL_HEALTH"
+                ? { domainScope: emailDomainScope }
+                : {},
         }),
       });
       if (!response.ok) {
@@ -366,6 +372,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   onAccept={() => acceptDnsBaseline(monitor)}
                 />
               )}
+              {monitor.type === "EMAIL_HEALTH" && <EmailHealthEvidence config={monitor.config} />}
               {monitor.type === "DOMAIN_EXPIRY" && (
                 <DomainExpiryEvidence
                   evidence={monitor.config?.expiry}
@@ -391,7 +398,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   <input
                     aria-label={`Frequency for ${monitorLabel(monitor.type)}`}
                     type="number"
-                    min={monitor.type === "DOMAIN_EXPIRY" ? 60 : 1}
+                    min={["DOMAIN_EXPIRY", "EMAIL_HEALTH"].includes(monitor.type) ? 60 : 1}
                     max={1440}
                     value={frequencyDrafts[monitor.id] ?? String(monitor.frequencyMinutes)}
                     onChange={(event) =>
@@ -543,7 +550,8 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               value={type}
               onChange={(event) => {
                 setType(event.target.value as Monitor["type"]);
-                if (event.target.value === "DOMAIN_EXPIRY") setFrequencyMinutes("1440");
+                if (["DOMAIN_EXPIRY", "EMAIL_HEALTH"].includes(event.target.value))
+                  setFrequencyMinutes("1440");
               }}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
             >
@@ -564,6 +572,19 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             customer data. Reputation is visible for roadmap clarity and remains disabled until the
             PRD&apos;s approved review-platform integration is available.
           </p>
+          {type === "EMAIL_HEALTH" && (
+            <label className="md:col-span-4 text-xs text-neutral-400">
+              Email policy domain
+              <select
+                value={emailDomainScope}
+                onChange={(event) => setEmailDomainScope(event.target.value)}
+                className="mt-1 block w-full min-w-0 rounded border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white"
+              >
+                <option value="REGISTERED">Registered domain (example.com)</option>
+                <option value="HOSTNAME">Exact verified hostname (mail.example.com)</option>
+              </select>
+            </label>
+          )}
           {type === "FORM" && (
             <div className="md:col-span-4 grid gap-3 md:grid-cols-3">
               <label className="text-xs text-neutral-400">
@@ -604,7 +625,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             Frequency (min)
             <input
               required
-              min={type === "DOMAIN_EXPIRY" ? 60 : 1}
+              min={["DOMAIN_EXPIRY", "EMAIL_HEALTH"].includes(type) ? 60 : 1}
               max={1440}
               type="number"
               value={frequencyMinutes}

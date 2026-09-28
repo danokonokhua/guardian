@@ -1,5 +1,9 @@
 ﻿# UI implementation handoff
 
+## Email-domain health: 28 September 2026
+
+Dashboard monitoring now includes SPF, DMARC and MTA-STS evidence with independent healthy/missing/invalid/weak/unknown states, policy disclosures, domain-scope selection, last checked time, stale evidence and change summaries. Chromium desktop/tablet/mobile tests and screenshot review passed. See [delivery notes](EMAIL_DOMAIN_HEALTH.md) for protocol limits, integration evidence and alert behavior. Notification-channel expansion is next; billing remains paused.
+
 ## Domain expiry: 28 September 2026
 
 Domain registration expiry is implemented in the monitoring dashboard with configurable alert thresholds, registry source, checked time, expiry date, and unknown/stale evidence. Chromium desktop/tablet/mobile checks passed, including threshold persistence without overwriting registry evidence. Backend integration covers concurrent checks, shared-domain deduplication, expired state, renewal, transactional notification insertion, worker routing and tenant isolation. See [delivery notes](DOMAIN_EXPIRY.md). Historical deferred-QA entries below do not apply to this verified slice. Billing remains paused; email-domain health is next.

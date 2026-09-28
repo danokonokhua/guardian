@@ -1,5 +1,6 @@
 import { collectDnsSnapshot } from "@/lib/dns/collector";
 import { runDomainExpiryCheck } from "@/lib/jobs/domain-expiry-check";
+import { runEmailHealthCheck } from "@/lib/jobs/email-health-check";
 import { persistDnsObservation, dnsOutcome } from "@/lib/jobs/dns-check";
 import type { DnsSnapshot } from "@/lib/dns/records";
 import tls from "node:tls";
@@ -236,6 +237,15 @@ export async function registerMonitorCheckWorker(boss: PgBoss): Promise<void> {
       prisma,
     );
     if (!target) return;
+    if (target.monitor.type === "EMAIL_HEALTH") {
+      await runEmailHealthCheck(
+        job.data.organizationId,
+        target.monitor.id,
+        new URL(target.website.normalizedUrl).hostname,
+        target.monitor.config,
+      );
+      return;
+    }
     if (target.monitor.type === "DOMAIN_EXPIRY") {
       await runDomainExpiryCheck(
         boss,

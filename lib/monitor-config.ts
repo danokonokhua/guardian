@@ -2,6 +2,7 @@ import { MonitorType } from "@prisma/client";
 import { z } from "zod";
 import { parseWith } from "@/lib/validation";
 import { expiryConfigSchema } from "@/lib/domain-expiry/config";
+import { emailHealthConfigSchema } from "@/lib/email-health/config";
 
 export const performanceMonitorConfigSchema = z
   .object({
@@ -40,6 +41,7 @@ export const monitorConfigSchema = z.object({
     .refine(
       (value) =>
         value === MonitorType.DOMAIN_EXPIRY ||
+        value === MonitorType.EMAIL_HEALTH ||
         value === MonitorType.DNS ||
         value === MonitorType.UPTIME ||
         value === MonitorType.SSL ||
@@ -76,6 +78,16 @@ export type MonitorUpdateInput = z.input<typeof monitorUpdateSchema>;
 
 export function parseMonitorConfig(input: unknown): MonitorConfig {
   const parsed = parseWith(monitorConfigSchema, input, "monitor");
+  if (parsed.type === MonitorType.EMAIL_HEALTH)
+    return {
+      ...parsed,
+      frequencyMinutes: parseWith(
+        z.number().int().min(60).max(1440),
+        (input as { frequencyMinutes?: number }).frequencyMinutes ?? 1440,
+        "monitor.frequencyMinutes",
+      ),
+      config: parseWith(emailHealthConfigSchema, parsed.config, "monitor.config"),
+    };
   if (parsed.type === MonitorType.DOMAIN_EXPIRY) {
     const frequencyMinutes = (input as { frequencyMinutes?: number }).frequencyMinutes ?? 1440;
     return {

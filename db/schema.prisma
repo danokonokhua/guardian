@@ -89,6 +89,7 @@ enum WebsiteVerifyStatus {
 /// (uptime|ssl|security|seo|content|links|performance|form).
 enum MonitorType {
   DOMAIN_EXPIRY
+  EMAIL_HEALTH
   DNS
   UPTIME
   SSL

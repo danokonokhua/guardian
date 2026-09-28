@@ -104,6 +104,14 @@ export function updateMonitor(
       },
     });
     if (!existing) return null;
+    if (existing.type === "EMAIL_HEALTH") {
+      if (input.config !== undefined)
+        throw new ConflictError(
+          "Email policy evidence is read-only. Recreate the monitor to change its domain scope.",
+        );
+      if (input.frequencyMinutes !== undefined && input.frequencyMinutes < 60)
+        throw new ConflictError("Email policy checks must be at least 60 minutes apart.");
+    }
     if (existing.type === "DOMAIN_EXPIRY") {
       if (input.frequencyMinutes !== undefined && input.frequencyMinutes < 60)
         throw new ConflictError("Domain expiry checks must be at least 60 minutes apart.");

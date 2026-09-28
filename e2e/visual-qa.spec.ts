@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { PrismaClient } from "@prisma/client";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { evidence, type EmailHealthSnapshot } from "../lib/email-health/types";
 
 // Opt-in, local-only QA. Disposable data; no scheduler dispatch or outbound email.
 const db = new PrismaClient();
@@ -10,6 +11,27 @@ const userId = randomUUID(),
   monitorId = randomUUID();
 const token = randomBytes(32).toString("base64url");
 const expiryMonitorId = randomUUID();
+const emailMonitorId = randomUUID();
+const emailEvidence: EmailHealthSnapshot = {
+  domain: "example.com",
+  checkedAt: "2026-09-28T00:00:00.000Z",
+  checks: {
+    SPF: evidence(
+      "HEALTHY",
+      "SPF configuration passed bounded syntax and include/redirect checks.",
+      "dns:example.com:TXT",
+      ["v=spf1 include:sender.example.test -all"],
+    ),
+    DMARC: evidence("WEAK", "DMARC is monitoring-only.", "dns:_dmarc.example.com:TXT", [
+      "v=DMARC1; p=none",
+    ]),
+    MTA_STS: evidence(
+      "MISSING",
+      "No MTA-STS policy identifier is published.",
+      "https://mta-sts.example.com/.well-known/mta-sts.txt",
+    ),
+  },
+};
 const expiryEvidence = {
   state: "KNOWN",
   domain: "example.com",
@@ -103,6 +125,19 @@ test.beforeAll(async () => {
     },
   });
 });
+test.beforeAll(async () => {
+  await db.monitor.create({
+    data: {
+      id: emailMonitorId,
+      organizationId,
+      websiteId,
+      type: "EMAIL_HEALTH",
+      enabled: false,
+      frequencyMinutes: 1440,
+      config: { emailHealth: emailEvidence } as object,
+    },
+  });
+});
 test.afterAll(async () => {
   await db.organization.deleteMany({ where: { id: organizationId } });
   await db.user.deleteMany({ where: { id: userId } });
@@ -124,6 +159,10 @@ for (const [name, width, height] of [
       data: { config: { baseline, latest, observedAt: new Date().toISOString() } },
     });
     const errors: string[] = [];
+    await db.monitor.update({
+      where: { id: emailMonitorId },
+      data: { config: { emailHealth: emailEvidence } as object },
+    });
     await db.monitor.update({
       where: { id: expiryMonitorId },
       data: { config: { expiry: expiryEvidence, lastSuccessful: expiryEvidence } },
@@ -186,6 +225,39 @@ for (const [name, width, height] of [
         .toBe(true);
     }
     await page.goto("/dashboard#monitoring");
+    const emailCard = page.getByRole("region", { name: "Email-domain health evidence" });
+    await expect(emailCard.getByText("Weak policy", { exact: true })).toBeVisible();
+    await emailCard.getByText("SPF policy evidence", { exact: true }).click();
+    await expect(
+      emailCard.getByText("v=spf1 include:sender.example.test -all", { exact: true }),
+    ).toBeVisible();
+    await emailCard.evaluate((element) => element.scrollIntoView({ block: "start" }));
+    await emailCard.screenshot({ path: testInfo.outputPath("email-health.png") });
+    await db.monitor.update({
+      where: { id: emailMonitorId },
+      data: {
+        config: {
+          emailHealth: {
+            ...emailEvidence,
+            checks: {
+              ...emailEvidence.checks,
+              SPF: evidence(
+                "UNKNOWN",
+                "SPF DNS lookup could not be completed.",
+                "dns:example.com:TXT",
+              ),
+            },
+          },
+          emailLastKnown: {
+            SPF: { ...emailEvidence.checks.SPF, checkedAt: emailEvidence.checkedAt },
+          },
+        } as object,
+      },
+    });
+    await page.reload();
+    await expect(emailCard.getByText(/Last confirmed state \(stale\)/)).toBeVisible();
+    await emailCard.evaluate((element) => element.scrollIntoView({ block: "start" }));
+    await emailCard.screenshot({ path: testInfo.outputPath("email-health-unknown.png") });
     const expiryCard = page.getByRole("region", {
       name: "Domain registration expiry",
       exact: true,
