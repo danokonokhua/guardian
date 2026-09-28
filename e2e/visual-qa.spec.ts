@@ -138,6 +138,25 @@ test.beforeAll(async () => {
     },
   });
 });
+test.beforeAll(async () => {
+  for (const channel of ["SLACK", "TEAMS", "DISCORD"]) {
+    await db.notificationDestination.create({
+      data: {
+        organizationId,
+        name: `${channel} operations`,
+        channel,
+        host:
+          channel === "SLACK"
+            ? "hooks.slack.com"
+            : channel === "TEAMS"
+              ? "prod-1.westus.logic.azure.com"
+              : "discord.com",
+        credentials: "qa-disabled-no-network",
+        enabled: false,
+      },
+    });
+  }
+});
 test.afterAll(async () => {
   await db.organization.deleteMany({ where: { id: organizationId } });
   await db.user.deleteMany({ where: { id: userId } });
@@ -347,6 +366,68 @@ for (const [name, width, height] of [
     await page.getByLabel("Acknowledge within (minutes)").fill("45");
     await page.getByRole("button", { name: "Save SLA policy", exact: true }).click();
     await expect(page.getByText("Organization SLA policy saved.")).toBeVisible();
+    const destinations = page.getByRole("region", {
+      name: "Organization notification destinations",
+    });
+    await destinations.getByLabel("Destination name", { exact: true }).fill("QA receiver");
+    await destinations.getByLabel("Notification service", { exact: true }).selectOption("WEBHOOK");
+    await destinations
+      .getByLabel("Destination webhook URL", { exact: true })
+      .fill("https://example.com/guardian-qa-no-send");
+    await destinations
+      .getByLabel("Webhook signing secret", { exact: true })
+      .fill("guardian-qa-signature-secret-32-characters");
+    await destinations.getByRole("button", { name: "Save destination", exact: true }).click();
+    await expect(destinations.getByText(/Destination saved paused/)).toBeVisible();
+    await expect(destinations.getByLabel("Destination webhook URL", { exact: true })).toHaveValue(
+      "",
+    );
+    await destinations.getByRole("button", { name: "Enable QA receiver", exact: true }).click();
+    await destinations.getByRole("button", { name: "Pause QA receiver", exact: true }).click();
+    await expect(
+      destinations.getByText("Destination paused. New incident deliveries are stopped.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    const savedDestination = await db.notificationDestination.findFirstOrThrow({
+      where: { organizationId, name: "QA receiver" },
+    });
+    expect(savedDestination.enabled).toBe(false);
+    expect(savedDestination.credentials).not.toContain("guardian-qa-no-send");
+    await db.externalDelivery.create({
+      data: {
+        organizationId,
+        destinationId: savedDestination.id,
+        dedupKey: randomUUID(),
+        status: "FAILED",
+        attempts: 5,
+        httpStatus: 429,
+        lastError: "Destination returned HTTP 429.",
+      },
+    });
+    await destinations
+      .getByRole("button", { name: "Refresh delivery status", exact: true })
+      .click();
+    await destinations.getByText("Delivery history — latest: failed", { exact: true }).click();
+    await expect(
+      destinations.getByText("Destination returned HTTP 429.", { exact: true }),
+    ).toBeVisible();
+    await destinations.evaluate((element) => element.scrollIntoView({ block: "start" }));
+    await destinations.screenshot({ path: testInfo.outputPath("notification-destinations.png") });
+    await destinations
+      .getByRole("button", { name: "Save destination", exact: true })
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: testInfo.outputPath("notification-destination-form-viewport.png"),
+    });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(
+      true,
+    );
+    page.once("dialog", (dialog) => dialog.accept());
+    await destinations.getByRole("button", { name: "Remove QA receiver", exact: true }).click();
+    await expect(
+      destinations.getByRole("button", { name: "Remove QA receiver", exact: true }),
+    ).toHaveCount(0);
     await page.goto("/dashboard");
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Skip to dashboard content" })).toBeFocused();

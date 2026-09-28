@@ -1,14 +1,17 @@
 ﻿"use client";
 import { useEffect, useState, type FormEvent } from "react";
 import { NotificationsPanel } from "@/app/notifications-panel";
+import { NotificationDestinations } from "@/components/dashboard/notification-destinations";
 type Policy = { acknowledgeMinutes: number; resolveMinutes: number };
 type Preferences = { IN_APP: boolean; EMAIL: boolean };
 export function AlertSettings({
   organizationId,
   canManage,
+  canManageDestinations = false,
 }: {
   organizationId: string;
   canManage: boolean;
+  canManageDestinations?: boolean;
 }) {
   const base = `/api/v1/organizations/${organizationId}`;
   const [policy, setPolicy] = useState<Policy | null>(null);
@@ -190,6 +193,7 @@ export function AlertSettings({
           </section>
         </div>
       )}
+      {canManageDestinations && <NotificationDestinations organizationId={organizationId} />}
       <section className="setup-card">
         <h2>Recent notifications</h2>
         <NotificationsPanel organizationId={organizationId} />

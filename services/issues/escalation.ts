@@ -5,6 +5,7 @@ import { withTenantTransaction } from "@/db/tenant";
 import { enqueueNotification, type NotificationEvent } from "@/lib/notifications";
 import { readOrganizationSlaPolicy } from "@/services/organizations/settings";
 import { isChannelEnabled } from "@/services/notifications/repository";
+import { queueDestinationAlerts } from "@/lib/notification-destinations/queue";
 
 export interface SlaEscalationResult {
   checkedIssues: number;
@@ -16,6 +17,15 @@ export async function enqueueSlaEscalations(
   scope: TenantScope,
   enqueue: (event: NotificationEvent) => Promise<string | null> = (event) =>
     enqueueNotification(event),
+  enqueueExternal: (issueId: string) => Promise<number> = (issueId) =>
+    withTenantTransaction(scope, (tx) =>
+      queueDestinationAlerts(
+        tx,
+        scope.organizationId,
+        issueId,
+        `sla:${issueId}:${Math.floor(Date.now() / 300000)}`,
+      ),
+    ),
 ): Promise<SlaEscalationResult> {
   const policy = await readOrganizationSlaPolicy(scope);
   const data = await withTenantTransaction(scope, async (tx) => {
@@ -61,6 +71,7 @@ export async function enqueueSlaEscalations(
   });
   let notificationsQueued = 0;
   for (const issue of breached) {
+    notificationsQueued += await enqueueExternal(issue.id);
     const ageMinutes = Math.floor((now - issue.firstSeenAt.getTime()) / 60_000);
     const eventBase = {
       organizationId: scope.organizationId,

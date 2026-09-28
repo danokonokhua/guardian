@@ -248,6 +248,8 @@ model PasswordResetToken {
 
 /// Phase 1A §6.1: THE TENANT ROOT. Soft delete (deletedAt), purge after 30d.
 model Organization {
+  notificationDestinations NotificationDestination[]
+  externalDeliveries ExternalDelivery[]
   domainExpiryAlerts DomainExpiryAlert[]
   id        String    @id @default(uuid())
   name      String
@@ -277,7 +279,46 @@ model Organization {
   @@map("organizations")
 }
 
-/// Durable deadline alert ledger, shared by a tenant's subdomain monitors.
+/// Organization-owned encrypted alert destinations.
+model NotificationDestination {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  name String
+  channel String
+  host String
+  credentials String
+  enabled Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deliveries ExternalDelivery[]
+  @@unique([id, organizationId])
+  @@index([organizationId, enabled], map: "notification_destinations_org_enabled")
+  @@map("notification_destinations")
+}
+
+model ExternalDelivery {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  destinationId String
+  destination NotificationDestination @relation(fields: [destinationId, organizationId], references: [id, organizationId], onDelete: Cascade, onUpdate: NoAction)
+  issueId String?
+  dedupKey String
+  status String @default("PENDING")
+  attempts Int @default(0)
+  lastError String?
+  httpStatus Int?
+  leaseId String?
+  leaseUntil DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deliveredAt DateTime?
+  @@unique([destinationId, dedupKey])
+  @@index([organizationId, createdAt], map: "external_deliveries_org_created")
+  @@map("external_deliveries")
+}
+
 model DomainExpiryAlert {
   id             String @id @default(uuid())
   organizationId String

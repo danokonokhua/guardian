@@ -42,6 +42,7 @@ export default async function AlertsPage() {
           key={membership.organizationId}
           organizationId={membership.organizationId}
           canManage={can(membership.role, "issue:manage")}
+          canManageDestinations={can(membership.role, "org:update")}
         />
       </DashboardShell>
     </DashboardOrganizationProvider>

@@ -81,6 +81,7 @@ services:
       args:
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     environment:
+      NOTIFICATION_ENCRYPTION_KEY: ${NOTIFICATION_ENCRYPTION_KEY:-}
       NODE_ENV: production
       APP_ENV: ${APP_ENV:-production}
       HOSTNAME: 0.0.0.0
@@ -130,6 +131,7 @@ services:
       args:
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     environment:
+      NOTIFICATION_ENCRYPTION_KEY: ${NOTIFICATION_ENCRYPTION_KEY:-}
       NODE_ENV: production
       APP_ENV: ${APP_ENV:-production}
       DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}

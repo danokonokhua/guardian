@@ -39,8 +39,10 @@ describe("SLA escalation", () => {
       }),
     );
     const enqueue = vi.fn().mockResolvedValue("job-1");
-    const result = await enqueueSlaEscalations(scope, enqueue);
-    expect(result).toEqual({ checkedIssues: 1, breachedIssues: 1, notificationsQueued: 4 });
+    const external = vi.fn().mockResolvedValue(1);
+    const result = await enqueueSlaEscalations(scope, enqueue, external);
+    expect(result).toEqual({ checkedIssues: 1, breachedIssues: 1, notificationsQueued: 5 });
+    expect(external).toHaveBeenCalledExactlyOnceWith(issue.id);
     expect(enqueue).toHaveBeenCalledTimes(4);
     expect(enqueue).toHaveBeenCalledWith(
       expect.objectContaining({ channel: "IN_APP", issueId: issue.id }),

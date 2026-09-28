@@ -1,3 +1,7 @@
+## Notification destinations: 28 September 2026
+
+Settings > Alerts now includes owner/admin organization destinations for Slack, Teams Workflows, Discord and signed HTTPS webhooks. Creation starts paused; explicit test, enable/pause, removal and the latest five delivery outcomes are available. Credentials are encrypted and never returned to the browser. Chromium desktop/tablet/mobile verification passed, including save, pause persistence and failure history. See [setup and delivery notes](NOTIFICATION_CHANNELS.md). Real provider receipt still requires the intended destination URLs and a Settings test. Status pages are next; billing remains paused.
+
 ﻿# UI implementation handoff
 
 ## Email-domain health: 28 September 2026

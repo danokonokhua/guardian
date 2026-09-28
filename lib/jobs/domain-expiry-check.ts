@@ -8,6 +8,7 @@ import { collectDomainExpiry } from "@/lib/domain-expiry/collector";
 import { expiryThreshold, type ExpiryObservation } from "@/lib/domain-expiry/records";
 import { DEFAULT_EXPIRY_THRESHOLDS } from "@/lib/domain-expiry/config";
 import { NOTIFICATION_JOB, type NotificationEvent } from "@/lib/notifications";
+import { queueDestinationAlerts } from "@/lib/notification-destinations/queue";
 
 export async function persistDomainExpiry(
   tx: Prisma.TransactionClient,
@@ -132,6 +133,7 @@ export async function persistDomainExpiry(
     skipDuplicates: true,
   });
   if (!claimed.count) return;
+  await queueDestinationAlerts(tx, monitor.organizationId, issue.id, `expiry:${issue.id}`, boss);
   const members = await tx.organizationMember.findMany({
     where: {
       organizationId: monitor.organizationId,

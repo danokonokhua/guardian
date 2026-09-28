@@ -260,6 +260,8 @@ Implementation checkpoint (28 September 2026): domain registration expiry now ha
 
 Email-domain health checkpoint (28 September 2026): SPF, DMARC and MTA-STS now have bounded collection, tenant-scoped observations/change history, per-protocol issues, existing SLA/preference-based alerts, and dashboard evidence. Unit and real database/queue integration checks passed; Chromium desktop/tablet/mobile QA is complete for this slice. See [implementation scope and verification](EMAIL_DOMAIN_HEALTH.md), including sender-dependent SPF limitations. Slack, Teams, Discord and webhook delivery is next; billing remains paused.
 
+Notification-channel checkpoint (28 September 2026): organization-owned Slack, Teams Workflows, Discord and signed HTTPS webhook destinations now include owner/admin settings, encrypted credentials, paused-by-default setup, explicit test delivery, tenant-isolated persistence, transactional queue insertion, bounded retries, delivery history and SLA/domain-expiry alert fanout. Unit and real database/queue tests pass; Chromium desktop/tablet/mobile checks pass. Real provider receipt remains to be verified with the intended destination URLs. See [setup and delivery notes](NOTIFICATION_CHANNELS.md). Agency/client status pages are next; billing remains paused.
+
 ## 24. MVP exit criteria
 
 Before major expansion, the MVP must create an account, organization, business, and website; scan a website; monitor uptime; check SSL and HTTP; measure response time; detect broken links; perform basic SEO and security checks; monitor critical lead forms; create issues; calculate a health score; explain issues; provide recommendations; send alerts; and maintain history.
