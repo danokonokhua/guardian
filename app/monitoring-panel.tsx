@@ -2,6 +2,10 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { DnsEvidence } from "@/components/dashboard/dns-evidence";
+import {
+  DomainExpiryEvidence,
+  type ExpiryEvidence,
+} from "@/components/dashboard/domain-expiry-evidence";
 
 type Monitor = {
   id: string;
@@ -10,6 +14,9 @@ type Monitor = {
   enabled: boolean;
   frequencyMinutes: number;
   config?: {
+    thresholds?: number[];
+    expiry?: ExpiryEvidence;
+    lastSuccessful?: ExpiryEvidence;
     baseline?: Record<string, string[]>;
     latest?: Record<string, { state: string; records?: string[]; reason?: string }>;
     observedAt?: string;
@@ -23,6 +30,7 @@ type Monitor = {
 };
 
 const monitorOptions = [
+  { value: "DOMAIN_EXPIRY", label: "Domain registration expiry" },
   { value: "DNS", label: "DNS record changes" },
   { value: "UPTIME", label: "Website uptime" },
   { value: "SSL", label: "SSL certificate" },
@@ -358,13 +366,32 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   onAccept={() => acceptDnsBaseline(monitor)}
                 />
               )}
+              {monitor.type === "DOMAIN_EXPIRY" && (
+                <DomainExpiryEvidence
+                  evidence={monitor.config?.expiry}
+                  lastSuccessful={monitor.config?.lastSuccessful}
+                  thresholds={monitor.config?.thresholds}
+                  onSave={async (thresholds) => {
+                    const response = await fetch(
+                      `/api/v1/organizations/${organizationId}/monitors/${monitor.id}`,
+                      {
+                        method: "PATCH",
+                        headers: { "content-type": "application/json" },
+                        body: JSON.stringify({ config: { thresholds } }),
+                      },
+                    );
+                    if (!response.ok) throw Error("Unable to save expiry thresholds");
+                    setReloadToken((value) => value + 1);
+                  }}
+                />
+              )}
               <div className="mt-4 flex items-end gap-2">
                 <label className="text-xs text-neutral-500">
                   Runs every (minutes)
                   <input
                     aria-label={`Frequency for ${monitorLabel(monitor.type)}`}
                     type="number"
-                    min={1}
+                    min={monitor.type === "DOMAIN_EXPIRY" ? 60 : 1}
                     max={1440}
                     value={frequencyDrafts[monitor.id] ?? String(monitor.frequencyMinutes)}
                     onChange={(event) =>
@@ -514,7 +541,10 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             Check type
             <select
               value={type}
-              onChange={(event) => setType(event.target.value as Monitor["type"])}
+              onChange={(event) => {
+                setType(event.target.value as Monitor["type"]);
+                if (event.target.value === "DOMAIN_EXPIRY") setFrequencyMinutes("1440");
+              }}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
             >
               {monitorOptions.map((option) => (
@@ -574,7 +604,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             Frequency (min)
             <input
               required
-              min={1}
+              min={type === "DOMAIN_EXPIRY" ? 60 : 1}
               max={1440}
               type="number"
               value={frequencyMinutes}

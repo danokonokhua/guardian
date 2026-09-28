@@ -88,6 +88,7 @@ enum WebsiteVerifyStatus {
 /// Phase 1A §6.3: monitoring_checks.type
 /// (uptime|ssl|security|seo|content|links|performance|form).
 enum MonitorType {
+  DOMAIN_EXPIRY
   DNS
   UPTIME
   SSL
@@ -246,6 +247,7 @@ model PasswordResetToken {
 
 /// Phase 1A §6.1: THE TENANT ROOT. Soft delete (deletedAt), purge after 30d.
 model Organization {
+  domainExpiryAlerts DomainExpiryAlert[]
   id        String    @id @default(uuid())
   name      String
   slug      String    @unique
@@ -272,6 +274,19 @@ model Organization {
 
   @@index([ownerId])
   @@map("organizations")
+}
+
+/// Durable deadline alert ledger, shared by a tenant's subdomain monitors.
+model DomainExpiryAlert {
+  id             String @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  domain         String
+  expiresAt      DateTime
+  thresholdDays  Int
+  createdAt      DateTime @default(now())
+  @@unique([organizationId, domain, expiresAt, thresholdDays], map: "domain_expiry_alert_cycle")
+  @@map("domain_expiry_alerts")
 }
 
 /// Phase 1A §6.1: joins users ↔ organizations with the RBAC role.

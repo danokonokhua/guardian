@@ -256,6 +256,8 @@ Billing implementation is paused by the product owner. Continue the monitoring e
 
 Acceptance evidence must include record reordering/noise and resolver failure tests; expiry boundary/renewal deduplication tests; email-policy malformed/missing/timeout cases; destination authorization and delivery retry tests; status-page public-data isolation tests; and accessibility fixtures including legitimate decorative/hidden elements.
 
+Implementation checkpoint (28 September 2026): domain registration expiry now has RDAP collection, persistent observations, scheduled worker integration, configurable 90/30/7-day defaults, expired incidents, renewal-aware alert deduplication and dashboard evidence. Local database/queue integration and Chromium desktop/tablet/mobile checks pass; see [domain expiry delivery notes](DOMAIN_EXPIRY.md). This completes the previously deferred Chromium visual-QA follow-up for this slice. Email inbox delivery still depends on resolving the existing provider quota restriction. Email-domain health is next; billing remains paused.
+
 ## 24. MVP exit criteria
 
 Before major expansion, the MVP must create an account, organization, business, and website; scan a website; monitor uptime; check SSL and HTTP; measure response time; detect broken links; perform basic SEO and security checks; monitor critical lead forms; create issues; calculate a health score; explain issues; provide recommendations; send alerts; and maintain history.

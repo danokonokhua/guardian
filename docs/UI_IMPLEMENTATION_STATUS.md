@@ -1,5 +1,9 @@
 ﻿# UI implementation handoff
 
+## Domain expiry: 28 September 2026
+
+Domain registration expiry is implemented in the monitoring dashboard with configurable alert thresholds, registry source, checked time, expiry date, and unknown/stale evidence. Chromium desktop/tablet/mobile checks passed, including threshold persistence without overwriting registry evidence. Backend integration covers concurrent checks, shared-domain deduplication, expired state, renewal, transactional notification insertion, worker routing and tenant isolation. See [delivery notes](DOMAIN_EXPIRY.md). Historical deferred-QA entries below do not apply to this verified slice. Billing remains paused; email-domain health is next.
+
 ## Visual browser verification: resolved for the current Chromium baseline
 
 On 2026-09-27, Playwright restored browser-based verification independently of the unavailable computer-use connector. Desktop (1440x1000), tablet (768x1024), and mobile (390x844) runs passed across 17 implemented routes, with authenticated DNS/settings interactions and loading/error checks. Screenshot review found and fixed mobile assignee-dropdown overflow and cramped tablet signup layout. See [the QA report](qa/2026-09-27/REPORT.md) for evidence, reproduction steps and scope limits. Earlier deferred-status entries below are historical.

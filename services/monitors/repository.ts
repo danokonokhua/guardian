@@ -1,6 +1,8 @@
 import "server-only";
 
 import { ConflictError } from "@/lib/errors";
+import { expiryConfigSchema } from "@/lib/domain-expiry/config";
+import { parseWith } from "@/lib/validation";
 import type { MonitorType } from "@prisma/client";
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
@@ -89,6 +91,7 @@ export function updateMonitor(
   input: { enabled?: boolean; frequencyMinutes?: number; config?: object },
 ): Promise<MonitorRecord | null> {
   return withTenantTransaction(scope, async (tx) => {
+    await tx.$executeRaw`SELECT id FROM monitoring_checks WHERE id = ${monitorId} FOR UPDATE`;
     const existing = await tx.monitor.findFirst({
       where: { id: monitorId, organizationId: scope.organizationId },
       select: {
@@ -97,9 +100,22 @@ export function updateMonitor(
         type: true,
         enabled: true,
         frequencyMinutes: true,
+        config: true,
       },
     });
     if (!existing) return null;
+    if (existing.type === "DOMAIN_EXPIRY") {
+      if (input.frequencyMinutes !== undefined && input.frequencyMinutes < 60)
+        throw new ConflictError("Domain expiry checks must be at least 60 minutes apart.");
+      if (input.config !== undefined)
+        input = {
+          ...input,
+          config: {
+            ...(existing.config as object),
+            ...parseWith(expiryConfigSchema, input.config, "monitor.config"),
+          },
+        };
+    }
     if (existing.type === "DNS" && input.config !== undefined)
       throw new ConflictError("Use DNS baseline acceptance to change DNS state.");
     const monitor = await tx.monitor.update({ where: { id: monitorId }, data: input, select });

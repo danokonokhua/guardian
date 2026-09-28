@@ -21,7 +21,11 @@ export async function enqueueSlaEscalations(
   const data = await withTenantTransaction(scope, async (tx) => {
     const [issues, members] = await Promise.all([
       tx.issue.findMany({
-        where: { organizationId: scope.organizationId, status: { notIn: ["RESOLVED", "IGNORED"] } },
+        where: {
+          organizationId: scope.organizationId,
+          ruleId: { not: "monitor.domain_expiry" },
+          status: { notIn: ["RESOLVED", "IGNORED"] },
+        },
         orderBy: { firstSeenAt: "asc" },
         take: 1000,
         select: {

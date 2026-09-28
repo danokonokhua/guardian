@@ -1,6 +1,7 @@
 import { MonitorType } from "@prisma/client";
 import { z } from "zod";
 import { parseWith } from "@/lib/validation";
+import { expiryConfigSchema } from "@/lib/domain-expiry/config";
 
 export const performanceMonitorConfigSchema = z
   .object({
@@ -38,6 +39,7 @@ export const monitorConfigSchema = z.object({
     .nativeEnum(MonitorType)
     .refine(
       (value) =>
+        value === MonitorType.DOMAIN_EXPIRY ||
         value === MonitorType.DNS ||
         value === MonitorType.UPTIME ||
         value === MonitorType.SSL ||
@@ -48,7 +50,7 @@ export const monitorConfigSchema = z.object({
         value === MonitorType.FORM,
       {
         message:
-          "This monitor type is not available yet. Choose DNS, UPTIME, SSL, SECURITY, LINKS, SEO, PERFORMANCE, or FORM.",
+          "This monitor type is not available yet. Choose DOMAIN_EXPIRY, DNS, UPTIME, SSL, SECURITY, LINKS, SEO, PERFORMANCE, or FORM.",
       },
     ),
   enabled: z.boolean().optional().default(true),
@@ -74,6 +76,18 @@ export type MonitorUpdateInput = z.input<typeof monitorUpdateSchema>;
 
 export function parseMonitorConfig(input: unknown): MonitorConfig {
   const parsed = parseWith(monitorConfigSchema, input, "monitor");
+  if (parsed.type === MonitorType.DOMAIN_EXPIRY) {
+    const frequencyMinutes = (input as { frequencyMinutes?: number }).frequencyMinutes ?? 1440;
+    return {
+      ...parsed,
+      frequencyMinutes: parseWith(
+        z.number().int().min(60).max(1440),
+        frequencyMinutes,
+        "monitor.frequencyMinutes",
+      ),
+      config: parseWith(expiryConfigSchema, parsed.config, "monitor.config"),
+    };
+  }
   if (parsed.type === MonitorType.DNS)
     return { ...parsed, config: parseWith(z.object({}).strict(), parsed.config, "monitor.config") };
   if (parsed.type === MonitorType.PERFORMANCE) {

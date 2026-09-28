@@ -9,6 +9,15 @@ const userId = randomUUID(),
   websiteId = randomUUID(),
   monitorId = randomUUID();
 const token = randomBytes(32).toString("base64url");
+const expiryMonitorId = randomUUID();
+const expiryEvidence = {
+  state: "KNOWN",
+  domain: "example.com",
+  expiresAt: "2026-10-05T00:00:00.000Z",
+  checkedAt: "2026-09-28T00:00:00.000Z",
+  source: "https://rdap.verisign.com/com/v1/domain/example.com",
+  thresholdDays: 7,
+};
 const baseline = {
   A: ["203.0.113.1"],
   AAAA: [],
@@ -82,6 +91,17 @@ test.beforeAll(async () => {
       summary: "Review the routing change before accepting the baseline.",
     },
   });
+  await db.monitor.create({
+    data: {
+      id: expiryMonitorId,
+      organizationId,
+      websiteId,
+      type: "DOMAIN_EXPIRY",
+      enabled: false,
+      frequencyMinutes: 1440,
+      config: { expiry: expiryEvidence, lastSuccessful: expiryEvidence },
+    },
+  });
 });
 test.afterAll(async () => {
   await db.organization.deleteMany({ where: { id: organizationId } });
@@ -104,6 +124,10 @@ for (const [name, width, height] of [
       data: { config: { baseline, latest, observedAt: new Date().toISOString() } },
     });
     const errors: string[] = [];
+    await db.monitor.update({
+      where: { id: expiryMonitorId },
+      data: { config: { expiry: expiryEvidence, lastSuccessful: expiryEvidence } },
+    });
     page.on("pageerror", (error) => errors.push(error.message));
     for (const path of [
       "/",
@@ -162,6 +186,37 @@ for (const [name, width, height] of [
         .toBe(true);
     }
     await page.goto("/dashboard#monitoring");
+    const expiryCard = page.getByRole("region", {
+      name: "Domain registration expiry",
+      exact: true,
+    });
+    await expect(expiryCard.getByText("7 days until registry expiry")).toBeVisible();
+    await expiryCard.getByLabel("Advance alerts (days, comma separated)").fill("60, 14, 3");
+    await expiryCard.getByRole("button", { name: "Save expiry alerts" }).click();
+    await expect
+      .poll(
+        async () => (await db.monitor.findUniqueOrThrow({ where: { id: expiryMonitorId } })).config,
+      )
+      .toMatchObject({ thresholds: [60, 14, 3], expiry: expiryEvidence });
+    await expiryCard.screenshot({ path: testInfo.outputPath("domain-expiry.png") });
+    await db.monitor.update({
+      where: { id: expiryMonitorId },
+      data: {
+        config: {
+          expiry: {
+            state: "UNKNOWN",
+            domain: "example.com",
+            reason: "rdap_unavailable",
+            checkedAt: expiryEvidence.checkedAt,
+          },
+          lastSuccessful: expiryEvidence,
+        },
+      },
+    });
+    await page.reload();
+    await expect(expiryCard.getByText("Expiry unknown", { exact: true })).toBeVisible();
+    await expect(expiryCard.getByText(/Last confirmed expiry \(stale\)/)).toBeVisible();
+    await expiryCard.screenshot({ path: testInfo.outputPath("domain-expiry-unknown.png") });
     await page.getByText("DNS records and baseline", { exact: true }).click();
     await expect(page.getByText("Added:", { exact: true })).toBeVisible();
     await expect(page.getByText("Removed:", { exact: true })).toBeVisible();
