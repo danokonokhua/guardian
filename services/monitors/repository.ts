@@ -104,6 +104,14 @@ export function updateMonitor(
       },
     });
     if (!existing) return null;
+    if (existing.type === "ACCESSIBILITY") {
+      if (input.config !== undefined)
+        throw new ConflictError(
+          "Accessibility evidence is read-only. Run a new check to refresh it.",
+        );
+      if (input.frequencyMinutes !== undefined && input.frequencyMinutes < 60)
+        throw new ConflictError("Accessibility checks must be at least 60 minutes apart.");
+    }
     if (existing.type === "EMAIL_HEALTH") {
       if (input.config !== undefined)
         throw new ConflictError(

@@ -76,6 +76,11 @@ jobs:
           export NOTIFICATION_ENCRYPTION_KEY="$(node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('base64'))")"
           npx vitest run tests/status-pages/lifecycle.integration.test.ts tests/jobs/external-notifications.integration.test.ts
 
+      - name: Accessibility monitor lifecycle
+        env:
+          ACCESSIBILITY_LIVE_TEST: "1"
+        run: npx vitest run tests/jobs/accessibility.integration.test.ts
+
       - name: Production build
         run: npm run build
 

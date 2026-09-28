@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { PrismaClient } from "@prisma/client";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { evidence, type EmailHealthSnapshot } from "../lib/email-health/types";
+import { analyzeAccessibility } from "../lib/accessibility/analyze";
 
 // Opt-in, local-only QA. Disposable data; no scheduler dispatch or outbound email.
 const db = new PrismaClient();
@@ -12,6 +13,11 @@ const userId = randomUUID(),
 const token = randomBytes(32).toString("base64url");
 const expiryMonitorId = randomUUID();
 const emailMonitorId = randomUUID();
+const accessibilityMonitorId = randomUUID();
+const accessibilityEvidence = analyzeAccessibility(
+  '<html><title>Client website</title><body>\n<img src="/hero.jpg">\n<input placeholder="Email">\n<button></button>\n</body></html>',
+  "https://qa.example.test/",
+);
 const emailEvidence: EmailHealthSnapshot = {
   domain: "example.com",
   checkedAt: "2026-09-28T00:00:00.000Z",
@@ -137,6 +143,17 @@ test.beforeAll(async () => {
       config: { emailHealth: emailEvidence } as object,
     },
   });
+  await db.monitor.create({
+    data: {
+      id: accessibilityMonitorId,
+      organizationId,
+      websiteId,
+      type: "ACCESSIBILITY",
+      enabled: false,
+      frequencyMinutes: 1440,
+      config: { accessibility: accessibilityEvidence } as object,
+    },
+  });
 });
 test.beforeAll(async () => {
   for (const channel of ["SLACK", "TEAMS", "DISCORD"]) {
@@ -187,6 +204,10 @@ for (const [name, width, height] of [
       data: { config: { expiry: expiryEvidence, lastSuccessful: expiryEvidence } },
     });
     page.on("pageerror", (error) => errors.push(error.message));
+    await db.monitor.update({
+      where: { id: accessibilityMonitorId },
+      data: { config: { accessibility: accessibilityEvidence } as object },
+    });
     for (const path of [
       "/",
       "/login",
@@ -244,6 +265,38 @@ for (const [name, width, height] of [
         .toBe(true);
     }
     await page.goto("/dashboard#monitoring");
+    const accessibilityCard = page.getByRole("region", {
+      name: "Accessibility evidence",
+      exact: true,
+    });
+    await expect(
+      accessibilityCard.getByText("4 potential findings across 4 rules", { exact: true }),
+    ).toBeVisible();
+    await accessibilityCard
+      .getByText("Form controls need accessible labels · 1 · high", { exact: true })
+      .click();
+    await expect(accessibilityCard.getByText(/<input> at line/)).toBeVisible();
+    await accessibilityCard.evaluate((element) => element.scrollIntoView({ block: "start" }));
+    await accessibilityCard.screenshot({ path: testInfo.outputPath("accessibility-evidence.png") });
+    await db.monitor.update({
+      where: { id: accessibilityMonitorId },
+      data: {
+        config: {
+          accessibility: {
+            ...accessibilityEvidence,
+            state: "UNKNOWN",
+            findings: [],
+            reason: "Page could not be fetched securely within the request limits.",
+          },
+          accessibilityLastKnown: accessibilityEvidence,
+        } as object,
+      },
+    });
+    await page.reload();
+    await expect(accessibilityCard.getByText(/Last complete evidence \(stale\)/)).toBeVisible();
+    await expect(accessibilityCard.getByText(/Existing findings are retained/)).toBeVisible();
+    await accessibilityCard.evaluate((element) => element.scrollIntoView({ block: "start" }));
+    await accessibilityCard.screenshot({ path: testInfo.outputPath("accessibility-unknown.png") });
     const emailCard = page.getByRole("region", { name: "Email-domain health evidence" });
     await expect(emailCard.getByText("Weak policy", { exact: true })).toBeVisible();
     await emailCard.getByText("SPF policy evidence", { exact: true }).click();

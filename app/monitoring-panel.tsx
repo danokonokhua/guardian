@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { DnsEvidence } from "@/components/dashboard/dns-evidence";
+import { AccessibilityEvidence } from "@/components/dashboard/accessibility-evidence";
+import type { AccessibilityConfig } from "@/lib/accessibility/types";
 import { EmailHealthEvidence } from "@/components/dashboard/email-health-evidence";
 import type { EmailHealthConfig } from "@/lib/email-health/types";
 import {
@@ -15,14 +17,15 @@ type Monitor = {
   type: string;
   enabled: boolean;
   frequencyMinutes: number;
-  config?: EmailHealthConfig & {
-    thresholds?: number[];
-    expiry?: ExpiryEvidence;
-    lastSuccessful?: ExpiryEvidence;
-    baseline?: Record<string, string[]>;
-    latest?: Record<string, { state: string; records?: string[]; reason?: string }>;
-    observedAt?: string;
-  };
+  config?: EmailHealthConfig &
+    AccessibilityConfig & {
+      thresholds?: number[];
+      expiry?: ExpiryEvidence;
+      lastSuccessful?: ExpiryEvidence;
+      baseline?: Record<string, string[]>;
+      latest?: Record<string, { state: string; records?: string[]; reason?: string }>;
+      observedAt?: string;
+    };
   results?: Array<{
     status: string;
     checkedAt: string;
@@ -32,6 +35,7 @@ type Monitor = {
 };
 
 const monitorOptions = [
+  { value: "ACCESSIBILITY", label: "Basic accessibility (HTML checks)" },
   { value: "EMAIL_HEALTH", label: "Email-domain health (SPF, DMARC, MTA-STS)" },
   { value: "DOMAIN_EXPIRY", label: "Domain registration expiry" },
   { value: "DNS", label: "DNS record changes" },
@@ -373,6 +377,9 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                 />
               )}
               {monitor.type === "EMAIL_HEALTH" && <EmailHealthEvidence config={monitor.config} />}
+              {monitor.type === "ACCESSIBILITY" && (
+                <AccessibilityEvidence config={monitor.config} />
+              )}
               {monitor.type === "DOMAIN_EXPIRY" && (
                 <DomainExpiryEvidence
                   evidence={monitor.config?.expiry}
@@ -398,7 +405,11 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   <input
                     aria-label={`Frequency for ${monitorLabel(monitor.type)}`}
                     type="number"
-                    min={["DOMAIN_EXPIRY", "EMAIL_HEALTH"].includes(monitor.type) ? 60 : 1}
+                    min={
+                      ["DOMAIN_EXPIRY", "EMAIL_HEALTH", "ACCESSIBILITY"].includes(monitor.type)
+                        ? 60
+                        : 1
+                    }
                     max={1440}
                     value={frequencyDrafts[monitor.id] ?? String(monitor.frequencyMinutes)}
                     onChange={(event) =>
@@ -550,7 +561,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               value={type}
               onChange={(event) => {
                 setType(event.target.value as Monitor["type"]);
-                if (["DOMAIN_EXPIRY", "EMAIL_HEALTH"].includes(event.target.value))
+                if (["DOMAIN_EXPIRY", "EMAIL_HEALTH", "ACCESSIBILITY"].includes(event.target.value))
                   setFrequencyMinutes("1440");
               }}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
@@ -572,6 +583,12 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             customer data. Reputation is visible for roadmap clarity and remains disabled until the
             PRD&apos;s approved review-platform integration is available.
           </p>
+          {type === "ACCESSIBILITY" && (
+            <p className="text-sm text-neutral-400">
+              Checks one verified page?s server-delivered HTML. No JavaScript or CSS is executed.
+              Findings need rendered-page and manual review.
+            </p>
+          )}
           {type === "EMAIL_HEALTH" && (
             <label className="md:col-span-4 text-xs text-neutral-400">
               Email policy domain
@@ -625,7 +642,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             Frequency (min)
             <input
               required
-              min={["DOMAIN_EXPIRY", "EMAIL_HEALTH"].includes(type) ? 60 : 1}
+              min={["DOMAIN_EXPIRY", "EMAIL_HEALTH", "ACCESSIBILITY"].includes(type) ? 60 : 1}
               max={1440}
               type="number"
               value={frequencyMinutes}

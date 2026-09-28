@@ -40,6 +40,7 @@ export const monitorConfigSchema = z.object({
     .nativeEnum(MonitorType)
     .refine(
       (value) =>
+        value === MonitorType.ACCESSIBILITY ||
         value === MonitorType.DOMAIN_EXPIRY ||
         value === MonitorType.EMAIL_HEALTH ||
         value === MonitorType.DNS ||
@@ -78,6 +79,16 @@ export type MonitorUpdateInput = z.input<typeof monitorUpdateSchema>;
 
 export function parseMonitorConfig(input: unknown): MonitorConfig {
   const parsed = parseWith(monitorConfigSchema, input, "monitor");
+  if (parsed.type === MonitorType.ACCESSIBILITY)
+    return {
+      ...parsed,
+      frequencyMinutes: parseWith(
+        z.number().int().min(60).max(1440),
+        (input as { frequencyMinutes?: number }).frequencyMinutes ?? 1440,
+        "monitor.frequencyMinutes",
+      ),
+      config: parseWith(z.object({}).strict(), parsed.config, "monitor.config"),
+    };
   if (parsed.type === MonitorType.EMAIL_HEALTH)
     return {
       ...parsed,

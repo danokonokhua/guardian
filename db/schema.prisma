@@ -88,6 +88,7 @@ enum WebsiteVerifyStatus {
 /// Phase 1A §6.3: monitoring_checks.type
 /// (uptime|ssl|security|seo|content|links|performance|form).
 enum MonitorType {
+  ACCESSIBILITY
   DOMAIN_EXPIRY
   EMAIL_HEALTH
   DNS

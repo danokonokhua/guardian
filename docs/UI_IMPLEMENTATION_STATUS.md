@@ -1,3 +1,7 @@
+## Basic accessibility monitoring: 28 September 2026
+
+Monitoring now offers Basic accessibility (HTML checks), with supported-rule counts, source-line locations, severity, fixes, scan scope/version and retained stale evidence on unavailable checks. The UI explicitly separates this bounded server-HTML scan from a rendered or manual accessibility audit. See [delivery notes](ACCESSIBILITY_MONITORING.md). The initial monitoring expansion is implemented within its documented scope; real-business MVP validation remains required and billing stays paused.
+
 ## Agency/client status pages: 28 September 2026
 
 Dashboard navigation now includes Client status pages. Owners/admins manage approved components, incident timelines, maintenance windows, publication, redaction and audit history; active organization members can view private previews. Public pages follow the Guardian design and expose only selected content. Chromium desktop/tablet/mobile verification and screenshot review passed. See [delivery notes](STATUS_PAGES.md) for manual confirmation, cache/withdrawal behavior and notification limits. Basic accessibility monitoring is next; billing remains paused.

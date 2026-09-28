@@ -170,9 +170,12 @@ export async function requestSafeOutbound(
     timeoutMs?: number;
     maxBodyBytes?: number;
     truncateBody?: boolean;
+    signal?: AbortSignal;
   } = {},
 ): Promise<SafeOutboundResponse> {
+  options.signal?.throwIfAborted();
   const target = await resolveSafeOutboundUrl(rawUrl);
+  options.signal?.throwIfAborted();
   const timeoutMs = options.timeoutMs ?? 10_000;
   const maxBodyBytes = options.maxBodyBytes ?? 64 * 1024;
   const requestOptions = {
@@ -181,6 +184,7 @@ export async function requestSafeOutbound(
     lookup: pinnedLookup(target),
     servername: target.hostname,
     headers: options.headers,
+    signal: options.signal,
   };
   const request = target.url.protocol === "https:" ? https.request : http.request;
 
@@ -222,6 +226,7 @@ export async function requestSafeOutbound(
         // metadata, but callers must never receive arbitrary upstream headers.
         for (const name of [
           "content-type",
+          "content-encoding",
           "retry-after",
           "x-robots-tag",
           "location",
