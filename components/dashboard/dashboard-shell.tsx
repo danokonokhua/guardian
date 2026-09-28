@@ -95,6 +95,7 @@ export function DashboardShell({
             [
               ["/dashboard/executive", "Executive overview"],
               ["/briefings", "Operational briefing"],
+              ["/status-pages", "Client status pages"],
               ["/billing", "Plans & billing"],
               ["/seo", "SEO insights"],
               ["/security", "Security posture"],
@@ -137,6 +138,7 @@ export function DashboardShell({
         <main id="command-content" className="command-content">
           <nav className="command-mobile-shortcuts" aria-label="Workspace views">
             <Link href="/briefings">Briefing</Link>
+            <Link href="/status-pages">Status pages</Link>
             <Link href="/billing">Billing</Link>
             <Link href="/dashboard/executive">Executive</Link>
             <Link href="/onboarding">Connect website</Link>

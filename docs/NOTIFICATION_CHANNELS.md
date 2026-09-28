@@ -28,7 +28,7 @@ Create an incoming webhook in the intended channel's integration settings and co
 
 Expose a public HTTPS endpoint on port 443 that accepts JSON POST requests and returns 2xx after durably accepting the event. Redirects are not followed; private, loopback and metadata addresses are blocked, including after DNS changes. Requests time out after eight seconds and response bodies are bounded to 64 KiB.
 
-The JSON envelope contains `version: 1`, `event` (`guardian.test` or `guardian.issue`), `deliveryId`, `organizationId`, nullable `issueId`, `title`, `body`, `severity`, `test`, and ISO `createdAt`. Titles are truncated to 200 characters and bodies to 1,500. Headers include:
+The JSON envelope contains `version: 1`, `event` (`guardian.test`, `guardian.issue` or `guardian.status`), `deliveryId`, `organizationId`, nullable `issueId`, `title`, `body`, `severity`, `test`, and ISO `createdAt`. Titles are truncated to 200 characters and bodies to 1,500. Headers include:
 
 - `Idempotency-Key` and `X-Guardian-Delivery-Id`: stable delivery UUID across retries.
 - `X-Guardian-Timestamp`: Unix seconds for this attempt.
@@ -81,3 +81,5 @@ Unit tests cover payloads, signature construction, URL validation, encryption, a
 Run `DESTINATIONS_LIVE_TEST=1` with `.env` loaded for `tests/jobs/external-notifications.integration.test.ts`. Existing domain-expiry and email-health integration tests also pass. Chromium desktop (1440×1000), tablet (768×1024) and mobile (390×844) checks cover creation, encrypted persistence, enable/pause, delivery failure history, deletion and responsive layout. Test fixtures are removed afterward. Long section screenshots include the fixed bottom navigation at the original viewport boundary; viewport captures show the usable form separately.
 
 Real Slack, Teams, Discord and customer webhook delivery still needs the intended destination URLs and an explicit test through Settings. No external provider messages were sent during implementation. The separate SMTP quota restriction remains unresolved. Billing stays paused; agency/client status pages are next in the PRD.
+
+Status-page incident transitions are now supported as an opt-in source. See [status-page notification behavior](STATUS_PAGES.md#notifications) for publication, revision and withdrawal checks.

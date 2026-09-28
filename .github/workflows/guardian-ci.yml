@@ -68,6 +68,14 @@ jobs:
       - name: Live PostgreSQL integration gates
         run: npm run test:integration
 
+      - name: Status pages and notification delivery isolation
+        env:
+          STATUS_PAGES_LIVE_TEST: "1"
+          DESTINATIONS_LIVE_TEST: "1"
+        run: |
+          export NOTIFICATION_ENCRYPTION_KEY="$(node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('base64'))")"
+          npx vitest run tests/status-pages/lifecycle.integration.test.ts tests/jobs/external-notifications.integration.test.ts
+
       - name: Production build
         run: npm run build
 

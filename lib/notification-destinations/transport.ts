@@ -62,6 +62,7 @@ export async function validateDestination(channel: DestinationChannel, raw: stri
   return url;
 }
 export type ExternalMessage = {
+  event?: "guardian.status";
   deliveryId: string;
   organizationId: string;
   issueId: string | null;
@@ -111,7 +112,7 @@ export function destinationPayload(channel: DestinationChannel, message: Externa
     };
   return {
     version: 1,
-    event: message.test ? "guardian.test" : "guardian.issue",
+    event: message.event ?? (message.test ? "guardian.test" : "guardian.issue"),
     ...message,
     title,
     body,

@@ -248,6 +248,9 @@ model PasswordResetToken {
 
 /// Phase 1A §6.1: THE TENANT ROOT. Soft delete (deletedAt), purge after 30d.
 model Organization {
+  statusPages StatusPage[]
+  publicStatusPages PublicStatusPage[]
+  statusPageAudits StatusPageAudit[]
   notificationDestinations NotificationDestination[]
   externalDeliveries ExternalDelivery[]
   domainExpiryAlerts DomainExpiryAlert[]
@@ -298,6 +301,7 @@ model NotificationDestination {
 }
 
 model ExternalDelivery {
+  statusMessage Json?
   id String @id @default(uuid())
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -619,4 +623,44 @@ model InAppNotification {
 
   @@index([organizationId, userId, createdAt])
   @@map("in_app_notifications")
+}
+
+model StatusPage {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  slug String @unique
+  document Json
+  published Boolean @default(false)
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  snapshot PublicStatusPage?
+  audits StatusPageAudit[]
+  @@unique([id, organizationId])
+  @@index([organizationId, createdAt], map: "status_pages_org_created")
+  @@map("status_pages")
+}
+model PublicStatusPage {
+  pageId String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  page StatusPage @relation(fields: [pageId, organizationId], references: [id, organizationId], onDelete: Cascade, onUpdate: NoAction)
+  slug String @unique
+  document Json
+  @@unique([pageId, organizationId])
+  @@map("public_status_pages")
+}
+model StatusPageAudit {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pageId String
+  page StatusPage @relation(fields: [pageId, organizationId], references: [id, organizationId], onDelete: Cascade, onUpdate: NoAction)
+  actorId String
+  action String
+  version Int
+  createdAt DateTime @default(now())
+  @@index([organizationId, pageId, createdAt], map: "status_page_audits_org_page_created")
+  @@map("status_page_audits")
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import type { PgBoss } from "pg-boss";
 import { withGucContext } from "@/db/tenant";
@@ -44,7 +45,27 @@ export async function deliverExternal(
     const issue = delivery.issueId
       ? await tx.issue.findFirst({ where: { id: delivery.issueId, organizationId } })
       : null;
+    const statusMessage = z
+      .object({
+        pageId: z.string().uuid(),
+        version: z.number().int(),
+        title: z.string().max(120),
+        body: z.string().max(1600),
+      })
+      .safeParse(delivery.statusMessage);
+    const statusPage = statusMessage.success
+      ? await tx.statusPage.findFirst({
+          where: {
+            id: statusMessage.data.pageId,
+            organizationId,
+            published: true,
+            version: statusMessage.data.version,
+          },
+        })
+      : null;
     if (
+      (delivery.statusMessage !== null &&
+        (!statusMessage.success || !statusPage || !delivery.destination.enabled)) ||
       (delivery.issueId &&
         (!delivery.destination.enabled ||
           !issue ||
@@ -74,18 +95,22 @@ export async function deliverExternal(
       });
       return null;
     }
-    return { delivery, issue };
+    return { delivery, issue, statusMessage: statusMessage.success ? statusMessage.data : null };
   });
   if (!claimed) return;
-  const { delivery, issue } = claimed;
+  const { delivery, issue, statusMessage } = claimed;
   const message: ExternalMessage = {
     deliveryId,
     organizationId,
     issueId: delivery.issueId,
-    title: issue?.title ?? "Guardian test notification",
-    body: issue?.summary ?? "Your Guardian notification destination is reachable.",
+    title: statusMessage?.title ?? issue?.title ?? "Guardian test notification",
+    body:
+      statusMessage?.body ??
+      issue?.summary ??
+      "Your Guardian notification destination is reachable.",
     severity: issue?.severity ?? "INFO",
-    test: !delivery.issueId,
+    test: !delivery.issueId && !statusMessage,
+    ...(statusMessage ? { event: "guardian.status" as const } : {}),
     createdAt: delivery.createdAt.toISOString(),
   };
   let result: SendResult;
