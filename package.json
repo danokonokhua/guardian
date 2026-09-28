@@ -27,7 +27,8 @@
     "worker": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/worker.ts",
     "reporting:smoke": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/reporting-smoke.ts",
     "test:integration": "vitest run tests/db/rls.integration.test.ts tests/jobs/system-ping.integration.test.ts tests/jobs/monitor-check.integration.test.ts",
-    "test:visual": "node --env-file=.env node_modules/@playwright/test/cli.js test"
+    "test:visual": "node --env-file=.env node_modules/@playwright/test/cli.js test",
+    "beta:check": "node ./node_modules/tsx/dist/cli.mjs scripts/beta-readiness.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.2",

@@ -87,6 +87,13 @@ a separate gate.
 
 ## Current status
 
-Technical validation is complete and recorded in
-[`AUDIT_VALIDATION_20260913.md`](./AUDIT_VALIDATION_20260913.md). Customer
-records and confirmed prevented/resolved outcomes have not yet been collected.
+The [customer tracker](CUSTOMER_VALIDATION_TRACKER.md) now records six completed
+reviews, satisfying the minimum sample size of five. It records one owner action
+and zero confirmed prevented/resolved outcomes. This supersedes the earlier
+statement that customer reviews had not been collected. No revenue or prevention
+benefit is inferred from technical findings alone, and no positive-outcome count
+is added as a new PRD threshold.
+
+[Beta readiness](BETA_READINESS.md) is the active next phase while billing remains
+paused. Customer follow-up and validation of the actual beta deployment remain
+distinct from the completed local technical tests.
