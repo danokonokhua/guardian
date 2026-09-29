@@ -56,3 +56,5 @@ evidence, not a public beta release sign-off.
 - Current customer follow-up results and deployment operational evidence.
 
 Beta preparation is underway; public beta validation is not yet complete.
+
+Local recovery checkpoint (29 September 2026): the isolated [backup restoration drill](BACKUP_RESTORE.md) initially found four duplicated queue keys. The authorized repair was rehearsed in isolation, preserved all six queue names and 1,392 jobs, removed only superseded metadata, and rebuilt the queue index. A fresh full restore and queue index integrity check passed. Web/worker resumed, all five local readiness checks passed, and the running worker completed an internal system ping. The local recovery blocker is resolved; production backup/permissions/key recovery and real notification receipt remain unverified. Root cause is not yet established.

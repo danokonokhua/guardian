@@ -194,7 +194,7 @@ Provide organization-owned status pages for agencies and client accounts: named 
 
 Reports should include health score, critical and resolved issues, trends, leads, SEO, performance, security, reputation, opportunities, and recommended actions.
 
-Billing must support Free, Starter, Growth, Pro, Agency, and Enterprise plans; subscriptions, trials, upgrades, downgrades, cancellations, invoices, payment failures, and webhooks. Pricing must be centrally configured and never hardcoded throughout the application.
+Billing must support Free Audit, Starter, Growth, Pro, Agency, White Label, and Enterprise plans; subscriptions, trials, upgrades, downgrades, cancellations, invoices, payment failures, and webhooks. Pricing must be centrally configured and never hardcoded throughout the application. The [working pricing specification](PRICING.md), accepted 28 September 2026, defines prices, intended limits, card-free 14-day trials for standard paid plans, positioning and unresolved enforcement details. Features marked with an asterisk become billable/unlocked only when their modules are complete; plan eligibility never substitutes for module availability. Billing implementation remains paused until resumed by the product owner.
 
 The API must be versioned under `/api/v1` and support businesses, websites, scans, issues, health, reports, integrations, notifications, and actions. It requires authentication, authorization, rate limiting, validation, logging, and API keys.
 
@@ -269,6 +269,8 @@ Basic accessibility checkpoint (28 September 2026): the ACCESSIBILITY monitor no
 Beta readiness checkpoint (28 September 2026): with the scoped accessibility slice complete and billing still paused, phase 14 Beta preparation is active. The customer tracker already records six completed reviews, meeting the minimum sample; confirmed outcomes remain as recorded rather than inferred. A reusable read-only deployment check now verifies liveness, configured-database readiness, login availability, anonymous tenant denial and unpublished status-page isolation. See [beta readiness and outstanding deployment/customer evidence](BETA_READINESS.md). Public beta validation and later major integrations are not claimed complete.
 
 ## 24. MVP exit criteria
+
+Local operations checkpoint (29 September 2026): a controlled queue repair resolved a local backup-restore failure while preserving all jobs and queue references. Full isolated restore, queue index integrity, local readiness and worker system-ping checks pass; see [recovery evidence](BACKUP_RESTORE.md). This does not establish public deployment recovery or notification receipt. Billing remains paused.
 
 Before major expansion, the MVP must create an account, organization, business, and website; scan a website; monitor uptime; check SSL and HTTP; measure response time; detect broken links; perform basic SEO and security checks; monitor critical lead forms; create issues; calculate a health score; explain issues; provide recommendations; send alerts; and maintain history.
 
