@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { getCurrentUser, listCurrentUserMemberships, requirePermission } from "@/lib/auth/context";
 import { createTenantScope } from "@/db/tenant";
 import { readOrganizationOverview } from "@/services/organizations/repository";

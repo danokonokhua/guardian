@@ -1,13 +1,262 @@
-﻿/** PRD section 19 plan catalog. Prices and entitlements await product configuration. */
+/**
+ * Guardian Plan Catalog & Pricing Specification.
+ * Canonical definitions aligned with PRD Section 19 and docs/PRICING.md.
+ */
+
 export const BILLING_PLANS = [
-  { id: "FREE", name: "Free" },
-  { id: "STARTER", name: "Starter" },
-  { id: "GROWTH", name: "Growth" },
-  { id: "PRO", name: "Pro" },
-  { id: "AGENCY", name: "Agency" },
-  { id: "ENTERPRISE", name: "Enterprise" },
+  {
+    id: "FREE",
+    name: "Free Audit",
+    tagline: "Find out what's wrong.",
+    monthlyPriceCents: 0,
+    annualPriceCents: 0,
+    hasTrial: false,
+    limits: {
+      maxWebsites: 1,
+      maxBusinesses: 1,
+      maxTeamMembers: 1,
+      minFrequencyMinutes: 60,
+      historyDays: 7,
+    },
+    features: {
+      continuousMonitoring: false,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: false,
+      brokenLinks: false,
+      performanceChecks: true,
+      accessibilityMonitoring: false,
+      leadFormMonitoring: false,
+      syntheticFormTests: false,
+      emailAlerts: false,
+      inAppAlerts: true,
+      customBranding: false,
+      apiAccess: false,
+    },
+  },
+  {
+    id: "STARTER",
+    name: "Starter",
+    tagline: "Protect my website.",
+    monthlyPriceCents: 900,
+    annualPriceCents: 9000,
+    hasTrial: true,
+    limits: {
+      maxWebsites: 1,
+      maxBusinesses: 1,
+      maxTeamMembers: 2,
+      minFrequencyMinutes: 5,
+      historyDays: 30,
+    },
+    features: {
+      continuousMonitoring: true,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: false,
+      brokenLinks: true,
+      performanceChecks: true,
+      accessibilityMonitoring: false,
+      leadFormMonitoring: true,
+      syntheticFormTests: false,
+      emailAlerts: true,
+      inAppAlerts: true,
+      customBranding: false,
+      apiAccess: false,
+    },
+  },
+  {
+    id: "GROWTH",
+    name: "Growth",
+    tagline: "Monitor my digital health.",
+    monthlyPriceCents: 2900,
+    annualPriceCents: 29000,
+    hasTrial: true,
+    limits: {
+      maxWebsites: 5,
+      maxBusinesses: 3,
+      maxTeamMembers: 5,
+      minFrequencyMinutes: 5,
+      historyDays: 90,
+    },
+    features: {
+      continuousMonitoring: true,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: true,
+      brokenLinks: true,
+      performanceChecks: true,
+      accessibilityMonitoring: true,
+      leadFormMonitoring: true,
+      syntheticFormTests: false,
+      emailAlerts: true,
+      inAppAlerts: true,
+      customBranding: false,
+      apiAccess: false,
+    },
+  },
+  {
+    id: "PRO",
+    name: "Pro",
+    tagline: "Protect my leads and growth.",
+    monthlyPriceCents: 5900,
+    annualPriceCents: 59000,
+    hasTrial: true,
+    isPopular: true,
+    limits: {
+      maxWebsites: 10,
+      maxBusinesses: 10,
+      maxTeamMembers: 10,
+      minFrequencyMinutes: 5,
+      historyDays: 365,
+    },
+    features: {
+      continuousMonitoring: true,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: true,
+      brokenLinks: true,
+      performanceChecks: true,
+      accessibilityMonitoring: true,
+      leadFormMonitoring: true,
+      syntheticFormTests: true,
+      emailAlerts: true,
+      inAppAlerts: true,
+      customBranding: false,
+      apiAccess: true,
+    },
+  },
+  {
+    id: "AGENCY",
+    name: "Agency",
+    tagline: "Manage all my clients.",
+    monthlyPriceCents: 9900,
+    annualPriceCents: 99000,
+    hasTrial: true,
+    limits: {
+      maxWebsites: 25,
+      maxBusinesses: 25,
+      maxTeamMembers: 15,
+      minFrequencyMinutes: 5,
+      historyDays: 365,
+    },
+    features: {
+      continuousMonitoring: true,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: true,
+      brokenLinks: true,
+      performanceChecks: true,
+      accessibilityMonitoring: true,
+      leadFormMonitoring: true,
+      syntheticFormTests: true,
+      emailAlerts: true,
+      inAppAlerts: true,
+      customBranding: true,
+      apiAccess: true,
+    },
+  },
+  {
+    id: "WHITE_LABEL",
+    name: "White Label",
+    tagline: "Sell Guardian under my own brand.",
+    monthlyPriceCents: 24900,
+    annualPriceCents: 249000,
+    hasTrial: true,
+    limits: {
+      maxWebsites: 100,
+      maxBusinesses: 100,
+      maxTeamMembers: 50,
+      minFrequencyMinutes: 5,
+      historyDays: 730,
+    },
+    features: {
+      continuousMonitoring: true,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: true,
+      brokenLinks: true,
+      performanceChecks: true,
+      accessibilityMonitoring: true,
+      leadFormMonitoring: true,
+      syntheticFormTests: true,
+      emailAlerts: true,
+      inAppAlerts: true,
+      customBranding: true,
+      apiAccess: true,
+    },
+  },
+  {
+    id: "ENTERPRISE",
+    name: "Enterprise",
+    tagline: "Run digital operations at scale.",
+    monthlyPriceCents: 0,
+    annualPriceCents: 0,
+    hasTrial: false,
+    limits: {
+      maxWebsites: Infinity,
+      maxBusinesses: Infinity,
+      maxTeamMembers: Infinity,
+      minFrequencyMinutes: 1,
+      historyDays: 730,
+    },
+    features: {
+      continuousMonitoring: true,
+      uptimeChecks: true,
+      sslChecks: true,
+      securityHeaders: true,
+      dnsMonitoring: true,
+      basicSeo: true,
+      advancedSeo: true,
+      brokenLinks: true,
+      performanceChecks: true,
+      accessibilityMonitoring: true,
+      leadFormMonitoring: true,
+      syntheticFormTests: true,
+      emailAlerts: true,
+      inAppAlerts: true,
+      customBranding: true,
+      apiAccess: true,
+    },
+  },
 ] as const;
+
 export type BillingPlanId = (typeof BILLING_PLANS)[number]["id"];
-export function billingPlanLabel(id: string): string {
-  return BILLING_PLANS.find((plan) => plan.id === id)?.name ?? "Unknown plan";
+
+export type PlanDefinition = (typeof BILLING_PLANS)[number];
+
+export function getPlanDefinition(id: string): PlanDefinition {
+  const plan = BILLING_PLANS.find((p) => p.id === id);
+  return plan ?? BILLING_PLANS[0];
 }
+
+export function billingPlanLabel(id: string): string {
+  return getPlanDefinition(id).name;
+}
+
+export function getPlanLimits(id: string) {
+  return getPlanDefinition(id).limits;
+}
+
+export function getPlanFeatures(id: string) {
+  return getPlanDefinition(id).features;
+}
+
+export const TRIAL_DURATION_DAYS = 14;
