@@ -88,6 +88,7 @@ Validation summary (September 2026):
 - 4 of 6 confirmed findings as accurate or partly accurate; 2 were unsure due to CDN/hosting layering.
 - 1 owner immediately assigned findings to their developer for remediation (Gabo Farms).
 - Key product finding: Customers strongly requested direct remediation / step-by-step resolution guides ("How does it get solved / fix it for me").
+- Remediation guide created (1 October 2026): `docs/customer-remediation-guides/SUMMARY.md` provides plain-English developer fixes for all 6 reviewed businesses — security headers (HSTS/CSP/X-Frame/nosniff), H1 structure, meta descriptions, canonical tags, sitemaps, and response-time optimization. This addresses the #1 customer request from the validation round.
 
 ## Technical rerun log
 

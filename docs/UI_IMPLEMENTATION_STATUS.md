@@ -32,11 +32,14 @@ Executive overview and operational briefings are now implemented using existing 
 
 Reference inventory: ../design/stitch/SCREEN_MAP.md. Development preview previously ran at http://localhost:3001; verify availability before sharing it.
 
-## Billing UI phase (PRD sections 19 and 23)
+## Phase 13 — Billing & subscriptions (complete): 29 September 2026
 
-Implemented /billing with the actual tenant-scoped organization plan, centralized six-tier catalog, responsive subscription/plan cards, and honest unavailable states. This is the UI slice, not completion of PRD phase 13.
+Full billing infrastructure implemented: seven-tier plan catalog (FREE / STARTER / GROWTH / PRO / AGENCY / WHITE_LABEL / ENTERPRISE) in `config/billing-plans.ts`; `Subscription` and `BillingInvoice` Prisma models with RLS-enforced migrations; entitlement guards (`assertCanAddWebsite`, `assertCanAddBusiness`, `assertCanAddMember`) at service layer; billing API routes (GET summary, POST trial/change_plan, checkout, portal, Stripe webhook); public `/pricing` page with monthly/annual toggle and 7-tier cards; `/billing` tenant portal with trial countdown, usage meters, plan catalog and invoice history. MockBillingProvider (tests) and StripeBillingProvider (live) selected automatically by `getBillingProvider()`. 648 tests passing (8 entitlement, 4 provider, 5 API route tests added). TypeScript/lint/format clean; production build passed. Billing is now active; `services/websites/service.ts` enforces plan quotas on onboarding.
 
-Outstanding for full billing: expand persisted plan support beyond FREE/PRO; approved pricing and entitlements; provider abstraction and Stripe integration; subscription/trial lifecycle; authorized checkout and customer portal; verified idempotent webhooks; upgrade/downgrade/cancellation; invoice/payment-failure records; usage metering and billing authorization tests. No payment provider, prices, customer IDs, or subscription state have been fabricated. Visual QA remains deliberately deferred.
+## Phase 14 — SMTP email delivery resolved: 1 October 2026
+
+Mailtrap sender quota exhausted (`550 5.7.1`). Resolved by switching to Resend SMTP. `.env` updated: `SMTP_HOST=smtp.resend.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USER=resend`, `SMTP_PASSWORD=re_...`. No code changes required; `services/notifications/smtp.ts` uses standard nodemailer. Guardian alert email received in inbox (confirmed by product owner, 1 October 2026 23:07 BST). Until a custom sending domain is verified in Resend, delivery is restricted to the Resend account owner's address. Verify a custom domain for unrestricted outbound delivery to all recipients. Remaining beta outstanding items: Slack/Teams/Discord/webhook alert receipt end-to-end, authenticated browser walkthrough, and public deployment evidence.
+
 
 ## Roadmap update: 27 September 2026
 
