@@ -40,6 +40,10 @@ Full billing infrastructure implemented: seven-tier plan catalog (FREE / STARTER
 
 Mailtrap sender quota exhausted (`550 5.7.1`). Resolved by switching to Resend SMTP. `.env` updated: `SMTP_HOST=smtp.resend.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USER=resend`, `SMTP_PASSWORD=re_...`. No code changes required; `services/notifications/smtp.ts` uses standard nodemailer. Guardian alert email received in inbox (confirmed by product owner, 1 October 2026 23:07 BST). Until a custom sending domain is verified in Resend, delivery is restricted to the Resend account owner's address. Verify a custom domain for unrestricted outbound delivery to all recipients. Remaining beta outstanding items: Slack/Teams/Discord/webhook alert receipt end-to-end, authenticated browser walkthrough, and public deployment evidence.
 
+## Phase 14 — Discord webhook alert delivery verified: 2 October 2026
+
+Organization notification destinations verified end-to-end with live Discord incoming webhook. Outbound URL validation accepts both `discord.com` and `discordapp.com` (normalized to `discord.com`). Direct outbound transport and background pg-boss worker delivery (`notification.external` queue via `guardian-worker-1`) both succeeded with HTTP 200. Automated CLI smoke runner created in `scripts/notification-destination-smoke.ts`. External notification delivery is fully operational.
+
 
 ## Roadmap update: 27 September 2026
 

@@ -36,8 +36,9 @@ WORKDIR /app
 
 # Prisma migration and query engines require the system OpenSSL libraries in
 # the runtime image as well as during the build.
+# curl is required by Coolify's built-in healthcheck.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && apt-get install -y --no-install-recommends openssl ca-certificates curl \
   && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
@@ -66,6 +67,11 @@ COPY --from=build --chown=guardian:guardian /app/types ./types
 COPY --from=build --chown=guardian:guardian /app/tsconfig.json ./tsconfig.json
 
 USER guardian
-EXPOSE 3000
+EXPOSE 8080
+
+# Optional Docker-level healthcheck. Coolify may still use its own.
+# The app in your logs listens on 8080, so we use that here.
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -fsS http://localhost:8080/api/health || exit 1
 
 CMD ["node", "--require", "./scripts/server-only-cli.cjs", "./node_modules/tsx/dist/cli.mjs", "scripts/start-web.ts"]

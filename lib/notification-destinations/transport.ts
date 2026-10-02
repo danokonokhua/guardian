@@ -31,12 +31,13 @@ export function destinationUrl(channel: DestinationChannel, raw: string): URL {
     throw new ValidationError("Use a Slack incoming webhook URL.");
   if (channel === "DISCORD") {
     if (
-      host !== "discord.com" ||
+      !(host === "discord.com" || host === "discordapp.com") ||
       !/^\/api\/(?:v\d+\/)?webhooks\/\d+\/[\w-]+$/.test(url.pathname) ||
       [...url.searchParams.keys()].some((k) => !["wait", "thread_id"].includes(k)) ||
       (url.searchParams.has("thread_id") && !/^\d+$/.test(url.searchParams.get("thread_id")!))
     )
       throw new ValidationError("Use a Discord channel incoming webhook URL.");
+    url.hostname = "discord.com";
     url.searchParams.set("wait", "true");
   }
   if (
