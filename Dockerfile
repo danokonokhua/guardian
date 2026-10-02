@@ -43,6 +43,7 @@ RUN apt-get update \
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 
 # Run as an unprivileged user in production.
 RUN groupadd --system --gid 1001 guardian \
@@ -67,11 +68,12 @@ COPY --from=build --chown=guardian:guardian /app/types ./types
 COPY --from=build --chown=guardian:guardian /app/tsconfig.json ./tsconfig.json
 
 USER guardian
+EXPOSE 3000
 EXPOSE 8080
 
-# Optional Docker-level healthcheck. Coolify may still use its own.
-# The app in your logs listens on 8080, so we use that here.
-HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -fsS http://localhost:8080/api/health || exit 1
+# Robust healthcheck for Coolify / Docker: checks dynamic PORT (default 3000), 8080, or 3000.
+# 30s start-period ensures Next.js has completed initialization before failures count.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=5 \
+  CMD curl -fsS "http://127.0.0.1:${PORT:-3000}/api/health" || curl -fsS "http://127.0.0.1:8080/api/health" || curl -fsS "http://127.0.0.1:3000/api/health" || exit 1
 
 CMD ["node", "--require", "./scripts/server-only-cli.cjs", "./node_modules/tsx/dist/cli.mjs", "scripts/start-web.ts"]
