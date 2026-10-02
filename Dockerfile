@@ -14,7 +14,7 @@ ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && apt-get install -y --no-install-recommends openssl ca-certificates curl \
   && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
@@ -66,6 +66,8 @@ COPY --from=build --chown=guardian:guardian /app/types ./types
 COPY --from=build --chown=guardian:guardian /app/tsconfig.json ./tsconfig.json
 
 USER guardian
-EXPOSE 3000
+EXPOSE 8080
 
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -fsS http://localhost:8080/api/health || exit 1
 CMD ["node", "--require", "./scripts/server-only-cli.cjs", "./node_modules/tsx/dist/cli.mjs", "scripts/start-web.ts"]
