@@ -38,7 +38,7 @@ export async function recordFinding(finding: Finding): Promise<{ id: string; cre
   return recordFindingWithClient(finding, prisma);
 }
 
-async function recordFindingWithClient(
+export async function recordFindingWithClient(
   finding: Finding,
   prisma: Pick<Prisma.TransactionClient, "website" | "issue" | "issueActivity" | "$executeRaw">,
 ): Promise<{ id: string; created: boolean }> {

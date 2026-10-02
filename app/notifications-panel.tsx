@@ -12,6 +12,8 @@ type Notification = {
 
 export function NotificationsPanel({ organizationId }: { organizationId: string }) {
   const [items, setItems] = useState<Notification[] | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     fetch(`/api/v1/organizations/${organizationId}/notifications`)
@@ -28,13 +30,24 @@ export function NotificationsPanel({ organizationId }: { organizationId: string 
       );
   }, [organizationId]);
   const markRead = async (id: string) => {
-    await fetch(`/api/v1/organizations/${organizationId}/notifications/${id}/read`, {
-      method: "PATCH",
-    });
-    setItems(
-      (current) =>
-        current?.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n)) ?? null,
-    );
+    setBusyId(id);
+    setActionError(null);
+    try {
+      const response = await fetch(
+        `/api/v1/organizations/${organizationId}/notifications/${id}/read`,
+        { method: "PATCH" },
+      );
+      if (!response.ok) throw new Error("Unable to mark notification as read. Please try again.");
+      setItems(
+        (current) =>
+          current?.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n)) ??
+          null,
+      );
+    } catch (cause) {
+      setActionError(cause instanceof Error ? cause.message : "Unable to update notification.");
+    } finally {
+      setBusyId(null);
+    }
   };
   if (error)
     return (
@@ -53,28 +66,40 @@ export function NotificationsPanel({ organizationId }: { organizationId: string 
       </p>
     );
   return (
-    <ul className="max-h-80 overflow-y-auto space-y-3 pr-2" aria-label="Notifications" tabIndex={0}>
-      {items.map((n) => (
-        <li
-          key={n.id}
-          className={`rounded-lg border p-4 ${n.readAt ? "border-neutral-800 bg-neutral-900/40" : "border-emerald-700/60 bg-emerald-950/20"}`}
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 className="font-medium">{n.title}</h3>
-              <p className="mt-1 text-sm text-neutral-400">{n.body}</p>
+    <>
+      {actionError && (
+        <p role="alert" className="mb-3 text-sm text-rose-300">
+          {actionError}
+        </p>
+      )}
+      <ul
+        className="max-h-80 overflow-y-auto space-y-3 pr-2"
+        aria-label="Notifications"
+        tabIndex={0}
+      >
+        {items.map((n) => (
+          <li
+            key={n.id}
+            className={`rounded-lg border p-4 ${n.readAt ? "border-neutral-800 bg-neutral-900/40" : "border-emerald-700/60 bg-emerald-950/20"}`}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="font-medium">{n.title}</h3>
+                <p className="mt-1 text-sm text-neutral-400">{n.body}</p>
+              </div>
+              {!n.readAt && (
+                <button
+                  disabled={busyId !== null}
+                  onClick={() => void markRead(n.id)}
+                  className="text-xs text-emerald-300 hover:text-emerald-200"
+                >
+                  Mark read
+                </button>
+              )}
             </div>
-            {!n.readAt && (
-              <button
-                onClick={() => void markRead(n.id)}
-                className="text-xs text-emerald-300 hover:text-emerald-200"
-              >
-                Mark read
-              </button>
-            )}
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

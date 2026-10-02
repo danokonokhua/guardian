@@ -3,9 +3,32 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const lookupMock = vi.hoisted(() => vi.fn());
 vi.mock("node:dns/promises", () => ({ lookup: lookupMock }));
 
-import { resolveSafeOutboundUrl } from "@/lib/security/outbound-url";
+import { resolveSafeOutboundUrl, requestSafeOutbound } from "@/lib/security/outbound-url";
 
 describe("outbound URL security boundary", () => {
+  it("rejects an aborted request before DNS lookup", async () => {
+    lookupMock.mockClear();
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      requestSafeOutbound("https://example.com", { signal: controller.signal }),
+    ).rejects.toThrow();
+    expect(lookupMock).not.toHaveBeenCalled();
+  });
+  it("does not open a socket if the deadline expires during DNS resolution", async () => {
+    let finish!: (value: { address: string; family: number }[]) => void;
+    lookupMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const controller = new AbortController();
+    const request = requestSafeOutbound("https://example.com", { signal: controller.signal });
+    controller.abort();
+    finish([{ address: "93.184.216.34", family: 4 }]);
+    await expect(request).rejects.toThrow();
+  });
   beforeEach(() => {
     lookupMock.mockReset();
     lookupMock.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);

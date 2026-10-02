@@ -13,9 +13,6 @@ describe("public landing page", () => {
   it("shows the account creation action", () => {
     render(<HomePage />);
 
-    expect(screen.getByRole("link", { name: "Create an account" })).toHaveAttribute(
-      "href",
-      "/signup",
-    );
+    expect(screen.getByRole("link", { name: "Get started" })).toHaveAttribute("href", "/signup");
   });
 });

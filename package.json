@@ -26,20 +26,25 @@
     "format:check": "prettier --check .",
     "worker": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/worker.ts",
     "reporting:smoke": "node --require ./scripts/server-only-cli.cjs ./node_modules/tsx/dist/cli.mjs scripts/reporting-smoke.ts",
-    "test:integration": "vitest run tests/db/rls.integration.test.ts tests/jobs/system-ping.integration.test.ts tests/jobs/monitor-check.integration.test.ts"
+    "test:integration": "vitest run tests/db/rls.integration.test.ts tests/jobs/system-ping.integration.test.ts tests/jobs/monitor-check.integration.test.ts",
+    "test:visual": "node --env-file=.env node_modules/@playwright/test/cli.js test",
+    "beta:check": "node ./node_modules/tsx/dist/cli.mjs scripts/beta-readiness.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.2",
     "@sentry/node": "10.71.0",
     "next": "16.3.2",
     "nodemailer": "9.0.6",
+    "parse5": "8.0.1",
     "pg-boss": "12.28.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "0.0.1",
+    "tldts": "^7.4.16",
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

@@ -1,0 +1,173 @@
+.public-status {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+.status-view,
+.status-manager {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.status-hero {
+  padding: 32px 0 12px;
+}
+.status-hero h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.status-hero h2 {
+  margin-top: 24px;
+}
+.status-panel {
+  padding: 24px;
+  border: 1px solid #334155;
+  border-radius: 18px;
+  background: #121b2a;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.status-panel h2,
+.status-panel h3 {
+  margin-top: 0;
+}
+.status-view .muted,
+.status-manager .muted {
+  color: #a5b4c8;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+.status-component {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid #334155;
+}
+.status-state {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #64748b;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.status-operational {
+  color: #6ee7b7;
+  border-color: #047857;
+}
+.status-outage {
+  color: #fda4af;
+  border-color: #be123c;
+}
+.status-degraded,
+.status-unknown {
+  color: #fde68a;
+  border-color: #a16207;
+}
+.status-maintenance {
+  color: #c4b5fd;
+  border-color: #7c3aed;
+}
+.status-event {
+  border-top: 1px solid #334155;
+  padding: 20px 0 4px;
+}
+.status-update {
+  border-left: 2px solid #6366f1;
+  padding: 4px 0 4px 16px;
+  margin: 16px 0;
+}
+.status-update time {
+  display: block;
+  color: #a5b4c8;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+.status-update p,
+.status-event p {
+  white-space: pre-wrap;
+}
+.status-form {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+}
+.status-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+.status-form input:not([type="checkbox"]),
+.status-form textarea,
+.status-form select,
+.status-manager > select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #475569;
+  background: #080f1c;
+  color: #f1f5f9;
+  border-radius: 8px;
+  padding: 11px;
+  font: inherit;
+}
+.status-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+.status-form label.status-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.status-actions button,
+.status-actions a,
+.status-form button {
+  min-height: 42px;
+}
+.status-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.status-manager details > summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-weight: 600;
+}
+.status-manager fieldset {
+  min-width: 0;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+}
+.status-manager input:focus-visible,
+.status-manager select:focus-visible,
+.status-manager textarea:focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 2px;
+}
+.public-status footer {
+  margin-top: 24px;
+}
+@media (max-width: 800px) {
+  .status-split {
+    grid-template-columns: 1fr;
+  }
+  .status-panel {
+    padding: 18px;
+  }
+  .status-component {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { GroundedRecommendation } from "@/lib/recommendations";
 
-type HealthData = {
+export type HealthData = {
   healthScore?: {
     score: number | null;
     state: "MEASURED" | "PARTIAL" | "INSUFFICIENT_DATA";
@@ -387,7 +387,42 @@ export function HealthPanel({
     }
   };
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 command-health">
+      <dl className="command-metrics">
+        {[
+          ["Healthy monitors", summary.up, "text-emerald-300"],
+          ["Failing monitors", summary.down + summary.error, "text-red-300"],
+          ["Active incidents", summary.activeIssues, "text-amber-300"],
+          ["Recovered incidents", summary.recoveredIssues, "text-sky-300"],
+        ].map(([label, value, color]) => (
+          <div key={label} className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
+            <dt className="text-xs text-neutral-400">{label}</dt>
+            <dd className={`mt-2 text-2xl font-semibold ${color}`}>{value}</dd>
+          </div>
+        ))}
+      </dl>
+      {issues
+        .filter(
+          (issue) =>
+            issue.severity === "CRITICAL" &&
+            issue.status !== "RESOLVED" &&
+            issue.status !== "IGNORED",
+        )
+        .slice(0, 1)
+        .map((issue) => (
+          <section className="command-incident" key={issue.id} aria-label="Priority incident">
+            <div>
+              <span className="eyebrow">CRITICAL · NEEDS ATTENTION</span>
+              <h3>{issue.title}</h3>
+              <p>{issue.businessImpact || issue.summary}</p>
+              <span className="fine-print">{issue.websiteName}</span>
+            </div>
+            <a href="#incidents-heading" className="button-secondary compact">
+              Review incident ↓
+            </a>
+          </section>
+        ))}
+
       {healthScore && (
         <section
           className="rounded-lg border border-neutral-800 p-4"
@@ -402,7 +437,7 @@ export function HealthPanel({
                 PRD-weighted score from the latest measurable monitor results and active issues.
               </p>
             </div>
-            <div className="text-right">
+            <div className="command-score">
               <p
                 className={`text-3xl font-semibold ${healthScore.score === null ? "text-neutral-400" : healthScore.score >= 80 ? "text-emerald-300" : healthScore.score >= 50 ? "text-amber-300" : "text-red-300"}`}
                 aria-label="Digital health score"
@@ -476,7 +511,7 @@ export function HealthPanel({
       )}
       {healthScore && (
         <section
-          className="rounded-lg border border-neutral-800 p-4"
+          className="command-recommendations rounded-lg border border-neutral-800 p-4"
           aria-labelledby="grounded-recommendations-heading"
         >
           <div>
@@ -648,19 +683,6 @@ export function HealthPanel({
           </div>
         </section>
       )}
-      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          ["Healthy monitors", summary.up, "text-emerald-300"],
-          ["Failing monitors", summary.down + summary.error, "text-red-300"],
-          ["Active incidents", summary.activeIssues, "text-amber-300"],
-          ["Recovered incidents", summary.recoveredIssues, "text-sky-300"],
-        ].map(([label, value, color]) => (
-          <div key={label} className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
-            <dt className="text-xs text-neutral-400">{label}</dt>
-            <dd className={`mt-2 text-2xl font-semibold ${color}`}>{value}</dd>
-          </div>
-        ))}
-      </dl>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <section
@@ -949,11 +971,11 @@ export function HealthPanel({
                       </button>
                     )}
                     {members.length > 0 && (
-                      <label className="flex items-center gap-2 text-xs text-neutral-400">
+                      <label className="flex min-w-0 max-w-full items-center gap-2 text-xs text-neutral-400">
                         <span className="sr-only">Assign issue</span>
                         <select
                           aria-label="Assign issue"
-                          className="rounded border border-neutral-700 bg-neutral-950 px-2 py-1 text-xs text-neutral-300"
+                          className="min-w-0 max-w-full rounded border border-neutral-700 bg-neutral-950 px-2 py-1 text-xs text-neutral-300"
                           value={issue.assignedToId ?? ""}
                           disabled={busyIssueId === issue.id}
                           onChange={(event) =>
@@ -976,7 +998,9 @@ export function HealthPanel({
                 )}
                 <button
                   type="button"
-                  className="text-xs text-neutral-400 underline decoration-neutral-700 underline-offset-2 hover:text-neutral-200"
+                  aria-expanded={expandedIssueId === issue.id}
+                  aria-controls={`incident-details-${issue.id}`}
+                  className="button-secondary compact"
                   onClick={() =>
                     setExpandedIssueId((current) => (current === issue.id ? null : issue.id))
                   }
@@ -984,7 +1008,16 @@ export function HealthPanel({
                   {expandedIssueId === issue.id ? "Hide details" : "View details"}
                 </button>
                 {expandedIssueId === issue.id && (
-                  <div className="w-full rounded-md bg-neutral-950/60 p-3 text-xs text-neutral-400">
+                  <section
+                    id={`incident-details-${issue.id}`}
+                    aria-label={`Incident details: ${issue.title}`}
+                    className="incident-details w-full text-xs text-neutral-400"
+                  >
+                    <div className="incident-details-heading">
+                      <span className="eyebrow">INCIDENT EVIDENCE</span>
+                      <h4>{issue.title}</h4>
+                      <p>{issue.summary}</p>
+                    </div>
                     <dl className="grid gap-1 sm:grid-cols-2">
                       <div>
                         <dt className="text-neutral-500">Rule</dt>
@@ -1033,7 +1066,7 @@ export function HealthPanel({
                           </p>
                         </div>
                       )}
-                  </div>
+                  </section>
                 )}
               </li>
             ))}

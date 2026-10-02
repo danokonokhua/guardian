@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Guardian AI - Revenue Protection &amp; Conversion Path Forensic Inspector</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#1c1f2a",
+            "tertiary-fixed": "#6ffbbe",
+            "on-tertiary-container": "#67f4b7",
+            "primary": "#c3c0ff",
+            "on-secondary-fixed-variant": "#004e5c",
+            "outline-variant": "#464555",
+            "inverse-on-surface": "#2c303b",
+            "primary-fixed-dim": "#c3c0ff",
+            "surface-dim": "#0f131d",
+            "surface-tint": "#c3c0ff",
+            "surface-bright": "#353944",
+            "secondary-fixed": "#acedff",
+            "surface-container-low": "#171b26",
+            "tertiary-container": "#006e4b",
+            "surface-container-highest": "#313540",
+            "on-tertiary-fixed": "#002113",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#4cd7f6",
+            "on-error": "#690005",
+            "on-secondary": "#003640",
+            "on-secondary-fixed": "#001f26",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-secondary-container": "#00424e",
+            "secondary-container": "#03b5d3",
+            "surface-container-lowest": "#0a0e18",
+            "on-primary-fixed-variant": "#3323cc",
+            "background": "#0f131d",
+            "inverse-primary": "#4d44e3",
+            "primary-fixed": "#e2dfff",
+            "on-primary": "#1d00a5",
+            "inverse-surface": "#dfe2f1",
+            "on-primary-fixed": "#0f0069",
+            "surface": "#0f131d",
+            "on-surface": "#dfe2f1",
+            "error": "#ffb4ab",
+            "outline": "#918fa1",
+            "secondary": "#4cd7f6",
+            "tertiary": "#4edea3",
+            "on-primary-container": "#dad7ff",
+            "surface-variant": "#313540",
+            "on-error-container": "#ffdad6",
+            "on-surface-variant": "#c7c4d8",
+            "primary-container": "#4f46e5",
+            "error-container": "#93000a",
+            "on-background": "#dfe2f1",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-high": "#262a35"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "display": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .safe-bottom {
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+    /* Pulse glow custom atmospheric helpers */
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen pb-24 select-none">
+<!-- ================= TOP APP BAR (Shared Components Exact Blueprint) ================= -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-3 h-14 bg-surface-container-low border-b border-outline-variant/30 shadow-sm backdrop-blur-md">
+<!-- Brand & Tenant -->
+<div class="flex items-center gap-2">
+<button class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg active:scale-95 transition-transform duration-100 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="swap_horizontal_circle">swap_horizontal_circle</span>
+</button>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-surface flex items-center gap-1.5 leading-tight">
+          Aura Luxury Living
+        </span>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse-subtle"></span>
+<span class="font-label text-[10px] text-tertiary-fixed tracking-wider font-semibold uppercase">Sentinel Active</span>
+</div>
+</div>
+</div>
+<!-- Trailing Actions / Filter Toggle -->
+<div class="flex items-center gap-1">
+<div class="flex items-center px-2 py-0.5 rounded-full bg-error-container/20 border border-error/30 text-error mr-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5 animate-pulse"></span>
+<span class="font-label text-[10px] font-bold tracking-tight">1 CRITICAL</span>
+</div>
+<button class="text-primary hover:bg-surface-container-high p-1.5 rounded-lg active:scale-95 transition-transform duration-100 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="crisis_alert" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+</button>
+</div>
+</header>
+<!-- ================= MAIN FORENSIC CANVAS (Mobile 390px Viewport Core) ================= -->
+<main class="pt-16 px-3.5 space-y-4 max-w-md mx-auto">
+<!-- Section 1: Executive Sentinel Header & Telemetry Metrics -->
+<section class="space-y-3 pt-1">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label text-[10px] tracking-widest uppercase font-bold text-secondary">Telemetric Diagnostics</span>
+<h1 class="font-headline text-xl font-extrabold text-on-surface tracking-tight leading-snug">
+            Revenue Protection &amp; Conversion Sentinel
+          </h1>
+</div>
+<div class="p-2 bg-surface-container rounded-xl border border-outline-variant/30 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="shield_with_heart">shield_with_heart</span>
+</div>
+</div>
+<!-- Quick Triage Metric Bento Deck -->
+<div class="grid grid-cols-3 gap-2">
+<!-- Protected Pipeline -->
+<div class="bg-surface-container-low p-2.5 rounded-xl border border-outline-variant/20 flex flex-col justify-between">
+<span class="font-label text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">Protected Flow</span>
+<div class="my-1">
+<span class="font-headline text-lg font-bold text-tertiary tracking-tight">$420,000</span>
+</div>
+<span class="font-label text-[9px] text-tertiary-fixed-dim flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]" data-icon="check_circle">check_circle</span> 99.4% safe
+          </span>
+</div>
+<!-- Hourly At-Risk -->
+<div class="bg-surface-container-low p-2.5 rounded-xl border border-error/40 shadow-[0_0_12px_-3px_rgba(244,63,94,0.15)] flex flex-col justify-between">
+<span class="font-label text-[10px] font-semibold text-error uppercase tracking-wider">Hourly At-Risk</span>
+<div class="my-1">
+<span class="font-headline text-lg font-extrabold text-error tracking-tight">$340.00<span class="text-[11px] font-normal text-on-surface-variant">/hr</span></span>
+</div>
+<span class="font-label text-[9px] text-error font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]" data-icon="trending_up">trending_up</span> Bleed rising
+          </span>
+</div>
+<!-- Active Leakage -->
+<div class="bg-surface-container-low p-2.5 rounded-xl border border-outline-variant/20 flex flex-col justify-between">
+<span class="font-label text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">Active Leakage</span>
+<div class="my-1">
+<span class="font-headline text-base font-bold text-error tracking-tight flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+              1 Failing
+            </span>
+</div>
+<span class="font-label text-[9px] text-on-surface-variant">VIP Penthouse</span>
+</div>
+</div>
+</section>
+<!-- Section 2: Real-Time Conversion Funnel Stream (Visual Drop-off) -->
+<section class="bg-surface-container-low rounded-xl p-3.5 border border-outline-variant/30 space-y-3">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="waterfall_chart">waterfall_chart</span>
+<h2 class="font-headline text-xs font-bold tracking-wide uppercase text-on-surface">Live Funnel Drop-off Stream</h2>
+</div>
+<span class="font-mono text-[10px] text-secondary bg-secondary-container/20 px-2 py-0.5 rounded-md font-medium">Real-Time Ingestion</span>
+</div>
+<!-- Funnel Steps Visualizer -->
+<div class="space-y-2">
+<!-- Step 1: Ad Click -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-xs">
+<span class="font-label text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
+<span class="w-4 h-4 rounded-full bg-surface-container-highest text-center text-[10px] text-on-surface font-mono flex items-center justify-center">1</span>
+              Meta Paid PPC Click
+            </span>
+<span class="font-mono font-bold text-on-surface text-[11px]">1,420 <span class="text-tertiary text-[10px]">100%</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<!-- Step 2: Villa Gallery View -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-xs">
+<span class="font-label text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
+<span class="w-4 h-4 rounded-full bg-surface-container-highest text-center text-[10px] text-on-surface font-mono flex items-center justify-center">2</span>
+              Villa Penthouse Gallery View
+            </span>
+<span class="font-mono font-bold text-on-surface text-[11px]">840 <span class="text-on-surface-variant text-[10px]">59.1%</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 59%;"></div>
+</div>
+</div>
+<!-- Step 3: VIP Form Open -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-xs">
+<span class="font-label text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
+<span class="w-4 h-4 rounded-full bg-surface-container-highest text-center text-[10px] text-on-surface font-mono flex items-center justify-center">3</span>
+              VIP Form Opened &amp; Populated
+            </span>
+<span class="font-mono font-bold text-on-surface text-[11px]">310 <span class="text-on-surface-variant text-[10px]">21.8%</span></span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 22%;"></div>
+</div>
+</div>
+<!-- Step 4: Form Submit (Catastrophic Drop) -->
+<div class="p-2 rounded-lg bg-error-container/10 border border-error/40 space-y-1.5">
+<div class="flex items-center justify-between text-xs">
+<span class="font-label text-[11px] text-error font-bold flex items-center gap-1">
+<span class="w-4 h-4 rounded-full bg-error text-on-error text-center text-[10px] font-mono font-bold flex items-center justify-center">4</span>
+              Submit Inquiry &amp; Stripe Hold
+            </span>
+<span class="font-mono font-extrabold text-error text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="error">error</span>
+              0 CONVERTED (100% LEAK)
+            </span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden relative">
+<div class="h-full bg-error rounded-full animate-pulse" style="width: 0%;"></div>
+<div class="absolute inset-0 bg-error/20 flex items-center justify-center text-[8px] font-mono uppercase text-error font-bold tracking-wider">
+              HTTP 500 SERVER RESPONSE BLOCK
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Forensic Incident Inspector Card -->
+<section class="bg-surface-container-low rounded-xl p-3.5 border border-error/50 shadow-[0_0_24px_-4px_rgba(244,63,94,0.25)] space-y-3 relative overflow-hidden">
+<!-- Ambient red telemetry glow pill -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-error/20 border border-error/40 text-error font-label text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+            Forensic Incident #8921
+          </span>
+<span class="text-on-surface-variant text-[11px] font-mono">T-Minus 45m</span>
+</div>
+<span class="material-symbols-outlined text-error text-lg" data-icon="bug_report">bug_report</span>
+</div>
+<!-- Endpoint & Root Cause -->
+<div class="space-y-1.5">
+<div class="text-[11px] font-mono bg-surface-container-lowest px-2.5 py-1.5 rounded-lg border border-outline-variant/30 text-primary-fixed truncate flex items-center justify-between">
+<span class="truncate">POST /villas/skyline-penthouse/inquiry</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant ml-1" data-icon="content_copy">content_copy</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container border border-outline-variant/20">
+<div class="flex items-center gap-1.5 text-on-surface text-xs font-semibold mb-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="troubleshoot">troubleshoot</span>
+            AI Root Cause Analysis
+          </div>
+<p class="font-body text-xs text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface">Postgres Connection Pool Starvation</strong> (<code class="text-secondary font-mono text-[11px]">pg_cluster_aura: 50/50</code> connections maxed) during high-velocity PPC campaign traffic surge. Worker timeouts cascading to HTTP 500 error state.
+          </p>
+</div>
+</div>
+<!-- Live Webhook & Payload Trace Terminal View -->
+<div class="space-y-1">
+<div class="flex items-center justify-between px-1">
+<span class="font-label text-[10px] font-bold tracking-wider uppercase text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="terminal">terminal</span>
+            Payload &amp; Exception Trace
+          </span>
+<span class="font-mono text-[9px] text-on-surface-variant">Worker node: #aura-core-us-east-1</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/30 font-mono text-[11px] leading-tight text-on-surface-variant overflow-x-auto">
+<pre class="text-[10px] text-primary">{
+  <span class="text-secondary">"timestamp"</span>: <span class="text-tertiary">"2025-05-18T14:32:04.112Z"</span>,
+  <span class="text-secondary">"status"</span>: <span class="text-error font-bold">500</span>,
+  <span class="text-secondary">"error"</span>: <span class="text-error">"POOL_EXHAUSTED"</span>,
+  <span class="text-secondary">"client_ip"</span>: <span class="text-on-surface">"198.51.100.24"</span>,
+  <span class="text-secondary">"lead_source"</span>: <span class="text-secondary-fixed">"meta_campaign_8843"</span>,
+  <span class="text-secondary">"cart_value"</span>: <span class="text-tertiary">"$14,500.00"</span>,
+  <span class="text-secondary">"connection_wait_ms"</span>: <span class="text-error">5002</span>
+}</pre>
+</div>
+</div>
+<!-- Ad Spend Bleed Calculator -->
+<div class="bg-error-container/15 rounded-lg p-2.5 border border-error/30 flex items-start gap-2.5">
+<div class="p-1.5 rounded-md bg-error-container text-on-error flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="price_change">price_change</span>
+</div>
+<div class="text-xs space-y-0.5 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline font-bold text-on-surface">Ad Spend Bleed Calculator</span>
+<span class="font-mono font-bold text-error text-[11px]">$240.00 Burned</span>
+</div>
+<p class="font-body text-[11px] text-on-surface-variant leading-normal">
+            Meta Real Estate Adset <span class="text-on-surface font-mono font-medium">#8843</span> actively driving bids to 500 endpoint with 0 inquiries captured in 45m.
+          </p>
+</div>
+</div>
+</section>
+<!-- Section 4: Autonomous Remediation & Failover Controls -->
+<section class="bg-surface-container rounded-xl p-3.5 border border-secondary/40 shadow-[0_0_20px_-5px_rgba(79,70,229,0.3)] space-y-3">
+<!-- Guardian Autonomous Banner -->
+<div class="flex items-start gap-2.5">
+<div class="p-1.5 rounded-lg bg-primary-container text-on-primary-container shrink-0">
+<span class="material-symbols-outlined text-lg" data-icon="auto_mode">auto_mode</span>
+</div>
+<div>
+<span class="font-label text-[10px] text-secondary font-bold tracking-widest uppercase">Guardian Autonomous Fix</span>
+<h3 class="font-headline text-xs font-bold text-on-surface leading-tight mt-0.5">
+            Spin up ephemeral Redis cache queue &amp; failover ingestion
+          </h3>
+<p class="font-body text-[11px] text-on-surface-variant mt-1 leading-snug">
+            Decouple lead write operations immediately to memory queue. Submits will resolve with HTTP 200 OK while database connections are safely drained.
+          </p>
+</div>
+</div>
+<!-- Action Touch CTA Buttons -->
+<div class="space-y-2 pt-1">
+<!-- 1-Tap Failover Button -->
+<button class="w-full py-3 px-4 bg-primary-container hover:bg-inverse-primary text-on-primary font-headline font-bold text-xs rounded-lg shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 border-t border-white/20">
+<span class="material-symbols-outlined text-lg" data-icon="bolt">bolt</span>
+<span>Deploy 1-Tap Zero-Downtime Failover</span>
+</button>
+<!-- Secondary Circuit Breaker Action -->
+<button class="w-full py-2.5 px-4 bg-surface-container-high hover:bg-surface-container-highest text-error border border-error/50 font-label font-semibold text-xs rounded-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="pause_circle">pause_circle</span>
+<span>Emergency Pause Meta Ad Campaigns</span>
+</button>
+</div>
+<!-- Rollback Snapshot Guarantee -->
+<div class="pt-1 flex items-center justify-between border-t border-outline-variant/20 text-[10px] text-on-surface-variant">
+<div class="flex items-center gap-1 font-mono">
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="verified">verified</span>
+<span>100% Rollback Snapshot #snp-992 Available</span>
+</div>
+<span class="text-[9px] uppercase tracking-wider text-outline">Latency: 0ms impact</span>
+</div>
+</section>
+<!-- Section 5: Monitored Conversion Endpoints Telemetry Deck -->
+<section class="space-y-2.5">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline text-xs font-bold tracking-wider uppercase text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="device_hub">device_hub</span>
+          Monitored Conversion Endpoints (4)
+        </h3>
+<span class="font-label text-[10px] text-secondary font-semibold">Live Polling</span>
+</div>
+<div class="space-y-2">
+<!-- Endpoint 1: VIP Penthouse (Failing) -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-error/50 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-ping shrink-0"></span>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface">VIP Penthouse Booking</div>
+<div class="font-mono text-[10px] text-error flex items-center gap-1 mt-0.5">
+<span>POST /inquiry</span>
+<span class="text-on-surface-variant">• HTTP 500 (2h 15m duration)</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-error-container/20 text-error font-mono text-[10px] font-bold border border-error/30">
+            FAILING
+          </span>
+</div>
+<!-- Endpoint 2: Private Yacht Charter Lead (Healthy) -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-tertiary shrink-0"></span>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface">Private Yacht Charter Lead</div>
+<div class="font-mono text-[10px] text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>POST /charter/reserve</span>
+<span class="text-tertiary">• 100% verified (142 submits)</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary font-mono text-[10px] font-bold border border-tertiary/30">
+            HEALTHY
+          </span>
+</div>
+<!-- Endpoint 3: WhatsApp Luxury Concierge (Healthy) -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-tertiary shrink-0"></span>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface">WhatsApp Luxury Concierge</div>
+<div class="font-mono text-[10px] text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>GET /concierge/wa-redirect</span>
+<span class="text-tertiary">• Instant redirect active</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary font-mono text-[10px] font-bold border border-tertiary/30">
+            HEALTHY
+          </span>
+</div>
+<!-- Endpoint 4: Stripe Security Deposit (Healthy) -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-tertiary shrink-0"></span>
+<div>
+<div class="font-headline text-xs font-bold text-on-surface">Stripe Security Deposit Hold</div>
+<div class="font-mono text-[10px] text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>POST /webhook/stripe-charge</span>
+<span class="text-tertiary">• 100% signature pass</span>
+</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary font-mono text-[10px] font-bold border border-tertiary/30">
+            HEALTHY
+          </span>
+</div>
+</div>
+</section>
+</main>
+<!-- ================= BOTTOM NAVIGATION BAR (Shared Components Exact Blueprint) ================= -->
+<!-- Destination intent: 'Revenue' tab is actively mapped and highlighted with style_active_navigation -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex items-center justify-around px-2 py-2 safe-bottom bg-surface-container-lowest/95 border-t border-outline-variant/30 shadow-lg backdrop-blur-xl">
+<!-- Tab 1: Operations -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95 duration-100" href="#operations">
+<span class="material-symbols-outlined text-xl mb-0.5" data-icon="monitoring">monitoring</span>
+<span class="font-label text-xs font-semibold tracking-wide">Operations</span>
+</a>
+<!-- Tab 2: Revenue (ACTIVE DESTINATION) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-primary-container/20 rounded-xl px-3 py-1.5 font-bold transition-all active:scale-95 duration-100" href="#revenue">
+<span class="material-symbols-outlined text-xl mb-0.5 text-primary" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label text-xs font-semibold tracking-wide text-primary">Revenue</span>
+</a>
+<!-- Tab 3: AI Briefs -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95 duration-100" href="#briefs">
+<span class="material-symbols-outlined text-xl mb-0.5" data-icon="smart_toy">smart_toy</span>
+<span class="font-label text-xs font-semibold tracking-wide">AI Briefs</span>
+</a>
+<!-- Tab 4: Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95 duration-100" href="#settings">
+<span class="material-symbols-outlined text-xl mb-0.5" data-icon="tune">tune</span>
+<span class="font-label text-xs font-semibold tracking-wide">Settings</span>
+</a>
+</nav>
+<!-- Interactive Simulation Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const failoverBtn = document.querySelector('button:has(.material-symbols-outlined[data-icon="bolt"])');
+      const pauseAdsBtn = document.querySelector('button:has(.material-symbols-outlined[data-icon="pause_circle"])');
+      
+      if (failoverBtn) {
+        failoverBtn.addEventListener('click', () => {
+          const originalContent = failoverBtn.innerHTML;
+          failoverBtn.innerHTML = `
+            <span class="material-symbols-outlined animate-spin text-base" data-icon="sync">sync</span>
+            <span>Spinning Redis Failover Queue...</span>
+          `;
+          failoverBtn.classList.remove('bg-primary-container');
+          failoverBtn.classList.add('bg-tertiary-container', 'text-tertiary-fixed');
+          
+          setTimeout(() => {
+            failoverBtn.innerHTML = `
+              <span class="material-symbols-outlined text-base" data-icon="check_circle">check_circle</span>
+              <span>Failover Active: 100% Ingestion Restored</span>
+            `;
+            // Update the critical chip
+            const criticalTag = document.querySelector('.bg-error-container\\/20');
+            if (criticalTag) {
+              criticalTag.innerHTML = `
+                <span class="w-1.5 h-1.5 rounded-full bg-tertiary mr-1.5"></span>
+                <span class="font-label text-[10px] font-bold tracking-tight text-tertiary">RESOLVED</span>
+              `;
+            }
+          }, 1800);
+        });
+      }
+
+      if (pauseAdsBtn) {
+        pauseAdsBtn.addEventListener('click', () => {
+          pauseAdsBtn.classList.add('opacity-75');
+          pauseAdsBtn.innerHTML = `
+            <span class="material-symbols-outlined text-sm" data-icon="check">check</span>
+            <span>Meta Campaign #8843 Paused</span>
+          `;
+        });
+      }
+    });
+  </script>
+</body></html>

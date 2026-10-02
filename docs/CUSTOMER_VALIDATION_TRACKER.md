@@ -81,6 +81,7 @@ Permission to quote feedback publicly: yes / no
 | Problems confirmed prevented/resolved |       0 | Evidence required for every claimed case |
 
 Validation summary (September 2026):
+
 - 6 of 10 portfolio businesses completed formal validation reviews (threshold of ≥ 5 satisfied).
 - 5 of 6 reviewers (83%) expressed clear intent to continue using Guardian ("Yes").
 - Average usefulness score: 3.83 / 5.0 (three 5/5, two 3/5, one 2/5).

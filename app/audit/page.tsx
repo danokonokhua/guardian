@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Brand } from "@/components/ui/brand";
 
 import AuditForm from "@/app/audit/audit-form";
 
@@ -12,15 +13,13 @@ export default function AuditPage() {
     <main className="min-h-screen px-6 py-12">
       <div className="mx-auto w-full max-w-4xl">
         <div className="mb-8 flex items-center justify-between gap-4">
-          <Link href="/" className="text-sm text-neutral-400 hover:text-emerald-300">
-            ← Guardian
-          </Link>
-          <Link href="/login" className="text-sm text-emerald-400 hover:text-emerald-300">
+          <Brand />
+          <Link href="/login" className="text-sm text-indigo-300 hover:text-indigo-200">
             Sign in
           </Link>
         </div>
-        <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-8 shadow-xl">
-          <p className="text-xs font-medium uppercase tracking-[0.3em] text-emerald-400">
+        <section className="rounded-2xl border border-indigo-400/20 bg-surface-raised p-6 sm:p-8 shadow-xl">
+          <p className="text-xs font-medium uppercase tracking-[0.3em] text-indigo-300">
             Free audit
           </p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight">

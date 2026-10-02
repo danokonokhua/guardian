@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Guardian AI — SEO Intelligence &amp; SERP Defense</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#0f131d",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#003640",
+            "error-container": "#93000a",
+            "secondary-fixed": "#acedff",
+            "on-primary": "#1d00a5",
+            "secondary-container": "#03b5d3",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary-fixed-dim": "#4cd7f6",
+            "tertiary": "#4edea3",
+            "surface-tint": "#c3c0ff",
+            "inverse-on-surface": "#2c303b",
+            "outline": "#918fa1",
+            "inverse-surface": "#dfe2f1",
+            "inverse-primary": "#4d44e3",
+            "on-surface-variant": "#c7c4d8",
+            "surface-container-highest": "#313540",
+            "on-tertiary": "#003824",
+            "surface-container-high": "#262a35",
+            "on-tertiary-fixed-variant": "#005236",
+            "surface-container-lowest": "#0a0e18",
+            "surface-container-low": "#171b26",
+            "tertiary-container": "#006e4b",
+            "primary-container": "#4f46e5",
+            "on-surface": "#dfe2f1",
+            "surface-variant": "#313540",
+            "surface-bright": "#353944",
+            "primary": "#c3c0ff",
+            "on-background": "#dfe2f1",
+            "on-primary-container": "#dad7ff",
+            "on-primary-fixed": "#0f0069",
+            "on-secondary-fixed-variant": "#004e5c",
+            "on-tertiary-fixed": "#002113",
+            "secondary": "#4cd7f6",
+            "on-secondary-fixed": "#001f26",
+            "on-error": "#690005",
+            "outline-variant": "#464555",
+            "on-primary-fixed-variant": "#3323cc",
+            "surface-container": "#1c1f2a",
+            "error": "#ffb4ab",
+            "background": "#0f131d",
+            "primary-fixed": "#e2dfff",
+            "on-secondary-container": "#00424e",
+            "surface-dim": "#0f131d",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-tertiary-container": "#67f4b7"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "display": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #0a0e18;
+      color: #dfe2f1;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest min-h-screen flex justify-center selection:bg-primary-container selection:text-white">
+<!-- Mobile Viewport Container (390px target frame) -->
+<div class="w-full max-w-[420px] min-h-screen bg-surface flex flex-col relative pb-24 shadow-2xl">
+<!-- TopAppBar (From Shared Components JSON) -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-3 h-14 bg-surface-container-low dark:bg-surface-container-low border-b border-outline-variant/30 shadow-sm backdrop-blur-md max-w-[420px] mx-auto right-0">
+<div class="flex items-center gap-2">
+<button class="p-1 rounded-lg text-primary hover:bg-surface-container-high transition-colors duration-150 active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="swap_horizontal_circle">swap_horizontal_circle</span>
+</button>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-surface dark:text-on-surface flex items-center gap-1.5 leading-tight">
+            Aura Luxury Living
+          </span>
+<span class="font-label text-[10px] tracking-wide text-secondary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            GSC Synced 04:00 UTC
+          </span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-primary hover:bg-surface-container-high transition-colors duration-150 active:scale-95 relative" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="crisis_alert">crisis_alert</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error border border-surface"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-4 pt-16 flex flex-col gap-4">
+<!-- Subheader Breadcrumb / System Telemetry -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-primary-container/20 text-primary border border-primary/30">
+            PRD §12 &amp; §16 ACTIVE
+          </span>
+<span class="text-xs text-outline font-label">SERP Defense Unit</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-tertiary">
+<span class="material-symbols-outlined text-sm" data-icon="shield">shield</span>
+<span class="font-semibold">Live Guard</span>
+</div>
+</div>
+<!-- Critical Alert Banner -->
+<div class="rounded-xl p-3.5 bg-gradient-to-r from-error-container/40 via-surface-container to-surface-container border border-error/40 flex items-start gap-3 shadow-lg">
+<div class="w-8 h-8 rounded-lg bg-error/20 border border-error/50 flex items-center justify-center shrink-0 mt-0.5 text-error">
+<span class="material-symbols-outlined text-lg" data-icon="warning">warning</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="text-xs font-bold uppercase tracking-wider text-error">SERP Anomaly Detected</h4>
+<span class="text-[10px] text-error font-medium px-1.5 py-0.5 rounded bg-error/10 border border-error/30 font-label">High Severity</span>
+</div>
+<p class="text-xs text-on-surface font-semibold mt-1">3 Conflicting Keyword Cannibalization Clusters</p>
+<div class="flex items-center justify-between mt-2 pt-1 border-t border-outline-variant/30">
+<span class="text-[11px] text-on-surface-variant font-label">At-Risk Organic Pipeline:</span>
+<span class="text-xs font-bold text-error tracking-tight tabular-nums font-headline">$34,500 at stake</span>
+</div>
+</div>
+</div>
+<!-- Executive SEO Score & Revenue Card -->
+<section class="rounded-xl p-4 bg-surface-container-low border border-outline-variant/30 shadow-md">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="insights">insights</span>
+<h3 class="font-headline text-xs font-bold uppercase tracking-wider text-on-surface-variant">Executive SEO Telemetry</h3>
+</div>
+<span class="text-[10px] font-semibold text-secondary px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20">30D Window</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Metric 1: Revenue -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col justify-between">
+<span class="text-[11px] font-label text-outline">Organic Value / Mo</span>
+<div class="my-1.5">
+<span class="font-headline text-lg font-bold text-on-surface tabular-nums tracking-tight">$148,200</span>
+<span class="text-[10px] font-semibold text-tertiary block leading-none mt-1 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                +$12.4k (8.9%)
+              </span>
+</div>
+<span class="text-[9px] text-outline font-label truncate">GSC Pipeline Yield</span>
+</div>
+<!-- Metric 2: Visibility Index -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col justify-between">
+<span class="text-[11px] font-label text-outline">Keyword Visibility</span>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline text-2xl font-bold text-primary tabular-nums tracking-tight">84.6</span>
+<span class="text-xs text-outline font-label">/100</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-secondary h-1.5 rounded-full" style="width: 84.6%"></div>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-2.5 border-t border-outline-variant/20 flex items-center justify-between text-[11px]">
+<span class="text-on-surface-variant flex items-center gap-1 font-label">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            Total Ranked Terms: <strong class="text-on-surface">1,420</strong>
+</span>
+<span class="text-primary hover:underline cursor-pointer font-medium flex items-center gap-0.5 text-xs">
+            Audit Logs <span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</section>
+<!-- High-Intent Cannibalization Card -->
+<section class="rounded-xl p-4 bg-surface-container-low border border-primary-container/40 relative overflow-hidden shadow-lg">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-base" data-icon="alt_route">alt_route</span>
+<span class="font-label text-[11px] uppercase tracking-wider font-bold text-error">SERP Conflict Detected</span>
+</div>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-error/20 text-error border border-error/30 font-label">Impact: $14.2k/mo</span>
+</div>
+<div class="bg-surface-container/80 rounded-lg p-2.5 border border-outline-variant/30 mb-3">
+<span class="text-[10px] uppercase font-bold text-outline font-label tracking-wide">Target Buyer Query</span>
+<p class="font-headline text-sm font-semibold text-on-surface mt-0.5 flex items-center justify-between">
+<span>“luxury waterfront penthouses for sale”</span>
+<span class="text-[10px] font-label text-secondary bg-secondary/10 px-1.5 py-0.5 rounded font-bold">2.4k Vol</span>
+</p>
+</div>
+<!-- Conflicting URLs Matrix -->
+<div class="space-y-2 mb-3">
+<!-- Page 1 (Dropping) -->
+<div class="p-2.5 rounded-lg bg-surface-container-high/60 border border-error/40 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="text-xs font-semibold text-on-surface truncate block">/villas/skyline-penthouse</span>
+</div>
+<span class="text-[10px] text-error font-medium font-label">Dropped rank #4 → #8 in 72 hrs</span>
+</div>
+<div class="text-right shrink-0">
+<span class="text-xs font-bold font-headline text-error tabular-nums">-4 Pos</span>
+</div>
+</div>
+<!-- Page 2 (Legacy Category) -->
+<div class="p-2.5 rounded-lg bg-surface-container-high/40 border border-outline-variant/30 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="text-xs font-semibold text-on-surface-variant truncate block">/categories/waterfront-luxury</span>
+</div>
+<span class="text-[10px] text-outline font-medium font-label">Legacy Category Page (Diluting Intent)</span>
+</div>
+<div class="text-right shrink-0">
+<span class="text-xs font-bold font-headline text-outline tabular-nums">#14 Pos</span>
+</div>
+</div>
+</div>
+<!-- One-Tap Action Button -->
+<button class="w-full py-2.5 px-3 rounded-lg bg-primary-container text-white font-label text-xs font-bold tracking-wide flex items-center justify-center gap-2 shadow-md hover:bg-opacity-90 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="auto_fix_high">auto_fix_high</span>
+          Authorize Canonical &amp; 301 Fix
+        </button>
+</section>
+<!-- 7-Day Keyword Movement Table / Cards -->
+<section class="rounded-xl p-4 bg-surface-container-low border border-outline-variant/30 shadow-md">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="query_stats">query_stats</span>
+<h3 class="font-headline text-xs font-bold uppercase tracking-wider text-on-surface">7-Day Keyword Movement</h3>
+</div>
+<span class="text-[10px] text-outline font-label">Tracked Daily</span>
+</div>
+<div class="space-y-2.5">
+<!-- Keyword Row 1 -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/30 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-xs font-semibold text-on-surface block leading-tight">private villa rental with concierge</span>
+<span class="text-[10px] text-error font-medium flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[12px]" data-icon="arrow_downward">arrow_downward</span>
+                  #2 → #6 (-4 rank drop, competitor added schema)
+                </span>
+</div>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-error/15 text-error border border-error/30 font-headline">#6</span>
+</div>
+<div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="text-[10px] text-outline font-label">Action Required:</span>
+<button class="px-2.5 py-1 rounded bg-secondary-container/20 border border-secondary text-secondary hover:bg-secondary-container/30 text-[11px] font-bold flex items-center gap-1 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[12px]" data-icon="schema">schema</span>
+                Update Structured Schema
+              </button>
+</div>
+</div>
+<!-- Keyword Row 2 -->
+<div class="p-3 rounded-lg bg-surface-container border border-tertiary/20 flex flex-col gap-1.5">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-xs font-semibold text-on-surface block leading-tight">buy luxury penthouse dubai marina</span>
+<span class="text-[10px] text-tertiary font-medium flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle">check_circle</span>
+                  Dominating Featured Snippet
+                </span>
+</div>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-tertiary/15 text-tertiary border border-tertiary/30 font-headline">#1 Stable</span>
+</div>
+<div class="flex items-center justify-between text-[10px] text-outline font-label pt-1 border-t border-outline-variant/10">
+<span>CTR: 31.4% (Top SERP Deck)</span>
+<span class="text-tertiary font-medium">9.8k Impressions/wk</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical SEO Checklist -->
+<section class="rounded-xl p-4 bg-surface-container-low border border-outline-variant/30 shadow-md">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="build">build</span>
+<h3 class="font-headline text-xs font-bold uppercase tracking-wider text-on-surface">Technical SEO Verification</h3>
+</div>
+<span class="text-[10px] text-tertiary font-semibold flex items-center gap-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Pass
+          </span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<!-- Item 1 -->
+<div class="p-2.5 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-on-surface font-medium">robots.txt</span>
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="verified">verified</span>
+</div>
+<span class="text-xs font-bold text-tertiary font-headline mt-1.5">100% compliant</span>
+<span class="text-[9px] text-outline font-label">No block directives</span>
+</div>
+<!-- Item 2 -->
+<div class="p-2.5 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-on-surface font-medium">XML Sitemap</span>
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="verified">verified</span>
+</div>
+<span class="text-xs font-bold text-on-surface font-headline mt-1.5">48/48 indexed</span>
+<span class="text-[9px] text-outline font-label">Synced to GSC ping</span>
+</div>
+<!-- Item 3 -->
+<div class="p-2.5 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-on-surface font-medium">Schema.org</span>
+<span class="material-symbols-outlined text-secondary text-xs" data-icon="check_circle">check_circle</span>
+</div>
+<span class="text-xs font-bold text-secondary font-headline mt-1.5">98% validity</span>
+<span class="text-[9px] text-outline font-label">RealEstateListing spec</span>
+</div>
+<!-- Item 4 -->
+<div class="p-2.5 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-on-surface font-medium">Mobile Crawl</span>
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="smartphone">smartphone</span>
+</div>
+<span class="text-xs font-bold text-tertiary font-headline mt-1.5">96/100 Core Web</span>
+<span class="text-[9px] text-outline font-label">LCP 1.1s | CLS 0.01</span>
+</div>
+</div>
+</section>
+<!-- AI SEO Analyst Insight -->
+<section class="rounded-xl p-4 bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-low border border-secondary/40 shadow-lg relative overflow-hidden mb-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-md bg-secondary/20 border border-secondary/40 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
+</div>
+<span class="font-headline text-xs font-bold text-on-surface">Agent #084 — SEO Intelligence</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/30">Executive Brief</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+          Traffic dip on waterfront landing cluster stems from dual-URL indexing. Google's mobile crawler is splitting authority between legacy taxonomies and the single property showroom.
+        </p>
+<div class="mt-3 p-2.5 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/30 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-outline font-label tracking-wide">Projected Financial Upside</span>
+<span class="font-headline text-sm font-bold text-tertiary tabular-nums">+$18,200/mo recovery</span>
+</div>
+<button class="text-xs font-bold text-secondary flex items-center gap-1 hover:underline" type="button">
+            View Logic
+            <span class="material-symbols-outlined text-xs" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (From Shared Components JSON) -->
+<!-- Operations is active: Primary intent is Operations / SERP Defense telemetry -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex items-center justify-around px-2 py-2 safe-bottom bg-surface-container-lowest/95 dark:bg-surface-container-lowest/95 border-t border-outline-variant/30 shadow-lg backdrop-blur-xl max-w-[420px] mx-auto right-0 font-label text-xs font-semibold tracking-wide">
+<!-- Operations (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed dark:text-primary-fixed bg-primary-container/20 dark:bg-primary-container/20 rounded-xl px-3 py-1.5 font-bold transition-all active:scale-95" href="#operations">
+<span class="material-symbols-outlined text-lg" data-icon="monitoring">monitoring</span>
+<span class="text-[10px] mt-0.5">Operations</span>
+</a>
+<!-- Revenue -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95" href="#revenue">
+<span class="material-symbols-outlined text-lg" data-icon="verified_user">verified_user</span>
+<span class="text-[10px] mt-0.5">Revenue</span>
+</a>
+<!-- AI Briefs -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95" href="#ai-briefs">
+<span class="material-symbols-outlined text-lg" data-icon="smart_toy">smart_toy</span>
+<span class="text-[10px] mt-0.5">AI Briefs</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface px-3 py-1.5 transition-colors active:scale-95" href="#settings">
+<span class="material-symbols-outlined text-lg" data-icon="tune">tune</span>
+<span class="text-[10px] mt-0.5">Settings</span>
+</a>
+</nav>
+</div>
+</body></html>

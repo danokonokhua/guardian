@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Website Onboarding &amp; Discovery Wizard | Guardian AI</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "background": "#0f131d",
+            "on-primary-fixed-variant": "#3323cc",
+            "on-error-container": "#ffdad6",
+            "surface-container-highest": "#313540",
+            "surface-container": "#1c1f2a",
+            "surface": "#0f131d",
+            "secondary": "#4cd7f6",
+            "on-primary": "#1d00a5",
+            "on-surface": "#dfe2f1",
+            "on-error": "#690005",
+            "on-tertiary": "#003824",
+            "primary-fixed": "#e2dfff",
+            "primary": "#c3c0ff",
+            "outline": "#918fa1",
+            "inverse-surface": "#dfe2f1",
+            "surface-bright": "#353944",
+            "primary-fixed-dim": "#c3c0ff",
+            "surface-container-low": "#171b26",
+            "surface-container-lowest": "#0a0e18",
+            "on-primary-container": "#dad7ff",
+            "error": "#ffb4ab",
+            "on-primary-fixed": "#0f0069",
+            "surface-tint": "#c3c0ff",
+            "inverse-primary": "#4d44e3",
+            "secondary-fixed": "#acedff",
+            "on-secondary": "#003640",
+            "tertiary-container": "#006e4b",
+            "inverse-on-surface": "#2c303b",
+            "on-tertiary-fixed-variant": "#005236",
+            "primary-container": "#4f46e5",
+            "on-tertiary-container": "#67f4b7",
+            "error-container": "#93000a",
+            "surface-variant": "#313540",
+            "tertiary": "#4edea3",
+            "surface-dim": "#0f131d",
+            "on-secondary-fixed": "#001f26",
+            "outline-variant": "#464555",
+            "on-tertiary-fixed": "#002113",
+            "on-background": "#dfe2f1",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-high": "#262a35",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary-fixed-variant": "#004e5c",
+            "on-secondary-container": "#00424e",
+            "secondary-container": "#03b5d3",
+            "on-surface-variant": "#c7c4d8",
+            "secondary-fixed-dim": "#4cd7f6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "display": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0a0e18;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #262a35;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #464555;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
+<!-- TOP HEADER / WIZARD APP BAR -->
+<header class="h-16 w-full bg-surface-container-lowest border-b border-outline-variant/30 flex items-center justify-between px-6 z-30 sticky top-0 shadow-sm backdrop-blur-md">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-white shadow-[0_0_12px_rgba(79,70,229,0.5)]">
+<span class="material-symbols-outlined text-[20px]" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline font-extrabold text-lg tracking-tight text-white">Guardian AI</span>
+<span class="text-[11px] font-label font-bold tracking-widest text-secondary px-1.5 py-0.5 rounded bg-secondary-container/20 border border-secondary-container/30 uppercase">Operations</span>
+</div>
+</div>
+<div class="h-5 w-px bg-outline-variant/40 hidden sm:block"></div>
+<!-- Portfolio Scope -->
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="apartment">apartment</span>
+<span class="text-xs font-label font-semibold text-on-surface">Aura Capital Portfolio</span>
+<span class="text-[10px] text-outline">•</span>
+<span class="text-[11px] font-mono text-outline">auraluxuryliving.com</span>
+</div>
+</div>
+<!-- Middle Step Counter Text (Mobile/Tablet view helper) -->
+<div class="hidden md:flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span class="text-xs font-label font-medium text-on-surface-variant">Step 2 of 4:</span>
+<span class="text-xs font-label font-bold text-white tracking-wide">Conversion &amp; Infrastructure Discovery</span>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="text-xs font-label font-medium text-on-surface-variant hover:text-white flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="crisis_alert">crisis_alert</span>
+<span class="hidden sm:inline">Incident Hotline</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/40 text-xs font-label font-semibold text-on-surface transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+<span>Save &amp; Exit</span>
+</button>
+</div>
+</header>
+<!-- MULTI-STEP PROGRESS STEPPER -->
+<section class="w-full bg-surface-container-lowest/80 border-b border-outline-variant/20 px-6 py-4">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Step 1: Completed -->
+<div class="flex items-center gap-3 p-2 rounded-lg bg-surface-container-low/40 border border-tertiary/20">
+<div class="w-7 h-7 rounded-full bg-tertiary-container/30 border border-tertiary text-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="check">check</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] font-label font-bold tracking-wider text-tertiary uppercase">Step 01</span>
+<span class="text-[10px] text-tertiary font-mono">VERIFIED</span>
+</div>
+<p class="text-xs font-label font-semibold text-white truncate">Organization &amp; Domain</p>
+</div>
+</div>
+<!-- Step 2: Active -->
+<div class="flex items-center gap-3 p-2 rounded-lg bg-surface-container-high/60 border border-primary-container shadow-[0_0_15px_rgba(79,70,229,0.25)] relative overflow-hidden">
+<div class="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-primary-container to-secondary"></div>
+<div class="w-7 h-7 rounded-full bg-primary-container text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-[0_0_10px_rgba(79,70,229,0.6)]">
+            2
+          </div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] font-label font-bold tracking-wider text-secondary uppercase">Step 02</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+</div>
+<p class="text-xs font-label font-semibold text-white truncate">Discovery &amp; Asset Mapping</p>
+</div>
+</div>
+<!-- Step 3: Upcoming -->
+<div class="flex items-center gap-3 p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/10 opacity-70">
+<div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant/40 text-outline flex items-center justify-center shrink-0 font-medium text-xs">
+            3
+          </div>
+<div class="min-w-0">
+<span class="text-[11px] font-label font-bold tracking-wider text-outline uppercase">Step 03</span>
+<p class="text-xs font-label font-semibold text-on-surface-variant truncate">Critical Revenue Paths</p>
+</div>
+</div>
+<!-- Step 4: Upcoming -->
+<div class="flex items-center gap-3 p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/10 opacity-50">
+<div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant/40 text-outline flex items-center justify-center shrink-0 font-medium text-xs">
+            4
+          </div>
+<div class="min-w-0">
+<span class="text-[11px] font-label font-bold tracking-wider text-outline uppercase">Step 04</span>
+<p class="text-xs font-label font-semibold text-on-surface-variant truncate">Sentinel Deployment</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- MAIN CANVAS: SPLIT LAYOUT -->
+<main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 pb-28">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: DISCOVERY CONSOLE & LIVE SPIDER (7 COLS) -->
+<section class="lg:col-span-7 flex flex-col gap-6">
+<!-- Spider Telemetry Banner -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/30 p-5 shadow-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-40 h-40 bg-secondary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high border border-secondary/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl animate-spin" data-icon="radar" style="animation-duration: 6s;">radar</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-base font-headline font-bold text-white">Live Spider Engine</h2>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-label font-bold bg-tertiary-container/30 border border-tertiary/40 text-tertiary tracking-wide uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Active Crawler
+                  </span>
+</div>
+<p class="text-xs font-body text-on-surface-variant">Scanning luxury villa booking funnels, concierge hooks &amp; endpoints</p>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/40 text-xs font-label font-semibold text-secondary flex items-center justify-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span>
+<span>Rescan Node</span>
+</button>
+</div>
+<!-- Crawl Status Bar -->
+<div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-outline">
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="travel_explore">travel_explore</span>
+<span class="font-bold text-white">48 URLs Discovered</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-base" data-icon="dns">dns</span>
+<span>12 Edge Nodes Verified</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span>TLS 1.3 Strict</span>
+</div>
+</div>
+<!-- Mini Progress line -->
+<div class="mt-3 w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container via-secondary to-tertiary h-full w-[78%] transition-all duration-500"></div>
+</div>
+</div>
+<!-- CATEGORY 1: FORM & INQUIRY ENDPOINTS -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/20 p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="contact_page">contact_page</span>
+<div>
+<h3 class="text-sm font-headline font-bold text-white">Form &amp; Inquiry Conversion Funnels</h3>
+<p class="text-xs text-on-surface-variant font-body">Direct pipeline for buyer leads, concierge inquiries &amp; VIP requests</p>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-label font-bold rounded bg-surface-container-high text-on-surface border border-outline-variant/30">3 Detected</span>
+</div>
+<!-- Asset List -->
+<div class="space-y-3">
+<!-- Asset 1 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-label font-bold bg-error-container/30 border border-error/30 text-error uppercase tracking-wider">High Exposure</span>
+<span class="text-xs font-semibold text-white">VIP Tour Booking Gateway</span>
+</div>
+<div class="flex items-center gap-2 font-mono text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="link">link</span>
+<span class="truncate max-w-xs sm:max-w-sm">/villas/skyline-penthouse/inquire</span>
+<span class="text-outline">•</span>
+<span class="text-tertiary">POST 200 OK</span>
+</div>
+</div>
+<div class="flex items-center gap-4 self-end sm:self-center">
+<div class="text-right hidden sm:block">
+<span class="block text-[11px] font-mono text-outline">Lead Value</span>
+<span class="text-xs font-semibold text-tertiary font-mono">$12,500 Avg</span>
+</div>
+<!-- Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<!-- Asset 2 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-label font-bold bg-surface-container-high border border-outline-variant/40 text-on-surface uppercase tracking-wider">Modal Funnel</span>
+<span class="text-xs font-semibold text-white">Luxury Concierge Consultation</span>
+</div>
+<div class="flex items-center gap-2 font-mono text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="link">link</span>
+<span class="truncate max-w-xs sm:max-w-sm">/contact#concierge-direct</span>
+<span class="text-outline">•</span>
+<span class="text-tertiary">POST 200 OK</span>
+</div>
+</div>
+<div class="flex items-center gap-4 self-end sm:self-center">
+<div class="text-right hidden sm:block">
+<span class="block text-[11px] font-mono text-outline">Lead Value</span>
+<span class="text-xs font-semibold text-on-surface font-mono">$4,800 Avg</span>
+</div>
+<!-- Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<!-- Asset 3 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-label font-bold bg-surface-container-high border border-outline-variant/40 text-on-surface uppercase tracking-wider">Asset Gate</span>
+<span class="text-xs font-semibold text-white">Investor Deck Confidential Gate</span>
+</div>
+<div class="flex items-center gap-2 font-mono text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="link">link</span>
+<span class="truncate max-w-xs sm:max-w-sm">/investors/syndicate-deck-access</span>
+<span class="text-outline">•</span>
+<span class="text-tertiary">POST 200 OK</span>
+</div>
+</div>
+<div class="flex items-center gap-4 self-end sm:self-center">
+<div class="text-right hidden sm:block">
+<span class="block text-[11px] font-mono text-outline">Lead Value</span>
+<span class="text-xs font-semibold text-primary font-mono">Institutional</span>
+</div>
+<!-- Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- CATEGORY 2: PAYMENT BRIDGES & ESCROW -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/20 p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="payments">payments</span>
+<div>
+<h3 class="text-sm font-headline font-bold text-white">Transaction Bridges &amp; Reservation Holds</h3>
+<p class="text-xs text-on-surface-variant font-body">Cryptographic webhooks and secure credit card tokenization pipelines</p>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-label font-bold rounded bg-surface-container-high text-on-surface border border-outline-variant/30">2 Verified</span>
+</div>
+<div class="space-y-3">
+<!-- Payment 1 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-label font-bold bg-primary-container/20 border border-primary-container/40 text-primary-fixed uppercase tracking-wider">Stripe V3</span>
+<span class="text-xs font-semibold text-white">Earnest Money Deposit Webhook</span>
+</div>
+<div class="flex items-center gap-2 font-mono text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="webhook">webhook</span>
+<span class="truncate max-w-xs sm:max-w-sm">/api/checkout/stripe/reservation-intent</span>
+</div>
+</div>
+<div class="flex items-center gap-4 self-end sm:self-center">
+<div class="text-right hidden sm:block">
+<span class="block text-[11px] font-mono text-outline">Risk Threshold</span>
+<span class="text-xs font-semibold text-error font-mono">&gt; 350ms drop</span>
+</div>
+<!-- Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<!-- Payment 2 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-label font-bold bg-surface-container-high border border-outline-variant/40 text-on-surface uppercase tracking-wider">Escrow API</span>
+<span class="text-xs font-semibold text-white">Title &amp; Escrow Release Listener</span>
+</div>
+<div class="flex items-center gap-2 font-mono text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="lock_clock">lock_clock</span>
+<span class="truncate max-w-xs sm:max-w-sm">/api/v2/escrow/vault-hold-verify</span>
+</div>
+</div>
+<div class="flex items-center gap-4 self-end sm:self-center">
+<div class="text-right hidden sm:block">
+<span class="block text-[11px] font-mono text-outline">Status</span>
+<span class="text-xs font-semibold text-tertiary font-mono">Encrypted</span>
+</div>
+<!-- Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- CATEGORY 3: INSTANT CHANNELS -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/20 p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-tertiary text-xl" data-icon="chat">chat</span>
+<div>
+<h3 class="text-sm font-headline font-bold text-white">High-Net-Worth Direct Communication Channels</h3>
+<p class="text-xs text-on-surface-variant font-body">Floating widgets and VIP concierge click-to-chat links</p>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-label font-bold rounded bg-surface-container-high text-on-surface border border-outline-variant/30">2 Verified</span>
+</div>
+<div class="space-y-3">
+<!-- Channel 1 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/30 border border-tertiary/30 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="chat">chat</span>
+</div>
+<div>
+<div class="text-xs font-semibold text-white">WhatsApp VIP Concierge Dispatch</div>
+<div class="text-[11px] font-mono text-outline">wa.me/18005550198?text=VIPInquiry</div>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Channel 2 -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/20 border border-secondary-container/40 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="phone_forwarded">phone_forwarded</span>
+</div>
+<div>
+<div class="text-xs font-semibold text-white">Direct Advisory Telephony Bridge (Twilio)</div>
+<div class="text-[11px] font-mono text-outline">tel:+18005550199 (Global Routing)</div>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: DETECTION INTELLIGENCE & REVENUE IMPACT CONFIGURATION (5 COLS) -->
+<section class="lg:col-span-5 flex flex-col gap-6">
+<!-- GUARDIAN AI COO SETUP RECOMMENDATION BANNER -->
+<div class="rounded-xl bg-gradient-to-br from-primary-container/20 via-surface-container-low to-secondary-container/10 border border-primary-container/40 p-5 shadow-[0_0_24px_rgba(79,70,229,0.2)] relative overflow-hidden">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 shadow-md">
+<span class="material-symbols-outlined text-xl" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="text-xs font-headline font-bold text-white">Guardian AI COO Recommendation</span>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-label font-bold bg-secondary-container text-on-secondary-container uppercase">Actionable</span>
+</div>
+<p class="text-xs font-body text-on-surface-variant leading-relaxed">
+                Guardian identified <strong class="text-white">2 high-risk lead funnels</strong> with no fallback error routing. If your CRM or Mailgun webhook degrades, buyers receive generic 500 errors.
+              </p>
+<div class="pt-1">
+<button class="px-3 py-1.5 rounded-lg bg-primary-container hover:bg-inverse-primary text-white text-xs font-label font-semibold flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+<span>Auto-configure Synthetic Heartbeats</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- REVENUE AT RISK CALCULATOR -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/30 p-5 flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-xl" data-icon="trending_down">trending_down</span>
+<h3 class="text-sm font-headline font-bold text-white">Estimated Revenue at Risk</h3>
+</div>
+<span class="text-[11px] font-mono text-outline">Hourly Exposure</span>
+</div>
+<!-- Value Display -->
+<div class="p-4 rounded-lg bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-between">
+<div>
+<div class="text-[10px] font-label font-bold text-outline uppercase tracking-wider">Incident Down-cost</div>
+<div class="text-3xl font-headline font-extrabold text-white tracking-tight tabular-nums">$28,500 <span class="text-xs font-normal text-on-surface-variant">/ hr</span></div>
+</div>
+<div class="h-10 w-10 rounded-full bg-error-container/20 border border-error/30 text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-xl" data-icon="warning">warning</span>
+</div>
+</div>
+<!-- Slider -->
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-label text-on-surface-variant">
+<span>Baseline Tolerance</span>
+<span class="font-mono text-white font-semibold">$28.5k/hr (Mid-tier Luxury)</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary-container" max="50000" min="10000" type="range" value="28500"/>
+<div class="flex justify-between text-[10px] font-mono text-outline">
+<span>$10k/hr (Boutique)</span>
+<span>$50k/hr (Ultra-Luxury)</span>
+</div>
+</div>
+<p class="text-[11px] font-body text-outline leading-tight">
+            Used by Guardian to calibrate automated escalation severity and trigger immediate SMS wakes for lead-gate outages.
+          </p>
+</div>
+<!-- AUTOMATED HEALTH BASELINE -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/30 p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="health_and_safety">health_and_safety</span>
+<h3 class="text-sm font-headline font-bold text-white">Edge Node Baselines</h3>
+</div>
+<span class="text-[10px] font-mono text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Live Telemetry
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<!-- Metric 1: SSL -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col">
+<span class="text-[10px] font-label font-medium text-outline uppercase tracking-wider">SSL Cert</span>
+<span class="text-base font-headline font-bold text-tertiary mt-1">84 Days</span>
+<span class="text-[10px] font-mono text-outline-variant">Let's Encrypt E6</span>
+</div>
+<!-- Metric 2: CDN -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col">
+<span class="text-[10px] font-label font-medium text-outline uppercase tracking-wider">Edge TTFB</span>
+<span class="text-base font-headline font-bold text-secondary mt-1">184 ms</span>
+<span class="text-[10px] font-mono text-outline-variant">Cloudflare US-East</span>
+</div>
+<!-- Metric 3: Core Web Vitals -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex flex-col">
+<span class="text-[10px] font-label font-medium text-outline uppercase tracking-wider">Mobile Vitals</span>
+<span class="text-base font-headline font-bold text-white mt-1">94 <span class="text-xs font-normal text-tertiary">/100</span></span>
+<span class="text-[10px] font-mono text-outline-variant">LCP 1.4s • CLS 0.0</span>
+</div>
+</div>
+</div>
+<!-- SENTINEL ALERT ROUTING CONFIGURATION -->
+<div class="rounded-xl bg-surface-container-low border border-outline-variant/30 p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="notifications_active">notifications_active</span>
+<h3 class="text-sm font-headline font-bold text-white">Sentinel Alert Escalation</h3>
+</div>
+<span class="text-[10px] font-label font-bold text-secondary uppercase tracking-wider">Instant Dispatch</span>
+</div>
+<div class="space-y-3">
+<!-- Routing Option 1: Slack -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-base" data-icon="tag">tag</span>
+</div>
+<div>
+<div class="text-xs font-semibold text-white">Slack Incident Channel</div>
+<div class="text-[11px] font-mono text-secondary">#exec-revenue-alerts</div>
+</div>
+</div>
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-0 focus:ring-offset-0 bg-surface-container-lowest border-outline-variant/40" type="checkbox"/>
+</div>
+<!-- Routing Option 2: SMS / Pager -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-base" data-icon="phone_iphone">phone_iphone</span>
+</div>
+<div>
+<div class="text-xs font-semibold text-white">Emergency SMS Wake</div>
+<div class="text-[11px] font-mono text-on-surface-variant">+1 (415) •••-4920 (Operator)</div>
+</div>
+</div>
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-0 focus:ring-offset-0 bg-surface-container-lowest border-outline-variant/40" type="checkbox"/>
+</div>
+<!-- Routing Option 3: Executive Email Digest -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-base" data-icon="mail">mail</span>
+</div>
+<div>
+<div class="text-xs font-semibold text-white">Email Incident Dispatch</div>
+<div class="text-[11px] font-mono text-outline">ops@auracapital.com</div>
+</div>
+</div>
+<input class="w-4 h-4 rounded text-primary-container focus:ring-0 focus:ring-offset-0 bg-surface-container-lowest border-outline-variant/40" type="checkbox"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- STICKY FOOTER ACTION BAR -->
+<footer class="fixed bottom-0 inset-x-0 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/30 py-3.5 px-6 z-40">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+<!-- Back Navigation -->
+<button class="text-xs font-label font-semibold text-on-surface-variant hover:text-white flex items-center gap-2 transition-colors order-2 sm:order-1">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+<span>Back to Domain Setup</span>
+</button>
+<!-- Center Volume Protection Badge -->
+<div class="flex items-center gap-3 bg-surface-container-high px-4 py-1.5 rounded-full border border-outline-variant/30 order-1 sm:order-2">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-xs font-label font-bold text-white">3 Critical Paths Selected</span>
+</div>
+<span class="text-outline">•</span>
+<span class="text-xs font-mono font-medium text-secondary">$420k Protected Volume</span>
+</div>
+<!-- Forward Action CTA -->
+<div class="flex items-center gap-3 order-3">
+<button class="px-5 py-2.5 rounded-lg bg-primary-container hover:bg-inverse-primary text-white text-xs font-label font-bold tracking-wide transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)] flex items-center gap-2">
+<span>Proceed to Sentinel Deployment</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</footer>
+</body></html>

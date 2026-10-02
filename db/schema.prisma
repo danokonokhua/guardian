@@ -88,6 +88,10 @@ enum WebsiteVerifyStatus {
 /// Phase 1A §6.3: monitoring_checks.type
 /// (uptime|ssl|security|seo|content|links|performance|form).
 enum MonitorType {
+  ACCESSIBILITY
+  DOMAIN_EXPIRY
+  EMAIL_HEALTH
+  DNS
   UPTIME
   SSL
   SECURITY
@@ -245,6 +249,12 @@ model PasswordResetToken {
 
 /// Phase 1A §6.1: THE TENANT ROOT. Soft delete (deletedAt), purge after 30d.
 model Organization {
+  statusPages StatusPage[]
+  publicStatusPages PublicStatusPage[]
+  statusPageAudits StatusPageAudit[]
+  notificationDestinations NotificationDestination[]
+  externalDeliveries ExternalDelivery[]
+  domainExpiryAlerts DomainExpiryAlert[]
   id        String    @id @default(uuid())
   name      String
   slug      String    @unique
@@ -271,6 +281,59 @@ model Organization {
 
   @@index([ownerId])
   @@map("organizations")
+}
+
+/// Organization-owned encrypted alert destinations.
+model NotificationDestination {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  name String
+  channel String
+  host String
+  credentials String
+  enabled Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deliveries ExternalDelivery[]
+  @@unique([id, organizationId])
+  @@index([organizationId, enabled], map: "notification_destinations_org_enabled")
+  @@map("notification_destinations")
+}
+
+model ExternalDelivery {
+  statusMessage Json?
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  destinationId String
+  destination NotificationDestination @relation(fields: [destinationId, organizationId], references: [id, organizationId], onDelete: Cascade, onUpdate: NoAction)
+  issueId String?
+  dedupKey String
+  status String @default("PENDING")
+  attempts Int @default(0)
+  lastError String?
+  httpStatus Int?
+  leaseId String?
+  leaseUntil DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deliveredAt DateTime?
+  @@unique([destinationId, dedupKey])
+  @@index([organizationId, createdAt], map: "external_deliveries_org_created")
+  @@map("external_deliveries")
+}
+
+model DomainExpiryAlert {
+  id             String @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  domain         String
+  expiresAt      DateTime
+  thresholdDays  Int
+  createdAt      DateTime @default(now())
+  @@unique([organizationId, domain, expiresAt, thresholdDays], map: "domain_expiry_alert_cycle")
+  @@map("domain_expiry_alerts")
 }
 
 /// Phase 1A §6.1: joins users ↔ organizations with the RBAC role.
@@ -561,4 +624,44 @@ model InAppNotification {
 
   @@index([organizationId, userId, createdAt])
   @@map("in_app_notifications")
+}
+
+model StatusPage {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  slug String @unique
+  document Json
+  published Boolean @default(false)
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  snapshot PublicStatusPage?
+  audits StatusPageAudit[]
+  @@unique([id, organizationId])
+  @@index([organizationId, createdAt], map: "status_pages_org_created")
+  @@map("status_pages")
+}
+model PublicStatusPage {
+  pageId String @id
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  page StatusPage @relation(fields: [pageId, organizationId], references: [id, organizationId], onDelete: Cascade, onUpdate: NoAction)
+  slug String @unique
+  document Json
+  @@unique([pageId, organizationId])
+  @@map("public_status_pages")
+}
+model StatusPageAudit {
+  id String @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pageId String
+  page StatusPage @relation(fields: [pageId, organizationId], references: [id, organizationId], onDelete: Cascade, onUpdate: NoAction)
+  actorId String
+  action String
+  version Int
+  createdAt DateTime @default(now())
+  @@index([organizationId, pageId, createdAt], map: "status_page_audits_org_page_created")
+  @@map("status_page_audits")
 }

@@ -1,3 +1,9 @@
+import { collectDnsSnapshot } from "@/lib/dns/collector";
+import { runDomainExpiryCheck } from "@/lib/jobs/domain-expiry-check";
+import { runEmailHealthCheck } from "@/lib/jobs/email-health-check";
+import { runAccessibilityCheck } from "@/lib/jobs/accessibility-check";
+import { persistDnsObservation, dnsOutcome } from "@/lib/jobs/dns-check";
+import type { DnsSnapshot } from "@/lib/dns/records";
 import tls from "node:tls";
 import type { PgBoss } from "pg-boss";
 
@@ -232,14 +238,44 @@ export async function registerMonitorCheckWorker(boss: PgBoss): Promise<void> {
       prisma,
     );
     if (!target) return;
+    if (target.monitor.type === "ACCESSIBILITY") {
+      await runAccessibilityCheck(
+        job.data.organizationId,
+        target.monitor.id,
+        target.website.normalizedUrl,
+      );
+      return;
+    }
+    if (target.monitor.type === "EMAIL_HEALTH") {
+      await runEmailHealthCheck(
+        job.data.organizationId,
+        target.monitor.id,
+        new URL(target.website.normalizedUrl).hostname,
+        target.monitor.config,
+      );
+      return;
+    }
+    if (target.monitor.type === "DOMAIN_EXPIRY") {
+      await runDomainExpiryCheck(
+        boss,
+        job.data.organizationId,
+        target.monitor.id,
+        new URL(target.website.normalizedUrl).hostname,
+      );
+      return;
+    }
 
     let outcome: MonitorCheckOutcome;
+    let dnsSnapshot: DnsSnapshot | undefined;
     // The database record is authoritative when available.  Older queued jobs
     // may omit `type`, so retain the historical UPTIME default only for an
     // absent value; arbitrary unknown types are ignored instead of silently
     // running the wrong adapter.
     const monitorType = target.monitor.type ?? job.data.type ?? "UPTIME";
-    if (monitorType === "SSL") {
+    if (monitorType === "DNS") {
+      dnsSnapshot = await collectDnsSnapshot(new URL(target.website.normalizedUrl).hostname);
+      outcome = dnsOutcome(dnsSnapshot, {});
+    } else if (monitorType === "SSL") {
       outcome = await runSslCheck(target.website.normalizedUrl);
     } else if (monitorType === "SECURITY") {
       outcome = await runSecurityCheck(target.website.normalizedUrl);
@@ -260,6 +296,7 @@ export async function registerMonitorCheckWorker(boss: PgBoss): Promise<void> {
     await withGucContext(
       { organizationId: job.data.organizationId },
       async (tx) => {
+        if (dnsSnapshot) outcome = await persistDnsObservation(tx, target.monitor.id, dnsSnapshot);
         await tx.monitoringResult.create({
           data: {
             organizationId: job.data.organizationId,

@@ -1,6 +1,15 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { DnsEvidence } from "@/components/dashboard/dns-evidence";
+import { AccessibilityEvidence } from "@/components/dashboard/accessibility-evidence";
+import type { AccessibilityConfig } from "@/lib/accessibility/types";
+import { EmailHealthEvidence } from "@/components/dashboard/email-health-evidence";
+import type { EmailHealthConfig } from "@/lib/email-health/types";
+import {
+  DomainExpiryEvidence,
+  type ExpiryEvidence,
+} from "@/components/dashboard/domain-expiry-evidence";
 
 type Monitor = {
   id: string;
@@ -8,6 +17,15 @@ type Monitor = {
   type: string;
   enabled: boolean;
   frequencyMinutes: number;
+  config?: EmailHealthConfig &
+    AccessibilityConfig & {
+      thresholds?: number[];
+      expiry?: ExpiryEvidence;
+      lastSuccessful?: ExpiryEvidence;
+      baseline?: Record<string, string[]>;
+      latest?: Record<string, { state: string; records?: string[]; reason?: string }>;
+      observedAt?: string;
+    };
   results?: Array<{
     status: string;
     checkedAt: string;
@@ -17,6 +35,10 @@ type Monitor = {
 };
 
 const monitorOptions = [
+  { value: "ACCESSIBILITY", label: "Basic accessibility (HTML checks)" },
+  { value: "EMAIL_HEALTH", label: "Email-domain health (SPF, DMARC, MTA-STS)" },
+  { value: "DOMAIN_EXPIRY", label: "Domain registration expiry" },
+  { value: "DNS", label: "DNS record changes" },
   { value: "UPTIME", label: "Website uptime" },
   { value: "SSL", label: "SSL certificate" },
   { value: "SECURITY", label: "Security headers" },
@@ -57,6 +79,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
   const [frequencyMinutes, setFrequencyMinutes] = useState("5");
   const [frequencyDrafts, setFrequencyDrafts] = useState<Record<string, string>>({});
   const [formId, setFormId] = useState("");
+  const [emailDomainScope, setEmailDomainScope] = useState("REGISTERED");
   const [formPagePath, setFormPagePath] = useState("");
   const [formProbePath, setFormProbePath] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
@@ -139,7 +162,9 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   ...(formPagePath.trim() === "" ? {} : { pagePath: formPagePath.trim() }),
                   ...(formProbePath.trim() === "" ? {} : { probePath: formProbePath.trim() }),
                 }
-              : {},
+              : type === "EMAIL_HEALTH"
+                ? { domainScope: emailDomainScope }
+                : {},
         }),
       });
       if (!response.ok) {
@@ -201,6 +226,30 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
     }
   }
 
+  async function acceptDnsBaseline(monitor: Monitor) {
+    if (
+      !window.confirm(
+        "Accept the displayed DNS records as the new baseline? Review all changes first.",
+      )
+    )
+      return;
+    setActionError(null);
+    try {
+      const response = await fetch(
+        `/api/v1/organizations/${organizationId}/monitors/${monitor.id}/dns-baseline`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ observedAt: monitor.config?.observedAt }),
+        },
+      );
+      if (!response.ok)
+        throw new Error("Unable to accept baseline. Refresh and check the latest DNS evidence.");
+      setReloadToken((value) => value + 1);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Unable to accept baseline");
+    }
+  }
   async function updateMonitor(monitor: Monitor, enabled: boolean) {
     setActionError(null);
     try {
@@ -308,7 +357,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
           {result.monitors.map((monitor) => (
             <li
               key={monitor.id}
-              className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-4"
+              className="min-w-0 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -321,13 +370,46 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                   {monitor.enabled ? "Enabled" : "Paused"}
                 </span>
               </div>
+              {monitor.type === "DNS" && (
+                <DnsEvidence
+                  evidence={monitor.config}
+                  onAccept={() => acceptDnsBaseline(monitor)}
+                />
+              )}
+              {monitor.type === "EMAIL_HEALTH" && <EmailHealthEvidence config={monitor.config} />}
+              {monitor.type === "ACCESSIBILITY" && (
+                <AccessibilityEvidence config={monitor.config} />
+              )}
+              {monitor.type === "DOMAIN_EXPIRY" && (
+                <DomainExpiryEvidence
+                  evidence={monitor.config?.expiry}
+                  lastSuccessful={monitor.config?.lastSuccessful}
+                  thresholds={monitor.config?.thresholds}
+                  onSave={async (thresholds) => {
+                    const response = await fetch(
+                      `/api/v1/organizations/${organizationId}/monitors/${monitor.id}`,
+                      {
+                        method: "PATCH",
+                        headers: { "content-type": "application/json" },
+                        body: JSON.stringify({ config: { thresholds } }),
+                      },
+                    );
+                    if (!response.ok) throw Error("Unable to save expiry thresholds");
+                    setReloadToken((value) => value + 1);
+                  }}
+                />
+              )}
               <div className="mt-4 flex items-end gap-2">
                 <label className="text-xs text-neutral-500">
                   Runs every (minutes)
                   <input
                     aria-label={`Frequency for ${monitorLabel(monitor.type)}`}
                     type="number"
-                    min={1}
+                    min={
+                      ["DOMAIN_EXPIRY", "EMAIL_HEALTH", "ACCESSIBILITY"].includes(monitor.type)
+                        ? 60
+                        : 1
+                    }
                     max={1440}
                     value={frequencyDrafts[monitor.id] ?? String(monitor.frequencyMinutes)}
                     onChange={(event) =>
@@ -477,7 +559,11 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             Check type
             <select
               value={type}
-              onChange={(event) => setType(event.target.value as Monitor["type"])}
+              onChange={(event) => {
+                setType(event.target.value as Monitor["type"]);
+                if (["DOMAIN_EXPIRY", "EMAIL_HEALTH", "ACCESSIBILITY"].includes(event.target.value))
+                  setFrequencyMinutes("1440");
+              }}
               className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100"
             >
               {monitorOptions.map((option) => (
@@ -497,6 +583,25 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             customer data. Reputation is visible for roadmap clarity and remains disabled until the
             PRD&apos;s approved review-platform integration is available.
           </p>
+          {type === "ACCESSIBILITY" && (
+            <p className="text-sm text-neutral-400">
+              Checks one verified page?s server-delivered HTML. No JavaScript or CSS is executed.
+              Findings need rendered-page and manual review.
+            </p>
+          )}
+          {type === "EMAIL_HEALTH" && (
+            <label className="md:col-span-4 text-xs text-neutral-400">
+              Email policy domain
+              <select
+                value={emailDomainScope}
+                onChange={(event) => setEmailDomainScope(event.target.value)}
+                className="mt-1 block w-full min-w-0 rounded border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white"
+              >
+                <option value="REGISTERED">Registered domain (example.com)</option>
+                <option value="HOSTNAME">Exact verified hostname (mail.example.com)</option>
+              </select>
+            </label>
+          )}
           {type === "FORM" && (
             <div className="md:col-span-4 grid gap-3 md:grid-cols-3">
               <label className="text-xs text-neutral-400">
@@ -537,7 +642,7 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
             Frequency (min)
             <input
               required
-              min={1}
+              min={["DOMAIN_EXPIRY", "EMAIL_HEALTH", "ACCESSIBILITY"].includes(type) ? 60 : 1}
               max={1440}
               type="number"
               value={frequencyMinutes}

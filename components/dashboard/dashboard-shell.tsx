@@ -1,6 +1,10 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Brand } from "@/components/ui/brand";
 
 export interface DashboardOrganization {
   readonly organizationId: string;
@@ -33,50 +37,145 @@ export function useDashboardOrganization(): DashboardOrganization {
   return value;
 }
 
-export function DashboardShell({ children }: { children: ReactNode }) {
+const destinations = [
+  { href: "/dashboard#overview", label: "Overview", icon: "◈" },
+  { href: "/health", label: "Digital health", icon: "◎" },
+  { href: "/dashboard#monitoring", label: "Monitoring", icon: "⌁" },
+  { href: "/settings/alerts", label: "Notifications", icon: "◇" },
+];
+export function DashboardShell({
+  children,
+  title = "Operations Command Center",
+  description = "Understand your health. Prioritize issues. Keep your business moving.",
+}: {
+  children: ReactNode;
+  title?: string;
+  description?: string;
+}) {
   const organization = useDashboardOrganization();
+  const pathname = usePathname();
+  const [active, setActive] = useState(
+    pathname === "/dashboard" ? "/dashboard#overview" : pathname,
+  );
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-6">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.3em] text-emerald-400">
-              Guardian dashboard
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight">Operations overview</h1>
-            <p className="mt-2 text-sm text-neutral-400">
-              {organization.email} · {organization.role.toLowerCase()}
+    <div className="command-shell">
+      <a className="command-skip" href="#command-content">
+        Skip to dashboard content
+      </a>
+      <aside className="command-sidebar">
+        <Brand />
+        <div className="workspace-label">
+          <span className="eyebrow">YOUR WORKSPACE</span>
+          <strong>Business operations</strong>
+          <span>{organization.role.toLowerCase()} access</span>
+        </div>
+        <a
+          className="button-primary"
+          href="/dashboard#monitoring"
+          onClick={() => setActive("/dashboard#monitoring")}
+        >
+          + Manage monitoring
+        </a>
+        <p className="sidebar-caption">OPERATIONS</p>
+        <nav aria-label="Dashboard navigation">
+          {destinations.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              aria-current={active === item.href ? "location" : undefined}
+              onClick={() => setActive(item.href)}
+            >
+              <span aria-hidden="true">{item.icon}</span>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <nav aria-label="Monitoring views">
+          {(
+            [
+              ["/dashboard/executive", "Executive overview"],
+              ["/briefings", "Operational briefing"],
+              ["/status-pages", "Client status pages"],
+              ["/billing", "Plans & billing"],
+              ["/seo", "SEO insights"],
+              ["/security", "Security posture"],
+              ["/revenue", "Lead-form health"],
+            ] as const
+          ).map(([href, label]) => (
+            <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <div className="sidebar-bottom">
+          <div className="workspace-note">
+            <span className="eyebrow">PROTECT · UNDERSTAND · GROW</span>
+            <p>
+              Evidence behind every finding.
+              <br />
+              Clarity for your next decision.
             </p>
           </div>
-          <nav aria-label="Dashboard navigation" className="flex gap-2 text-sm">
-            <a
-              className="rounded-md px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100"
-              href="/dashboard"
-            >
-              Overview
-            </a>
-            <a
-              className="rounded-md px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100"
-              href="#health"
-            >
-              Health
-            </a>
-            <a
-              className="rounded-md bg-neutral-800 px-3 py-2 text-neutral-100"
-              href="#notifications"
-            >
-              Notifications
-            </a>
-            <a
-              className="rounded-md px-3 py-2 text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100"
-              href="#monitoring"
-            >
-              Monitoring
-            </a>
-          </nav>
+          <Link href="/onboarding" className="quiet-link">
+            Connect a website
+          </Link>
+          <a href="/audit">Run a free website audit ↗</a>
+          <Link href="/">Back to homepage ↗</Link>
+        </div>
+      </aside>
+      <div className="command-body">
+        <header className="command-topbar">
+          <span className="command-mobile-brand">
+            <Brand />
+          </span>
+          <span className="command-breadcrumb">
+            Workspace <span>/</span> Operations
+          </span>
+          <span className="operator-identity">
+            {organization.email} · {organization.role.toLowerCase()}
+          </span>
         </header>
-        {children}
+        <main id="command-content" className="command-content">
+          <nav className="command-mobile-shortcuts" aria-label="Workspace views">
+            <Link href="/briefings">Briefing</Link>
+            <Link href="/status-pages">Status pages</Link>
+            <Link href="/billing">Billing</Link>
+            <Link href="/dashboard/executive">Executive</Link>
+            <Link href="/onboarding">Connect website</Link>
+          </nav>
+          <div className="command-heading" id="overview">
+            <div>
+              <span className="eyebrow">YOUR DIGITAL BUSINESS, IN VIEW</span>
+              <h1>{title}</h1>
+              <p>{description}</p>
+            </div>
+            <a
+              href="/dashboard#monitoring"
+              className="button-secondary compact"
+              onClick={() => setActive("/dashboard#monitoring")}
+            >
+              Manage checks ↗
+            </a>
+          </div>
+          {children}
+        </main>
+        <footer className="command-footer">
+          Guardian · Digital business operations<span>Monitor → Understand → Act</span>
+        </footer>
       </div>
-    </main>
+      <nav className="command-mobile-nav" aria-label="Mobile dashboard navigation">
+        {destinations.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            aria-current={active === item.href ? "location" : undefined}
+            onClick={() => setActive(item.href)}
+          >
+            <span aria-hidden="true">{item.icon}</span>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </div>
   );
 }

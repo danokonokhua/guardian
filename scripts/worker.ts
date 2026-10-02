@@ -30,6 +30,9 @@ async function main(): Promise<void> {
   workerLogger = logger;
   await assertRuntimeDatabaseRole();
   const boss = await startJobBoss();
+  const { registerExternalNotificationWorker } =
+    await import("@/lib/notification-destinations/worker");
+  await registerExternalNotificationWorker(boss);
   await registerSystemPingWorker(boss);
   await registerMonitorCheckWorker(boss);
   await registerNotificationWorker(boss, productionNotificationProvider);

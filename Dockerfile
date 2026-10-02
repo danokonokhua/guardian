@@ -50,8 +50,7 @@ RUN groupadd --system --gid 1001 guardian \
 # Next standalone output contains the traced production server and runtime deps.
 COPY --from=build --chown=guardian:guardian /app/.next/standalone ./
 COPY --from=build --chown=guardian:guardian /app/.next/static ./.next/static
-# There is currently no public/ directory. If one is added later, copy it
-# alongside .next/static so the standalone server can serve those assets.
+COPY --from=build --chown=guardian:guardian /app/public ./public
 
 # The persistent worker runs from TypeScript source via tsx and needs the
 # generated Prisma client plus its server-side modules.

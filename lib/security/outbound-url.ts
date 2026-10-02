@@ -164,13 +164,18 @@ export function pinnedLookup(target: SafeOutboundTarget): LookupFunction {
 export async function requestSafeOutbound(
   rawUrl: string,
   options: {
-    method?: "GET" | "HEAD";
+    method?: "GET" | "HEAD" | "POST";
+    headers?: Readonly<Record<string, string>>;
+    body?: string;
     timeoutMs?: number;
     maxBodyBytes?: number;
     truncateBody?: boolean;
+    signal?: AbortSignal;
   } = {},
 ): Promise<SafeOutboundResponse> {
+  options.signal?.throwIfAborted();
   const target = await resolveSafeOutboundUrl(rawUrl);
+  options.signal?.throwIfAborted();
   const timeoutMs = options.timeoutMs ?? 10_000;
   const maxBodyBytes = options.maxBodyBytes ?? 64 * 1024;
   const requestOptions = {
@@ -178,6 +183,8 @@ export async function requestSafeOutbound(
     timeout: timeoutMs,
     lookup: pinnedLookup(target),
     servername: target.hostname,
+    headers: options.headers,
+    signal: options.signal,
   };
   const request = target.url.protocol === "https:" ? https.request : http.request;
 
@@ -219,6 +226,8 @@ export async function requestSafeOutbound(
         // metadata, but callers must never receive arbitrary upstream headers.
         for (const name of [
           "content-type",
+          "content-encoding",
+          "retry-after",
           "x-robots-tag",
           "location",
           "strict-transport-security",
@@ -246,6 +255,6 @@ export async function requestSafeOutbound(
       clientRequest.destroy(new Error("Outbound request timed out.")),
     );
     clientRequest.once("error", reject);
-    clientRequest.end();
+    clientRequest.end(options.body);
   });
 }
