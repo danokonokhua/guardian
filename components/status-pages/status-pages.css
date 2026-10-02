@@ -1,41 +1,51 @@
 .public-status {
   max-width: 980px;
   margin: 0 auto;
-  padding: 32px 20px;
+  padding: 40px 24px;
 }
 .status-view,
 .status-manager {
   display: grid;
-  gap: 24px;
+  gap: 28px;
   min-width: 0;
 }
 .status-hero {
-  padding: 32px 0 12px;
+  padding: 32px 0 16px;
 }
 .status-hero h1 {
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   margin: 12px 0;
   overflow-wrap: anywhere;
+  color: #ffffff;
 }
 .status-hero h2 {
   margin-top: 24px;
+  color: #ffffff;
 }
 .status-panel {
-  padding: 24px;
-  border: 1px solid #334155;
-  border-radius: 18px;
-  background: #121b2a;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 1.5rem;
+  background: rgba(18, 24, 38, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   min-width: 0;
   overflow-wrap: anywhere;
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .status-panel h2,
 .status-panel h3 {
   margin-top: 0;
+  color: #ffffff;
+  letter-spacing: -0.01em;
 }
 .status-view .muted,
 .status-manager .muted {
-  color: #a5b4c8;
-  font-size: 0.86rem;
+  color: #94a3b8;
+  font-size: 0.88rem;
   line-height: 1.6;
 }
 .status-component {
@@ -44,62 +54,75 @@
   align-items: start;
   gap: 18px;
   padding: 18px 0;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .status-state {
   display: inline-block;
-  padding: 5px 10px;
-  border: 1px solid #64748b;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-transform: capitalize;
   white-space: nowrap;
+  backdrop-filter: blur(8px);
 }
 .status-operational {
-  color: #6ee7b7;
-  border-color: #047857;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 12px -2px rgba(16, 185, 129, 0.25);
 }
 .status-outage {
-  color: #fda4af;
-  border-color: #be123c;
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  box-shadow: 0 0 12px -2px rgba(244, 63, 94, 0.25);
 }
 .status-degraded,
 .status-unknown {
-  color: #fde68a;
-  border-color: #a16207;
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 12px -2px rgba(245, 158, 11, 0.25);
 }
 .status-maintenance {
   color: #c4b5fd;
-  border-color: #7c3aed;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 12px -2px rgba(139, 92, 246, 0.25);
 }
 .status-event {
-  border-top: 1px solid #334155;
-  padding: 20px 0 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 22px 0 6px;
 }
 .status-update {
-  border-left: 2px solid #6366f1;
-  padding: 4px 0 4px 16px;
-  margin: 16px 0;
+  border-left: 2px solid #00F0FF;
+  padding: 6px 0 6px 18px;
+  margin: 18px 0;
+  box-shadow: inset 4px 0 8px -4px rgba(0, 240, 255, 0.3);
 }
 .status-update time {
   display: block;
-  color: #a5b4c8;
-  font-size: 0.8rem;
+  color: #94a3b8;
+  font-size: 0.82rem;
   margin-top: 4px;
 }
 .status-update p,
 .status-event p {
   white-space: pre-wrap;
+  color: #cbd5e1;
 }
 .status-form {
   display: grid;
-  gap: 14px;
-  margin: 18px 0;
+  gap: 16px;
+  margin: 20px 0;
 }
 .status-form label {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   font-size: 0.9rem;
+  color: #e2e8f0;
 }
 .status-form input:not([type="checkbox"]),
 .status-form textarea,
@@ -107,15 +130,24 @@
 .status-manager > select {
   width: 100%;
   min-width: 0;
-  border: 1px solid #475569;
-  background: #080f1c;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 13, 20, 0.7);
   color: #f1f5f9;
-  border-radius: 8px;
-  padding: 11px;
+  border-radius: 0.75rem;
+  padding: 12px 14px;
   font: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.status-form input:focus,
+.status-form textarea:focus,
+.status-form select:focus,
+.status-manager > select:focus {
+  outline: none;
+  border-color: #00F0FF;
+  box-shadow: 0 0 12px -2px rgba(0, 240, 255, 0.3);
 }
 .status-form textarea {
-  min-height: 100px;
+  min-height: 110px;
   resize: vertical;
 }
 .status-form label.status-checkbox {
@@ -133,6 +165,8 @@
 .status-actions a,
 .status-form button {
   min-height: 42px;
+  border-radius: 9999px;
+  transition: all 0.2s;
 }
 .status-split {
   display: grid;
@@ -141,33 +175,36 @@
 }
 .status-manager details > summary {
   cursor: pointer;
-  padding: 12px 0;
+  padding: 14px 0;
   font-weight: 600;
+  color: #ffffff;
 }
 .status-manager fieldset {
   min-width: 0;
-  border: 1px solid #475569;
-  border-radius: 8px;
-  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  padding: 14px;
+  background: rgba(10, 13, 20, 0.4);
 }
 .status-manager input:focus-visible,
 .status-manager select:focus-visible,
 .status-manager textarea:focus-visible {
-  outline: 2px solid #a5b4fc;
+  outline: 2px solid #00F0FF;
   outline-offset: 2px;
 }
 .public-status footer {
-  margin-top: 24px;
+  margin-top: 32px;
+  text-align: center;
 }
 @media (max-width: 800px) {
   .status-split {
     grid-template-columns: 1fr;
   }
   .status-panel {
-    padding: 18px;
+    padding: 20px;
   }
   .status-component {
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
   }
 }

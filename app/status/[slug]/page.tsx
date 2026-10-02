@@ -2,12 +2,15 @@ import { notFound } from "next/navigation";
 import { readPublicStatusPage } from "@/services/status-pages";
 import { PublicStatus } from "@/components/status-pages/public-status";
 import { Brand } from "@/components/ui/brand";
+import { AmbientBackground } from "@/components/ui/ambient-background";
 import "@/components/status-pages/status-pages.css";
+
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Service status | Guardian",
   robots: { index: false, follow: false },
 };
+
 export default async function PublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const document = await readPublicStatusPage(slug);
@@ -16,10 +19,15 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
   // eslint-disable-next-line react-hooks/purity
   const asOf = Date.now();
   return (
-    <main className="public-status">
-      <Brand />
-      <PublicStatus slug={slug} initial={document} asOf={asOf} />
-      <footer className="muted">Powered by Guardian · Times shown in UTC</footer>
-    </main>
+    <div className="relative min-h-screen bg-canvas text-foreground">
+      <AmbientBackground variant="audit" />
+      <main className="relative z-10 public-status">
+        <div className="mb-6">
+          <Brand />
+        </div>
+        <PublicStatus slug={slug} initial={document} asOf={asOf} />
+        <footer className="muted">Powered by Guardian · Times shown in UTC</footer>
+      </main>
+    </div>
   );
 }

@@ -5,8 +5,6 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Brand } from "@/components/ui/brand";
-import { AmbientBackground } from "@/components/ui/ambient-background";
-import { StatusCapsule } from "@/components/ui/status-capsule";
 
 export interface DashboardOrganization {
   readonly organizationId: string;
@@ -60,23 +58,19 @@ export function DashboardShell({
     pathname === "/dashboard" ? "/dashboard#overview" : pathname,
   );
   return (
-    <div className="command-shell relative overflow-hidden">
-      <AmbientBackground variant="dashboard" />
+    <div className="command-shell">
       <a className="command-skip" href="#command-content">
         Skip to dashboard content
       </a>
-      <aside className="command-sidebar relative z-10 backdrop-blur-2xl bg-surface-container-lowest/80 border-r border-glass-subtle-border">
+      <aside className="command-sidebar">
         <Brand />
-        <div className="workspace-label rounded-2xl bg-surface-container-low/75 border border-glass-specular-border p-3.5 shadow-sm">
+        <div className="workspace-label">
           <span className="eyebrow">YOUR WORKSPACE</span>
           <strong>Business operations</strong>
-          <div className="mt-1 flex items-center justify-between">
-            <span className="text-xs text-on-surface-variant font-mono">{organization.role.toLowerCase()}</span>
-            <StatusCapsule status="operational" label="Live" pulse className="py-0.5 px-2 text-[10px]" />
-          </div>
+          <span>{organization.role.toLowerCase()} access</span>
         </div>
         <a
-          className="button-primary text-center"
+          className="button-primary"
           href="/dashboard#monitoring"
           onClick={() => setActive("/dashboard#monitoring")}
         >
@@ -129,19 +123,17 @@ export function DashboardShell({
           <Link href="/">Back to homepage ↗</Link>
         </div>
       </aside>
-      <div className="command-body relative z-10">
-        <header className="command-topbar backdrop-blur-2xl bg-surface-container-lowest/80 border-b border-glass-subtle-border">
+      <div className="command-body">
+        <header className="command-topbar">
           <span className="command-mobile-brand">
             <Brand />
           </span>
           <span className="command-breadcrumb">
             Workspace <span>/</span> Operations
           </span>
-          <div className="flex items-center gap-3">
-            <span className="operator-identity font-mono text-xs px-3 py-1 rounded-full bg-surface-container/60 border border-glass-subtle-border">
-              {organization.email} · {organization.role.toLowerCase()}
-            </span>
-          </div>
+          <span className="operator-identity">
+            {organization.email} · {organization.role.toLowerCase()}
+          </span>
         </header>
         <main id="command-content" className="command-content">
           <nav className="command-mobile-shortcuts" aria-label="Workspace views">

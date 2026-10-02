@@ -1,7 +1,6 @@
 import Link from "next/link";
 import AuditForm from "@/app/audit/audit-form";
 import { Brand } from "@/components/ui/brand";
-import { AmbientBackground } from "@/components/ui/ambient-background";
 const features = [
   {
     n: "01",
@@ -24,9 +23,8 @@ const features = [
 ];
 export default function HomePage() {
   return (
-    <div className="marketing-page relative overflow-hidden">
-      <AmbientBackground variant="audit" />
-      <header className="public-header relative z-10">
+    <div className="marketing-page">
+      <header className="public-header">
         <Brand />
         <nav aria-label="Main navigation">
           <a href="#features" className="desktop-link">
@@ -41,7 +39,7 @@ export default function HomePage() {
           </Link>
         </nav>
       </header>
-      <main id="main-content" className="relative z-10">
+      <main id="main-content">
         <section className="hero">
           <span className="status-pill">
             <span /> DIGITAL BUSINESS OPERATIONS
