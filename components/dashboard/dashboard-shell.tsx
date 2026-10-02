@@ -57,15 +57,6 @@ export function DashboardShell({
   const [active, setActive] = useState(
     pathname === "/dashboard" ? "/dashboard#overview" : pathname,
   );
-
-  async function handleSignOut(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {}
-    window.location.href = "/";
-  }
-
   return (
     <div className="command-shell">
       <a className="command-skip" href="#command-content">
@@ -104,6 +95,7 @@ export function DashboardShell({
             [
               ["/dashboard/executive", "Executive overview"],
               ["/briefings", "Operational briefing"],
+              ["/dashboard/integrations", "Google integrations"],
               ["/status-pages", "Client status pages"],
               ["/billing", "Plans & billing"],
               ["/seo", "SEO insights"],
@@ -130,7 +122,7 @@ export function DashboardShell({
           </Link>
           <a href="/audit">Run a free website audit ↗</a>
           <Link href="/">Back to homepage ↗</Link>
-          <form action="/api/auth/logout" method="POST" onSubmit={handleSignOut} className="pt-2 border-t border-glass-subtle-border/40 mt-2">
+          <form action="/api/auth/logout" method="POST" className="pt-2 border-t border-glass-subtle-border/40 mt-2">
             <button
               type="submit"
               className="w-full text-left text-xs font-medium text-neutral-400 hover:text-rose-400 py-1 transition-colors flex items-center gap-2"
@@ -153,7 +145,7 @@ export function DashboardShell({
             <span className="operator-identity">
               {organization.email} · {organization.role.toLowerCase()}
             </span>
-            <form action="/api/auth/logout" method="POST" onSubmit={handleSignOut} className="inline-block">
+            <form action="/api/auth/logout" method="POST" className="inline-block">
               <button
                 type="submit"
                 aria-label="Sign out"
@@ -168,11 +160,12 @@ export function DashboardShell({
         <main id="command-content" className="command-content">
           <nav className="command-mobile-shortcuts" aria-label="Workspace views">
             <Link href="/briefings">Briefing</Link>
+            <Link href="/dashboard/integrations">Google integrations</Link>
             <Link href="/status-pages">Status pages</Link>
             <Link href="/billing">Billing</Link>
             <Link href="/dashboard/executive">Executive</Link>
             <Link href="/onboarding">Connect website</Link>
-            <form action="/api/auth/logout" method="POST" onSubmit={handleSignOut} className="inline">
+            <form action="/api/auth/logout" method="POST" className="inline">
               <button
                 type="submit"
                 className="text-xs text-neutral-400 hover:text-rose-400 py-1 px-2"

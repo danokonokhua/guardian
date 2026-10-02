@@ -59,3 +59,9 @@ export function assertCanUseFeature(
     );
   }
 }
+
+/** Asserts an organization plan has access to Google Integrations (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseGoogleIntegrations(planId: string): void {
+  assertCanUseFeature(planId, "googleIntegrations");
+}
+
