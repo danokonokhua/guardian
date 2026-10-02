@@ -65,9 +65,13 @@ export default function AuditForm() {
           placeholder="https://your-business.com"
           inputMode="url"
           required
-          className="guardian-input min-w-0 flex-1"
+          className="guardian-input min-w-0 flex-1 bg-[#07090E]/90 text-white placeholder-neutral-400 border border-white/20 focus:border-[#00F0FF] focus:ring-1 focus:ring-[#00F0FF]"
         />
-        <button type="submit" disabled={loading} className="button-primary">
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-8 py-3.5 rounded-xl font-bold uppercase tracking-wider bg-[#00F0FF] text-[#0A0D14] shadow-[0_0_20px_rgba(0,240,255,0.35)] hover:bg-[#38F4FF] hover:shadow-[0_0_28px_rgba(0,240,255,0.55)] transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+        >
           {loading ? "Auditing…" : "Run free audit"}
         </button>
       </form>
