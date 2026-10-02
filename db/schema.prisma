@@ -309,6 +309,7 @@ model Organization {
   healthScoreComponents    HealthScoreComponent[]
   subscription             Subscription?
   billingInvoices          BillingInvoice[]
+  googleIntegrations       GoogleIntegration[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -443,6 +444,7 @@ model Website {
   monitors          Monitor[]
   issues            Issue[]
   monitoringResults MonitoringResult[]
+  googleIntegrations GoogleIntegration[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -738,3 +740,46 @@ model BillingInvoice {
   @@map("billing_invoices")
 }
 
+// ---------------------------------------------------------------------------
+// Phase 15: Google Integrations
+// ---------------------------------------------------------------------------
+
+enum GoogleProvider {
+  GA4
+  SEARCH_CONSOLE
+  BUSINESS_PROFILE
+}
+
+enum GoogleIntegrationStatus {
+  CONNECTED
+  NEEDS_REAUTH
+  DISCONNECTED
+  ERROR
+}
+
+/// Encrypted Google OAuth credentials for GA4 / Search Console / Business Profile.
+/// One row per (organization, provider, propertyId) — propertyId disambiguates
+/// multiple GA4 properties on the same account.
+model GoogleIntegration {
+  id                   String                  @id @default(uuid())
+  organizationId       String
+  websiteId            String?
+  provider             GoogleProvider
+  status               GoogleIntegrationStatus @default(DISCONNECTED)
+  accountEmail         String?
+  propertyId           String?
+  propertyName         String?
+  encryptedCredentials String
+  lastSyncAt           DateTime?
+  lastError            String?
+  syncSummary          Json?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website?       @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, provider, propertyId])
+  @@index([organizationId])
+  @@map("google_integrations")
+}
