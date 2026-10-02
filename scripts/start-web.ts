@@ -7,18 +7,7 @@ import { pathToFileURL } from "node:url";
 /** Starts the standalone Next server only after the runtime role is checked. */
 async function main(): Promise<void> {
   const { assertRuntimeDatabaseRole } = await import("@/db/client");
-  let retries = 0;
-  while (true) {
-    try {
-      await assertRuntimeDatabaseRole();
-      break;
-    } catch (error) {
-      retries++;
-      if (retries >= 15) throw error;
-      process.stderr.write(`Waiting for database (attempt ${retries}/15): ${String(error)}\n`);
-      await new Promise((r) => setTimeout(r, 2000));
-    }
-  }
+  await assertRuntimeDatabaseRole();
   const serverPath = [
     resolve(process.cwd(), "server.js"),
     resolve(process.cwd(), ".next", "standalone", "server.js"),
