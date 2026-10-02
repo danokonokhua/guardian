@@ -18,12 +18,16 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
-# npm ci runs the Prisma postinstall hook, so provide the schema before it
-# runs rather than copying the full source tree first.
-COPY db/schema.prisma ./db/schema.prisma
-RUN npm ci
+# Use --ignore-scripts so the Prisma postinstall hook does NOT run here.
+# The schema may not have changed between builds, causing Docker to cache the
+# early COPY db/schema.prisma layer and generate stale Prisma types.
+# We run db:generate explicitly after COPY . . below so TypeScript always sees
+# the types that match the committed schema.
+RUN npm ci --ignore-scripts
 
 COPY . .
+# Regenerate Prisma Client from the committed schema — this is the single
+# authoritative generation step and runs every time source files change.
 RUN npm run db:generate
 ENV NODE_ENV=production
 # Next 16 defaults to Turbopack, which can exceed the memory budget on the
