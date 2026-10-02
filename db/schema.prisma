@@ -48,10 +48,39 @@ enum UserStatus {
   DELETED
 }
 
-/// Phase 1A §6.1: organizations.plan ("free|pro…, code-config").
+/// Phase 1A §6.1 / PRD §19: organizations.plan
 enum Plan {
   FREE
+  STARTER
+  GROWTH
   PRO
+  AGENCY
+  WHITE_LABEL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  PAUSED
+}
+
+enum BillingInterval {
+  MONTHLY
+  ANNUAL
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  UNCOLLECTIBLE
+  VOID
 }
 
 /// Phase 1A §10 RBAC: OWNER | ADMIN | MEMBER | VIEWER.
@@ -278,6 +307,8 @@ model Organization {
   inAppNotifications      InAppNotification[]
   healthScores             HealthScore[]
   healthScoreComponents    HealthScoreComponent[]
+  subscription             Subscription?
+  billingInvoices          BillingInvoice[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -665,3 +696,45 @@ model StatusPageAudit {
   @@index([organizationId, pageId, createdAt], map: "status_page_audits_org_page_created")
   @@map("status_page_audits")
 }
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  organizationId         String             @unique
+  plan                   Plan               @default(FREE)
+  interval               BillingInterval    @default(MONTHLY)
+  status                 SubscriptionStatus @default(ACTIVE)
+  trialStartsAt          DateTime?
+  trialEndsAt            DateTime?
+  currentPeriodStart     DateTime           @default(now())
+  currentPeriodEnd       DateTime?
+  cancelAtPeriodEnd      Boolean            @default(false)
+  provider               String             @default("MANUAL")
+  providerCustomerId     String?
+  providerSubscriptionId String?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("subscriptions")
+}
+
+model BillingInvoice {
+  id               String        @id @default(uuid())
+  organizationId   String
+  amountCents      Int
+  currency         String        @default("usd")
+  status           InvoiceStatus @default(PAID)
+  invoiceNumber    String?
+  hostedInvoiceUrl String?
+  pdfUrl           String?
+  paidAt           DateTime?
+  createdAt        DateTime      @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("billing_invoices")
+}
+
