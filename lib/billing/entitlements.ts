@@ -60,54 +60,8 @@ export function assertCanUseFeature(
   }
 }
 
-// ─── Convenience feature guards ─────────────────────────────────────────────
-
-/** PRO, AGENCY, WHITE_LABEL, ENTERPRISE only. */
+/** Asserts an organization plan has access to Google Integrations (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
 export function assertCanUseGoogleIntegrations(planId: string): void {
   assertCanUseFeature(planId, "googleIntegrations");
 }
 
-/** GROWTH+ only. */
-export function assertCanUseAdvancedSeo(planId: string): void {
-  assertCanUseFeature(planId, "advancedSeo");
-}
-
-/** PRO+ only. */
-export function assertCanUseSyntheticFormTests(planId: string): void {
-  assertCanUseFeature(planId, "syntheticFormTests");
-}
-
-/** PRO+ only. */
-export function assertCanUseBookingMonitoring(planId: string): void {
-  assertCanUseFeature(planId, "bookingCheckoutMonitoring");
-}
-
-/** PRO+ only. */
-export function assertCanUseReputationMonitoring(planId: string): void {
-  assertCanUseFeature(planId, "reputationMonitoring");
-}
-
-/** AGENCY+ only. */
-export function assertCanUseMultiClientDashboard(planId: string): void {
-  assertCanUseFeature(planId, "multiClientDashboard");
-}
-
-/** PRO+ only (limited on PRO, full on AGENCY+). */
-export function assertCanUseApiAccess(planId: string): void {
-  assertCanUseFeature(planId, "apiAccess");
-}
-
-/** WHITE_LABEL, ENTERPRISE only. */
-export function assertCanRemoveGuardianBranding(planId: string): void {
-  assertCanUseFeature(planId, "removeGuardianBranding");
-}
-
-/** ENTERPRISE only. */
-export function assertHasSla(planId: string): void {
-  assertCanUseFeature(planId, "sla");
-}
-
-/** Returns the monthly AI insight quota for a plan (null = custom/unlimited). */
-export function getAiInsightsQuota(planId: string): number | null {
-  return getPlanLimits(planId).aiInsightsPerMonth;
-}

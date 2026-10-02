@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Guardian Plan Catalog & Pricing Specification.
  * Canonical definitions aligned with PRD Section 19, docs/PRICING.md, and the
  * master feature/limits table (updated 2 October 2026).
@@ -9,23 +9,23 @@
  */
 
 export const BILLING_PLANS = [
-  // ─── Free Audit ───────────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ Free Audit ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "FREE",
     name: "Free Audit",
     tagline: "Find out what's wrong.",
     monthlyPriceCents: 0,
     annualPriceCents: 0,
-    /** No trial — the plan itself is the free tier. */
+    /** No trial ΓÇö the plan itself is the free tier. */
     hasTrial: false,
     trialCreditCardRequired: false,
     limits: {
       maxWebsites: 1,
       maxBusinesses: 1,
       maxTeamMembers: 1,
-      /** Snapshot / one-time — no scheduled frequency. */
+      /** Snapshot / one-time ΓÇö no scheduled frequency. */
       minFrequencyMinutes: null as null | number,
-      /** Snapshot only — no history retention. */
+      /** Snapshot only ΓÇö no history retention. */
       historyDays: 0,
       /** Critical pages monitored (null = N/A). */
       maxCriticalPages: null as null | number,
@@ -97,7 +97,7 @@ export const BILLING_PLANS = [
     },
   },
 
-  // ─── Starter — $9 / mo ────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ Starter ΓÇö $9 / mo ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "STARTER",
     name: "Starter",
@@ -166,7 +166,7 @@ export const BILLING_PLANS = [
     },
   },
 
-  // ─── Growth — $29 / mo ────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ Growth ΓÇö $29 / mo ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "GROWTH",
     name: "Growth",
@@ -235,7 +235,7 @@ export const BILLING_PLANS = [
     },
   },
 
-  // ─── Pro — $59 / mo ───────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ Pro ΓÇö $59 / mo ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "PRO",
     name: "Pro",
@@ -305,7 +305,7 @@ export const BILLING_PLANS = [
     },
   },
 
-  // ─── Agency — $99 / mo ────────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ Agency ΓÇö $99 / mo ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "AGENCY",
     name: "Agency",
@@ -374,7 +374,7 @@ export const BILLING_PLANS = [
     },
   },
 
-  // ─── White Label — $249 / mo ──────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ White Label ΓÇö $249 / mo ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "WHITE_LABEL",
     name: "White Label",
@@ -443,12 +443,12 @@ export const BILLING_PLANS = [
     },
   },
 
-  // ─── Enterprise — Custom ──────────────────────────────────────────────────
+  // ΓöÇΓöÇΓöÇ Enterprise ΓÇö Custom ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   {
     id: "ENTERPRISE",
     name: "Enterprise",
     tagline: "Run digital operations at scale.",
-    /** Price is negotiated — 0 sentinel means "contact sales". */
+    /** Price is negotiated ΓÇö 0 sentinel means "contact sales". */
     monthlyPriceCents: 0,
     annualPriceCents: 0,
     hasTrial: false,             // negotiated
@@ -457,7 +457,7 @@ export const BILLING_PLANS = [
       maxWebsites: Infinity,
       maxBusinesses: Infinity,
       maxTeamMembers: Infinity,
-      minFrequencyMinutes: 1,    // 1–5 min custom
+      minFrequencyMinutes: 1,    // 1ΓÇô5 min custom
       historyDays: Infinity,     // custom retention
       maxCriticalPages: null,    // custom
       maxLeadForms: null,        // custom

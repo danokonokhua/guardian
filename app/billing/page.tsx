@@ -42,6 +42,7 @@ export default async function BillingPage() {
         description="Your organization's plan and subscription information."
       >
         <BillingOverview
+          organizationId={membership.organizationId}
           organizationName={organization?.name ?? "Organization unavailable"}
           plan={organization?.plan ?? null}
         />
