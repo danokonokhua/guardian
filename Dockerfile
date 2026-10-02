@@ -14,7 +14,7 @@ ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl ca-certificates curl \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
@@ -24,6 +24,7 @@ COPY db/schema.prisma ./db/schema.prisma
 RUN npm ci
 
 COPY . .
+RUN npm run db:generate
 ENV NODE_ENV=production
 # Next 16 defaults to Turbopack, which can exceed the memory budget on the
 # small VPS targets this image is intended to support. The webpack path is
@@ -77,4 +78,3 @@ HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=5 \
   CMD curl -fsS "http://127.0.0.1:${PORT:-3000}/api/health" || curl -fsS "http://127.0.0.1:8080/api/health" || curl -fsS "http://127.0.0.1:3000/api/health" || exit 1
 
 CMD ["node", "--require", "./scripts/server-only-cli.cjs", "./node_modules/tsx/dist/cli.mjs", "scripts/start-web.ts"]
-
