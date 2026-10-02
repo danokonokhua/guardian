@@ -1,127 +1,249 @@
 /**
  * Guardian Plan Catalog & Pricing Specification.
- * Canonical definitions aligned with PRD Section 19 and docs/PRICING.md.
+ * Canonical definitions aligned with PRD Section 19, docs/PRICING.md, and the
+ * master feature/limits table (updated 2 October 2026).
+ *
+ * Monetary values are in US cents.
+ * Infinity is used for "Custom / unlimited" numeric limits.
+ * null is used for "negotiated" or "not applicable" limits.
  */
 
 export const BILLING_PLANS = [
+  // ─── Free Audit ───────────────────────────────────────────────────────────
   {
     id: "FREE",
     name: "Free Audit",
     tagline: "Find out what's wrong.",
     monthlyPriceCents: 0,
     annualPriceCents: 0,
+    /** No trial — the plan itself is the free tier. */
     hasTrial: false,
+    trialCreditCardRequired: false,
     limits: {
       maxWebsites: 1,
       maxBusinesses: 1,
       maxTeamMembers: 1,
-      minFrequencyMinutes: 60,
-      historyDays: 7,
+      /** Snapshot / one-time — no scheduled frequency. */
+      minFrequencyMinutes: null as null | number,
+      /** Snapshot only — no history retention. */
+      historyDays: 0,
+      /** Critical pages monitored (null = N/A). */
+      maxCriticalPages: null as null | number,
+      /** Lead/form slots. */
+      maxLeadForms: null as null | number,
+      /** AI insights per month. */
+      aiInsightsPerMonth: 0,
     },
     features: {
+      // Monitoring
       continuousMonitoring: false,
-      uptimeChecks: true,
-      sslChecks: true,
-      securityHeaders: true,
-      dnsMonitoring: true,
+      uptimeChecks: true,           // one-time snapshot
+      sslChecks: true,              // snapshot
+      securityHeaders: true,        // snapshot
+      dnsMonitoring: true,          // snapshot
+      domainExpiryMonitoring: true, // snapshot
+      spfDmarcChecks: false,
+      // SEO
       basicSeo: true,
       advancedSeo: false,
-      brokenLinks: false,
-      performanceChecks: true,
+      // Scanning
+      brokenLinkScanning: true,     // sample only
+      performanceMonitoring: true,  // snapshot
       accessibilityMonitoring: false,
-      leadFormMonitoring: false,
+      // Forms & Journeys
+      leadFormMonitoring: true,     // snapshot
       syntheticFormTests: false,
+      bookingCheckoutMonitoring: false,
+      // Scores & Issues
+      digitalHealthScore: true,     // snapshot
+      issueDetection: true,         // basic
+      businessImpactExplanation: true, // basic
+      fixRecommendations: true,     // basic
+      // Alerts
+      inAppAlerts: false,
       emailAlerts: false,
-      inAppAlerts: true,
-      customBranding: false,
-      apiAccess: false,
+      digests: false,
+      // AI (gated separately by aiInsightsPerMonth)
+      aiIssueExplanations: false,
+      aiPrioritization: false,
+      aiBusinessSummaries: false,
+      // Google Integrations
       googleIntegrations: false,
       googleAnalytics: false,
       googleSearchConsole: false,
       googleBusinessProfile: false,
+      // Intelligence
+      reputationMonitoring: false,
+      competitorIntelligence: false,
+      marketingIntelligence: false,
+      // Agency / multi-client
+      multiClientDashboard: false,
+      bulkScans: false,
+      clientAccounts: false,
+      // Access & Permissions
+      roleBasedPermissions: false,
+      apiAccess: false,
+      // Branding
+      agencyBranding: false,
+      customLogo: false,
+      removeGuardianBranding: false,
+      customDashboardBranding: false,
+      customDomain: false,
+      brandedEmails: false,
+      brandedReports: false,
+      // Support / SLA
+      prioritySupport: false,
+      sla: false,
     },
   },
+
+  // ─── Starter — $9 / mo ────────────────────────────────────────────────────
   {
     id: "STARTER",
     name: "Starter",
     tagline: "Protect my website.",
     monthlyPriceCents: 900,
-    annualPriceCents: 9000,
+    annualPriceCents: 9_000,   // $90/yr
     hasTrial: true,
+    trialCreditCardRequired: false,
     limits: {
       maxWebsites: 1,
       maxBusinesses: 1,
       maxTeamMembers: 2,
       minFrequencyMinutes: 5,
       historyDays: 30,
+      maxCriticalPages: 3,
+      maxLeadForms: 1,
+      aiInsightsPerMonth: 10,
     },
     features: {
       continuousMonitoring: true,
       uptimeChecks: true,
-      sslChecks: true,
+      sslChecks: true,              // daily
       securityHeaders: true,
       dnsMonitoring: true,
+      domainExpiryMonitoring: true,
+      spfDmarcChecks: false,
       basicSeo: true,
       advancedSeo: false,
-      brokenLinks: true,
-      performanceChecks: true,
+      brokenLinkScanning: true,     // limited
+      performanceMonitoring: true,  // daily
       accessibilityMonitoring: false,
       leadFormMonitoring: true,
       syntheticFormTests: false,
-      emailAlerts: true,
+      bookingCheckoutMonitoring: false,
+      digitalHealthScore: true,
+      issueDetection: true,
+      businessImpactExplanation: true,
+      fixRecommendations: true,
       inAppAlerts: true,
-      customBranding: false,
-      apiAccess: false,
+      emailAlerts: true,
+      digests: true,                // monthly only
+      aiIssueExplanations: true,    // limited
+      aiPrioritization: false,
+      aiBusinessSummaries: false,
       googleIntegrations: false,
       googleAnalytics: false,
       googleSearchConsole: false,
       googleBusinessProfile: false,
+      reputationMonitoring: false,
+      competitorIntelligence: false,
+      marketingIntelligence: false,
+      multiClientDashboard: false,
+      bulkScans: false,
+      clientAccounts: false,
+      roleBasedPermissions: true,   // basic
+      apiAccess: false,
+      agencyBranding: false,
+      customLogo: false,
+      removeGuardianBranding: false,
+      customDashboardBranding: false,
+      customDomain: false,
+      brandedEmails: false,
+      brandedReports: false,
+      prioritySupport: false,       // standard
+      sla: false,
     },
   },
+
+  // ─── Growth — $29 / mo ────────────────────────────────────────────────────
   {
     id: "GROWTH",
     name: "Growth",
     tagline: "Monitor my digital health.",
-    monthlyPriceCents: 2900,
-    annualPriceCents: 29000,
+    monthlyPriceCents: 2_900,
+    annualPriceCents: 29_000,  // $290/yr
     hasTrial: true,
+    trialCreditCardRequired: false,
     limits: {
       maxWebsites: 5,
       maxBusinesses: 3,
       maxTeamMembers: 5,
       minFrequencyMinutes: 5,
       historyDays: 90,
+      maxCriticalPages: 10,
+      maxLeadForms: 5,
+      aiInsightsPerMonth: 50,
     },
     features: {
       continuousMonitoring: true,
       uptimeChecks: true,
-      sslChecks: true,
+      sslChecks: true,              // daily
       securityHeaders: true,
       dnsMonitoring: true,
+      domainExpiryMonitoring: true,
+      spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinks: true,
-      performanceChecks: true,
-      accessibilityMonitoring: true,
+      brokenLinkScanning: true,     // weekly
+      performanceMonitoring: true,  // every 12 hrs
+      accessibilityMonitoring: true, // basic
       leadFormMonitoring: true,
       syntheticFormTests: false,
-      emailAlerts: true,
+      bookingCheckoutMonitoring: false,
+      digitalHealthScore: true,
+      issueDetection: true,
+      businessImpactExplanation: true,
+      fixRecommendations: true,
       inAppAlerts: true,
-      customBranding: false,
-      apiAccess: false,
+      emailAlerts: true,
+      digests: true,                // daily + weekly + monthly
+      aiIssueExplanations: true,
+      aiPrioritization: true,       // limited
+      aiBusinessSummaries: true,    // limited
       googleIntegrations: false,
       googleAnalytics: false,
       googleSearchConsole: false,
       googleBusinessProfile: false,
+      reputationMonitoring: false,
+      competitorIntelligence: false,
+      marketingIntelligence: false,
+      multiClientDashboard: false,
+      bulkScans: false,
+      clientAccounts: false,
+      roleBasedPermissions: true,   // basic
+      apiAccess: false,
+      agencyBranding: false,
+      customLogo: false,
+      removeGuardianBranding: false,
+      customDashboardBranding: false,
+      customDomain: false,
+      brandedEmails: false,
+      brandedReports: false,
+      prioritySupport: false,       // standard
+      sla: false,
     },
   },
+
+  // ─── Pro — $59 / mo ───────────────────────────────────────────────────────
   {
     id: "PRO",
     name: "Pro",
     tagline: "Protect my leads and growth.",
-    monthlyPriceCents: 5900,
-    annualPriceCents: 59000,
+    monthlyPriceCents: 5_900,
+    annualPriceCents: 59_000,  // $590/yr
     hasTrial: true,
+    trialCreditCardRequired: false,
     isPopular: true,
     limits: {
       maxWebsites: 10,
@@ -129,43 +251,78 @@ export const BILLING_PLANS = [
       maxTeamMembers: 10,
       minFrequencyMinutes: 5,
       historyDays: 365,
+      maxCriticalPages: 25,
+      maxLeadForms: 20,
+      aiInsightsPerMonth: 200,
     },
     features: {
       continuousMonitoring: true,
       uptimeChecks: true,
-      sslChecks: true,
+      sslChecks: true,              // daily
       securityHeaders: true,
       dnsMonitoring: true,
+      domainExpiryMonitoring: true,
+      spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinks: true,
-      performanceChecks: true,
+      brokenLinkScanning: true,     // weekly
+      performanceMonitoring: true,  // every 6 hrs
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
-      emailAlerts: true,
+      bookingCheckoutMonitoring: true,
+      digitalHealthScore: true,
+      issueDetection: true,
+      businessImpactExplanation: true,
+      fixRecommendations: true,
       inAppAlerts: true,
-      customBranding: false,
-      apiAccess: true,
+      emailAlerts: true,
+      digests: true,
+      aiIssueExplanations: true,
+      aiPrioritization: true,
+      aiBusinessSummaries: true,
       googleIntegrations: true,
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      reputationMonitoring: true,
+      competitorIntelligence: true, // limited
+      marketingIntelligence: true,  // limited
+      multiClientDashboard: false,
+      bulkScans: false,
+      clientAccounts: false,
+      roleBasedPermissions: true,
+      apiAccess: true,              // limited
+      agencyBranding: false,
+      customLogo: false,
+      removeGuardianBranding: false,
+      customDashboardBranding: false,
+      customDomain: false,
+      brandedEmails: false,
+      brandedReports: false,
+      prioritySupport: true,
+      sla: false,
     },
   },
+
+  // ─── Agency — $99 / mo ────────────────────────────────────────────────────
   {
     id: "AGENCY",
     name: "Agency",
     tagline: "Manage all my clients.",
-    monthlyPriceCents: 9900,
-    annualPriceCents: 99000,
+    monthlyPriceCents: 9_900,
+    annualPriceCents: 99_000,  // $990/yr
     hasTrial: true,
+    trialCreditCardRequired: false,
     limits: {
       maxWebsites: 25,
       maxBusinesses: 25,
       maxTeamMembers: 15,
       minFrequencyMinutes: 5,
       historyDays: 365,
+      maxCriticalPages: null,       // per client
+      maxLeadForms: null,           // per client
+      aiInsightsPerMonth: 500,      // shared pool
     },
     features: {
       continuousMonitoring: true,
@@ -173,36 +330,68 @@ export const BILLING_PLANS = [
       sslChecks: true,
       securityHeaders: true,
       dnsMonitoring: true,
+      domainExpiryMonitoring: true,
+      spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinks: true,
-      performanceChecks: true,
+      brokenLinkScanning: true,     // weekly
+      performanceMonitoring: true,  // every 6 hrs
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
-      emailAlerts: true,
+      bookingCheckoutMonitoring: true,
+      digitalHealthScore: true,
+      issueDetection: true,
+      businessImpactExplanation: true,
+      fixRecommendations: true,
       inAppAlerts: true,
-      customBranding: true,
-      apiAccess: true,
+      emailAlerts: true,
+      digests: true,
+      aiIssueExplanations: true,
+      aiPrioritization: true,
+      aiBusinessSummaries: true,
       googleIntegrations: true,
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      reputationMonitoring: true,
+      competitorIntelligence: true,
+      marketingIntelligence: true,
+      multiClientDashboard: true,
+      bulkScans: true,
+      clientAccounts: true,
+      roleBasedPermissions: true,
+      apiAccess: true,
+      agencyBranding: true,
+      customLogo: true,
+      removeGuardianBranding: false,
+      customDashboardBranding: false,
+      customDomain: false,
+      brandedEmails: false,
+      brandedReports: true,         // partial
+      prioritySupport: true,
+      sla: false,
     },
   },
+
+  // ─── White Label — $249 / mo ──────────────────────────────────────────────
   {
     id: "WHITE_LABEL",
     name: "White Label",
     tagline: "Sell Guardian under my own brand.",
-    monthlyPriceCents: 24900,
-    annualPriceCents: 249000,
+    monthlyPriceCents: 24_900,
+    annualPriceCents: 249_000, // $2,490/yr
     hasTrial: true,
+    trialCreditCardRequired: false,
     limits: {
       maxWebsites: 100,
       maxBusinesses: 100,
       maxTeamMembers: 50,
       minFrequencyMinutes: 5,
-      historyDays: 730,
+      historyDays: 730,             // 24 months
+      maxCriticalPages: null,       // per client
+      maxLeadForms: null,           // per client
+      aiInsightsPerMonth: 2_000,    // shared pool
     },
     features: {
       continuousMonitoring: true,
@@ -210,36 +399,69 @@ export const BILLING_PLANS = [
       sslChecks: true,
       securityHeaders: true,
       dnsMonitoring: true,
+      domainExpiryMonitoring: true,
+      spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinks: true,
-      performanceChecks: true,
+      brokenLinkScanning: true,     // weekly
+      performanceMonitoring: true,  // every 6 hrs
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
-      emailAlerts: true,
+      bookingCheckoutMonitoring: true,
+      digitalHealthScore: true,
+      issueDetection: true,
+      businessImpactExplanation: true,
+      fixRecommendations: true,
       inAppAlerts: true,
-      customBranding: true,
-      apiAccess: true,
+      emailAlerts: true,
+      digests: true,
+      aiIssueExplanations: true,
+      aiPrioritization: true,
+      aiBusinessSummaries: true,
       googleIntegrations: true,
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      reputationMonitoring: true,
+      competitorIntelligence: true,
+      marketingIntelligence: true,
+      multiClientDashboard: true,
+      bulkScans: true,
+      clientAccounts: true,
+      roleBasedPermissions: true,
+      apiAccess: true,
+      agencyBranding: true,
+      customLogo: true,
+      removeGuardianBranding: true,
+      customDashboardBranding: true,
+      customDomain: true,
+      brandedEmails: true,
+      brandedReports: true,
+      prioritySupport: true,
+      sla: false,
     },
   },
+
+  // ─── Enterprise — Custom ──────────────────────────────────────────────────
   {
     id: "ENTERPRISE",
     name: "Enterprise",
     tagline: "Run digital operations at scale.",
+    /** Price is negotiated — 0 sentinel means "contact sales". */
     monthlyPriceCents: 0,
     annualPriceCents: 0,
-    hasTrial: false,
+    hasTrial: false,             // negotiated
+    trialCreditCardRequired: false,
     limits: {
       maxWebsites: Infinity,
       maxBusinesses: Infinity,
       maxTeamMembers: Infinity,
-      minFrequencyMinutes: 1,
-      historyDays: 730,
+      minFrequencyMinutes: 1,    // 1–5 min custom
+      historyDays: Infinity,     // custom retention
+      maxCriticalPages: null,    // custom
+      maxLeadForms: null,        // custom
+      aiInsightsPerMonth: null,  // custom
     },
     features: {
       continuousMonitoring: true,
@@ -247,21 +469,47 @@ export const BILLING_PLANS = [
       sslChecks: true,
       securityHeaders: true,
       dnsMonitoring: true,
+      domainExpiryMonitoring: true,
+      spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinks: true,
-      performanceChecks: true,
+      brokenLinkScanning: true,
+      performanceMonitoring: true,
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
-      emailAlerts: true,
+      bookingCheckoutMonitoring: true,
+      digitalHealthScore: true,
+      issueDetection: true,
+      businessImpactExplanation: true,
+      fixRecommendations: true,
       inAppAlerts: true,
-      customBranding: true,
-      apiAccess: true,
+      emailAlerts: true,
+      digests: true,
+      aiIssueExplanations: true,
+      aiPrioritization: true,
+      aiBusinessSummaries: true,
       googleIntegrations: true,
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      reputationMonitoring: true,
+      competitorIntelligence: true,
+      marketingIntelligence: true,
+      multiClientDashboard: true,
+      bulkScans: true,
+      clientAccounts: true,
+      roleBasedPermissions: true,
+      apiAccess: true,
+      agencyBranding: true,
+      customLogo: true,
+      removeGuardianBranding: true,
+      customDashboardBranding: true,
+      customDomain: true,
+      brandedEmails: true,
+      brandedReports: true,
+      prioritySupport: true,     // dedicated
+      sla: true,
     },
   },
 ] as const;

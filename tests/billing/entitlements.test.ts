@@ -73,8 +73,8 @@ describe("Billing & Plan Entitlements", () => {
       expect(() => assertCanUseFeature("FREE", "syntheticFormTests")).toThrow(ForbiddenError);
       expect(() => assertCanUseFeature("STARTER", "syntheticFormTests")).toThrow(ForbiddenError);
 
-      expect(() => assertCanUseFeature("AGENCY", "customBranding")).not.toThrow();
-      expect(() => assertCanUseFeature("GROWTH", "customBranding")).toThrow(ForbiddenError);
+      expect(() => assertCanUseFeature("AGENCY", "agencyBranding")).not.toThrow();
+      expect(() => assertCanUseFeature("GROWTH", "agencyBranding")).toThrow(ForbiddenError);
     });
   });
 });

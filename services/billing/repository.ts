@@ -45,7 +45,7 @@ export interface BillingSummary {
     maxWebsites: number;
     maxBusinesses: number;
     maxTeamMembers: number;
-    minFrequencyMinutes: number;
+    minFrequencyMinutes: number | null;
     historyDays: number;
   };
   usage: {

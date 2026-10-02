@@ -187,7 +187,7 @@ export default function PricingPage() {
                         <span>Accessibility hygiene checks</span>
                       </div>
                     )}
-                    {plan.features.customBranding && (
+                    {plan.features.agencyBranding && (
                       <div className="flex items-center gap-3 text-neutral-300">
                         <span className="text-primary font-bold">✓</span>
                         <span>Custom white-label branding</span>
