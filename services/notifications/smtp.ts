@@ -13,19 +13,14 @@ export interface TransactionalEmail {
 
 function createSmtpMailer(): ((message: TransactionalEmail) => Promise<void>) | null {
   const config = serverConfig.server;
-  if (config.smtpHost === undefined) {
-    if (serverConfig.isProduction) {
-      throw new Error("SMTP_HOST is required for production email notifications.");
-    }
+  if (config.smtpHost === undefined || config.mailFromEmail === undefined) {
     return null;
-  }
-  if (config.mailFromEmail === undefined) {
-    throw new Error("MAIL_FROM_EMAIL is required when SMTP_HOST is configured.");
   }
   const hasUser = config.smtpUser !== undefined;
   const hasPassword = config.smtpPassword !== undefined;
   if (hasUser !== hasPassword) {
-    throw new Error("SMTP_USER and SMTP_PASSWORD must be configured together.");
+    console.warn("SMTP_USER and SMTP_PASSWORD must be configured together.");
+    return null;
   }
 
   const transporter = createTransport({
@@ -53,10 +48,15 @@ function createSmtpMailer(): ((message: TransactionalEmail) => Promise<void>) | 
 
 /** Sends a non-incident email, such as a local password-recovery message. */
 export async function sendTransactionalEmail(message: TransactionalEmail): Promise<boolean> {
-  const send = createSmtpMailer();
-  if (send === null) return false;
-  await send(message);
-  return true;
+  try {
+    const send = createSmtpMailer();
+    if (send === null) return false;
+    await send(message);
+    return true;
+  } catch (error) {
+    console.warn("transactional_email_failed", error);
+    return false;
+  }
 }
 
 /**

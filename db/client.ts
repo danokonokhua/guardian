@@ -49,7 +49,11 @@ export function getPrisma(): PrismaClient {
 
 /** Refuses to run application processes with PostgreSQL superuser privileges (unless explicitly opted in via ALLOW_SUPERUSER_DB for managed environments). */
 export async function assertRuntimeDatabaseRole(): Promise<void> {
-  if (process.env.ALLOW_SUPERUSER_DB === "true" || process.env.ALLOW_SUPERUSER_DB === "1") {
+  if (
+    process.env.ALLOW_SUPERUSER_DB === "true" ||
+    process.env.ALLOW_SUPERUSER_DB === "1" ||
+    process.env.ALLOW_SUPERUSER_DB === "yes"
+  ) {
     return;
   }
   const rows = await getPrisma().$queryRaw<Array<{ rolsuper: boolean; rolbypassrls: boolean }>>`

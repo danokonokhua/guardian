@@ -27,7 +27,7 @@ async function main(): Promise<void> {
   const prisma = getPrisma();
   const user = await prisma.user.upsert({
     where: { email },
-    update: { status: "ACTIVE" },
+    update: { status: "ACTIVE", emailVerifiedAt: new Date() },
     create: {
       email,
       name: serverConfig.server.guardianAdminName ?? "Guardian Owner",
@@ -36,12 +36,12 @@ async function main(): Promise<void> {
     },
   });
 
-  const existingCredential = await prisma.authCredential.findUnique({ where: { userId: user.id } });
-  if (existingCredential === null) {
-    await prisma.authCredential.create({
-      data: { userId: user.id, passwordHash: await hashPassword(password) },
-    });
-  }
+  const passwordHash = await hashPassword(password);
+  await prisma.authCredential.upsert({
+    where: { userId: user.id },
+    create: { userId: user.id, passwordHash },
+    update: { passwordHash },
+  });
 
   const memberships = await withGucContext({ userId: user.id }, (tx) =>
     tx.organizationMember.findMany({ where: { userId: user.id }, select: { id: true } }),

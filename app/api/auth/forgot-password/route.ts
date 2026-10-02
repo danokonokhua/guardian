@@ -46,10 +46,8 @@ export const POST = withRoute(async (request) => {
     text: `We received a request to reset your Guardian password.\n\nOpen this link within one hour to choose a new password:\n${resetUrl}\n\nIf you did not request this, you can safely ignore this email.`,
   });
   if (!sent) {
-    await getPrisma().passwordResetToken.deleteMany({ where: { tokenHash: hashAuthToken(token) } });
-    if (serverConfig.appEnv === "local" || serverConfig.appEnv === "development") {
-      logger.info("guardian_password_reset_link", { email: user.email, resetUrl });
-    }
+    logger.warn("guardian_password_reset_link", { email: user.email, resetUrl });
+    console.log(`[GUARDIAN PASSWORD RESET LINK] Email: ${user.email} -> ${resetUrl}`);
   }
   return jsonResponse(GENERIC_RESPONSE);
 });

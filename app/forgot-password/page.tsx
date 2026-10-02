@@ -23,7 +23,8 @@ export default function ForgotPasswordPage() {
     if (response.ok) {
       setMessage("If an account exists for that email, a reset link has been sent.");
     } else {
-      setError("Unable to process the password reset request.");
+      const data = (await response.json().catch(() => null)) as { error?: string } | null;
+      setError(data?.error ?? "Unable to process the password reset request.");
     }
     setSubmitting(false);
   }
