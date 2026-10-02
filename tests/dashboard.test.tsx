@@ -61,4 +61,12 @@ describe("authenticated dashboard", () => {
     expect(screen.getByRole("heading", { name: "Notifications" })).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledWith(`/api/v1/organizations/${ORGANIZATION_ID}/notifications`);
   });
+
+  it("renders sign out controls for authenticated operators", async () => {
+    const page = await DashboardPage();
+    render(page);
+
+    const signoutButtons = screen.getAllByRole("button", { name: /sign out/i });
+    expect(signoutButtons.length).toBeGreaterThanOrEqual(1);
+  });
 });

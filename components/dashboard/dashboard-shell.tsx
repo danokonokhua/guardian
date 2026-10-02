@@ -121,6 +121,15 @@ export function DashboardShell({
           </Link>
           <a href="/audit">Run a free website audit ↗</a>
           <Link href="/">Back to homepage ↗</Link>
+          <form action="/api/auth/logout" method="POST" className="pt-2 border-t border-glass-subtle-border/40 mt-2">
+            <button
+              type="submit"
+              className="w-full text-left text-xs font-medium text-neutral-400 hover:text-rose-400 py-1 transition-colors flex items-center gap-2"
+            >
+              <span aria-hidden="true" className="text-sm">⎋</span>
+              <span>Sign out</span>
+            </button>
+          </form>
         </div>
       </aside>
       <div className="command-body">
@@ -131,9 +140,21 @@ export function DashboardShell({
           <span className="command-breadcrumb">
             Workspace <span>/</span> Operations
           </span>
-          <span className="operator-identity">
-            {organization.email} · {organization.role.toLowerCase()}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="operator-identity">
+              {organization.email} · {organization.role.toLowerCase()}
+            </span>
+            <form action="/api/auth/logout" method="POST" className="inline-block">
+              <button
+                type="submit"
+                aria-label="Sign out"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-neutral-400 hover:text-white bg-surface-container/60 hover:bg-surface-container border border-glass-subtle-border hover:border-glass-specular-border transition-all active:scale-95 shadow-sm"
+              >
+                <span>Sign out</span>
+                <span aria-hidden="true" className="text-neutral-500 text-[10px]">↳</span>
+              </button>
+            </form>
+          </div>
         </header>
         <main id="command-content" className="command-content">
           <nav className="command-mobile-shortcuts" aria-label="Workspace views">
@@ -142,6 +163,14 @@ export function DashboardShell({
             <Link href="/billing">Billing</Link>
             <Link href="/dashboard/executive">Executive</Link>
             <Link href="/onboarding">Connect website</Link>
+            <form action="/api/auth/logout" method="POST" className="inline">
+              <button
+                type="submit"
+                className="text-xs text-neutral-400 hover:text-rose-400 py-1 px-2"
+              >
+                Sign out
+              </button>
+            </form>
           </nav>
           <div className="command-heading" id="overview">
             <div>
