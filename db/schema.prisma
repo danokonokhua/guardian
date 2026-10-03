@@ -216,6 +216,7 @@ model User {
   authCredential           AuthCredential?
   authSessions             AuthSession[]
   passwordResetTokens      PasswordResetToken[]
+  pushSubscriptions        MobilePushSubscription[]
 
   @@map("users")
 }
@@ -320,6 +321,7 @@ model Organization {
   agencyBranding           AgencyBranding?
   remediationActions       RemediationAction[]
   apiKeys                  ApiKey[]
+  mobilePushSubscriptions  MobilePushSubscription[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -1085,3 +1087,24 @@ model ApiKey {
   @@index([organizationId, revokedAt])
   @@map("api_keys")
 }
+
+/// Phase 24: Mobile Platform Web Push Subscriptions (RFC 8291/8292).
+model MobilePushSubscription {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String
+  endpoint       String   @unique
+  p256dhKey      String
+  authKey        String
+  userAgent      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("mobile_push_subscriptions")
+}
+
