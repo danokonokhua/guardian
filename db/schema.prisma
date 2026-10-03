@@ -319,6 +319,7 @@ model Organization {
   agencyClients            AgencyClient[]
   agencyBranding           AgencyBranding?
   remediationActions       RemediationAction[]
+  apiKeys                  ApiKey[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -1061,8 +1062,26 @@ model RemediationAction {
   @@map("remediation_actions")
 }
 
+/// Phase 23: Programmatic API Keys with SHA-256 token hashing and rate limiting.
+model ApiKey {
+  id                 String    @id @default(uuid())
+  organizationId     String
+  name               String
+  keyPrefix          String    // First 14 characters, e.g. "gdn_live_3f81"
+  keyHash            String    // SHA-256 hash of secret token (never stored plaintext)
+  scopes             String[]  @default(["*"])
+  rateLimitPerMinute Int       @default(60)
+  lastUsedAt         DateTime?
+  expiresAt          DateTime?
+  revokedAt          DateTime?
+  createdById        String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-
-
-
+  @@index([keyHash])
+  @@index([organizationId])
+  @@index([organizationId, revokedAt])
+  @@map("api_keys")
+}

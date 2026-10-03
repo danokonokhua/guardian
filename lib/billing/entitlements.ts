@@ -115,9 +115,25 @@ export function assertCanUseAutomatedRemediation(planId: string): void {
   assertCanUseFeature(planId, "automatedRemediation");
 }
 
+/** Asserts an organization plan has access to Developer API keys (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseApiAccess(planId: string): void {
+  assertCanUseFeature(planId, "apiAccess");
+}
 
-
-
-
-
+/** Returns the allowed requests per minute for an API key based on the organization's plan tier. */
+export function getPlanRateLimitPerMinute(planId: string): number {
+  const normalized = planId.toUpperCase();
+  switch (normalized) {
+    case "ENTERPRISE":
+      return 1000;
+    case "WHITE_LABEL":
+      return 300;
+    case "AGENCY":
+      return 120;
+    case "PRO":
+      return 60;
+    default:
+      return 60;
+  }
+}
 
