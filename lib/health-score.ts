@@ -159,6 +159,7 @@ function categoryForRule(ruleId: string): HealthScoreCategory | null {
   if (
     ruleId === "RULE_GBP_LOW_RATING" ||
     ruleId === "RULE_GBP_UNANSWERED_REVIEWS" ||
+    ruleId.startsWith("RULE_REPUTATION_") ||
     ruleId.startsWith("monitor.reputation") ||
     ruleId.startsWith("reputation.")
   ) {

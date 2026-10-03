@@ -311,6 +311,7 @@ model Organization {
   billingInvoices          BillingInvoice[]
   googleIntegrations       GoogleIntegration[]
   wordpressConnections     WordpressConnection[]
+  reviews                  BusinessReview[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -447,6 +448,7 @@ model Website {
   monitoringResults MonitoringResult[]
   googleIntegrations GoogleIntegration[]
   wordpressConnection WordpressConnection?
+  reviews            BusinessReview[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -824,4 +826,39 @@ model WordpressConnection {
   @@index([tokenPrefix])
   @@map("wordpress_connections")
 }
+
+/// Customer reviews monitored across Google Business Profile, direct submissions, and external channels.
+/// Stores sentiment classification, keywords, and AI suggested response drafts.
+model BusinessReview {
+  id                 String    @id @default(uuid())
+  organizationId     String
+  websiteId          String?
+  source             String    @default("GOOGLE_BUSINESS") // GOOGLE_BUSINESS, DIRECT, TRUSTPILOT
+  externalId         String?
+  authorName         String
+  authorAvatarUrl    String?
+  rating             Int       // 1 to 5
+  comment            String
+  sentiment          String    // POSITIVE, NEUTRAL, NEGATIVE
+  sentimentScore     Float     @default(0.5) // 0.0 to 1.0
+  sentimentKeywords  Json?     // Array of extracted theme keywords
+  hasReply           Boolean   @default(false)
+  replyText          String?
+  aiSuggestedReply   String?
+  aiSuggestionStatus String?   // PENDING_REVIEW, APPROVED, DISCARDED
+  reviewDate         DateTime  @default(now())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website?     @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, source, externalId])
+  @@index([organizationId])
+  @@index([organizationId, source])
+  @@index([organizationId, sentiment])
+  @@index([organizationId, hasReply])
+  @@map("business_reviews")
+}
+
 
