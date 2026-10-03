@@ -95,6 +95,22 @@ export function assertCanUseMarketingIntelligence(planId: string): void {
   assertCanUseFeature(planId, "marketingIntelligence");
 }
 
+/** Asserts an organization plan has access to Multi-Client Agency Dashboard (AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseMultiClientDashboard(planId: string): void {
+  assertCanUseFeature(planId, "multiClientDashboard");
+}
+
+/** Asserts an organization plan has access to Bulk Client Scans (AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseBulkScans(planId: string): void {
+  assertCanUseFeature(planId, "bulkScans");
+}
+
+/** Asserts an organization plan has access to White-Label Agency Branding (AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseAgencyBranding(planId: string): void {
+  assertCanUseFeature(planId, "agencyBranding");
+}
+
+
 
 
 

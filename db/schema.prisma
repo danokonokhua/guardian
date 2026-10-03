@@ -316,6 +316,8 @@ model Organization {
   competitorSnapshots      CompetitorSnapshot[]
   marketingCampaigns       MarketingCampaign[]
   marketingMetricSnapshots MarketingMetricSnapshot[]
+  agencyClients            AgencyClient[]
+  agencyBranding           AgencyBranding?
 
   @@index([ownerId])
   @@map("organizations")
@@ -970,6 +972,54 @@ model MarketingMetricSnapshot {
   @@index([organizationId, periodStart])
   @@map("marketing_metric_snapshots")
 }
+
+/// Managed client accounts within an agency organization.
+model AgencyClient {
+  id                   String    @id @default(uuid())
+  agencyOrganizationId String
+  clientOrganizationId String?
+  clientName           String
+  clientDomain         String
+  contactEmail         String?
+  contactName          String?
+  status               String    @default("ACTIVE") // ACTIVE, PAUSED, ARCHIVED
+  notes                String?
+  monthlyRetainerCents Int?      @default(0)
+  currency             String    @default("USD")
+  healthScore          Int?      @default(85)
+  lastScannedAt        DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  agencyOrganization Organization @relation(fields: [agencyOrganizationId], references: [id], onDelete: Cascade)
+
+  @@unique([agencyOrganizationId, clientDomain])
+  @@index([agencyOrganizationId])
+  @@index([agencyOrganizationId, status])
+  @@map("agency_clients")
+}
+
+/// White-label agency customization (custom logo, brand colors, custom portal title).
+model AgencyBranding {
+  id                 String   @id @default(uuid())
+  organizationId     String   @unique
+  companyName        String
+  logoUrl            String?
+  brandPrimaryColor  String?  @default("#06b6d4")
+  brandAccentColor   String?  @default("#8b5cf6")
+  customDomain       String?
+  portalTitle        String?
+  supportEmail       String?
+  footerText         String?
+  isWhiteLabelActive Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("agency_brandings")
+}
+
 
 
 
