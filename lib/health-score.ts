@@ -148,6 +148,7 @@ function categoryForRule(ruleId: string): HealthScoreCategory | null {
   if (ruleId === "monitor.performance") return "PERFORMANCE";
   if (ruleId === "monitor.seo") return "SEO";
   if (ruleId === "monitor.security" || ruleId === "monitor.ssl") return "SECURITY";
+  if (ruleId.startsWith("RULE_WP_") || ruleId.startsWith("wordpress.")) return "SECURITY";
   if (
     ruleId === "monitor.uptime" ||
     ruleId === "monitor.http_status" ||

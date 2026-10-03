@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Guardian Plan Catalog & Pricing Specification.
  * Canonical definitions aligned with PRD Section 19, docs/PRICING.md, and the
  * master feature/limits table (updated 2 October 2026).
@@ -67,11 +67,12 @@ export const BILLING_PLANS = [
       aiIssueExplanations: false,
       aiPrioritization: false,
       aiBusinessSummaries: false,
-      // Google Integrations
+      // Integrations
       googleIntegrations: false,
       googleAnalytics: false,
       googleSearchConsole: false,
       googleBusinessProfile: false,
+      wordpressConnect: false,
       // Intelligence
       reputationMonitoring: false,
       competitorIntelligence: false,
@@ -146,6 +147,7 @@ export const BILLING_PLANS = [
       googleAnalytics: false,
       googleSearchConsole: false,
       googleBusinessProfile: false,
+      wordpressConnect: true,
       reputationMonitoring: false,
       competitorIntelligence: false,
       marketingIntelligence: false,
@@ -215,6 +217,7 @@ export const BILLING_PLANS = [
       googleAnalytics: false,
       googleSearchConsole: false,
       googleBusinessProfile: false,
+      wordpressConnect: true,
       reputationMonitoring: false,
       competitorIntelligence: false,
       marketingIntelligence: false,
@@ -285,6 +288,7 @@ export const BILLING_PLANS = [
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      wordpressConnect: true,
       reputationMonitoring: true,
       competitorIntelligence: true, // limited
       marketingIntelligence: true,  // limited
@@ -354,6 +358,7 @@ export const BILLING_PLANS = [
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      wordpressConnect: true,
       reputationMonitoring: true,
       competitorIntelligence: true,
       marketingIntelligence: true,
@@ -423,6 +428,7 @@ export const BILLING_PLANS = [
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      wordpressConnect: true,
       reputationMonitoring: true,
       competitorIntelligence: true,
       marketingIntelligence: true,
@@ -493,6 +499,7 @@ export const BILLING_PLANS = [
       googleAnalytics: true,
       googleSearchConsole: true,
       googleBusinessProfile: true,
+      wordpressConnect: true,
       reputationMonitoring: true,
       competitorIntelligence: true,
       marketingIntelligence: true,

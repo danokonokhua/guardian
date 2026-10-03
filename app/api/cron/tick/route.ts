@@ -6,6 +6,8 @@ import { enqueueSystemPing } from "@/lib/jobs/system-ping";
 import { enqueueRetentionPruneJob } from "@/lib/jobs/retention-prune";
 import { serverConfig } from "@/config/server";
 
+import { runWordpressIntegrationsSync } from "@/lib/jobs/wordpress-sync";
+
 function hasValidCronSecret(request: Request, configuredSecret: string): boolean {
   const authorization = request.headers.get("authorization");
   if (authorization === null || !authorization.startsWith("Bearer ")) {
@@ -38,6 +40,7 @@ export const POST = withRoute(async (request, context) => {
   }
 
   void enqueueRetentionPruneJob(undefined, { triggeredBy: "cron_tick" }).catch(() => null);
+  void runWordpressIntegrationsSync().catch(() => null);
   const result = await enqueueSystemPing();
   return new Response(JSON.stringify({ data: result }), {
     status: 202,

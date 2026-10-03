@@ -75,4 +75,10 @@ export function assertCanUseSyntheticFormTests(planId: string): void {
   assertCanUseFeature(planId, "syntheticFormTests");
 }
 
+/** Asserts an organization plan has access to WordPress Connect (STARTER, GROWTH, PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseWordpressConnect(planId: string): void {
+  assertCanUseFeature(planId, "wordpressConnect");
+}
+
+
 

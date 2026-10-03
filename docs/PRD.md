@@ -238,7 +238,7 @@ Required testing includes unit, integration, API, authorization, tenant-isolatio
 14. Beta
 15. Google integrations
 16. SEO Intelligence
-17. WordPress
+17. WordPress (Guardian Connect) — Completed (3 October 2026)
 18. Reputation
 19. Competitor Intelligence
 20. Marketing Intelligence

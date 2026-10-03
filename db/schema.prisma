@@ -310,6 +310,7 @@ model Organization {
   subscription             Subscription?
   billingInvoices          BillingInvoice[]
   googleIntegrations       GoogleIntegration[]
+  wordpressConnections     WordpressConnection[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -445,6 +446,7 @@ model Website {
   issues            Issue[]
   monitoringResults MonitoringResult[]
   googleIntegrations GoogleIntegration[]
+  wordpressConnection WordpressConnection?
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -783,3 +785,43 @@ model GoogleIntegration {
   @@index([organizationId])
   @@map("google_integrations")
 }
+
+enum WordpressConnectionStatus {
+  CONNECTED
+  SYNCING
+  ERROR
+  DISCONNECTED
+}
+
+/// Connected WordPress site via Guardian Connect plugin or webhook.
+/// Stores encrypted pairing token, environment specs, and security/health telemetry.
+model WordpressConnection {
+  id               String                    @id @default(uuid())
+  organizationId   String
+  websiteId        String                    @unique
+  siteUrl          String
+  tokenEncrypted   String
+  tokenPrefix      String
+  status           WordpressConnectionStatus @default(CONNECTED)
+  wpVersion        String?
+  phpVersion       String?
+  serverSoftware   String?
+  debugMode        Boolean                   @default(false)
+  httpsEnforced    Boolean                   @default(true)
+  updatesAvailable Json?
+  plugins          Json?
+  themes           Json?
+  lastSyncAt       DateTime?
+  lastError        String?
+  isSandbox        Boolean                   @default(false)
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website      @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([tokenPrefix])
+  @@map("wordpress_connections")
+}
+

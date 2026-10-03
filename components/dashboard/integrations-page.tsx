@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser, listCurrentUserMemberships } from "@/lib/auth/context";
 import { DashboardOrganizationProvider, DashboardShell } from "./dashboard-shell";
-import { GoogleIntegrationsView } from "./google-integrations-view";
+import { IntegrationsTabs } from "./integrations-tabs";
 
 export async function IntegrationsPage() {
   const identity = await getCurrentUser();
@@ -36,13 +36,10 @@ export async function IntegrationsPage() {
       }}
     >
       <DashboardShell
-        title="Google Intelligence & Integrations"
-        description="Connect Google Analytics 4, Search Console, and Google Business Profile to track real visitor volume, search visibility, and customer feedback."
+        title="Integrations & Connected Intelligence"
+        description="Connect Google Analytics, Search Console, Google Business Profile, and WordPress Guardian Connect to feed continuous operational and security intelligence."
       >
-        <GoogleIntegrationsView
-          key={membership.organizationId}
-          organizationId={membership.organizationId}
-        />
+        <IntegrationsTabs organizationId={membership.organizationId} />
       </DashboardShell>
     </DashboardOrganizationProvider>
   );
