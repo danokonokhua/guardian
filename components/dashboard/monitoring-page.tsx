@@ -1,12 +1,13 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { getCurrentUser, listCurrentUserMemberships } from "@/lib/auth/context";
 import { DashboardOrganizationProvider, DashboardShell } from "./dashboard-shell";
 import { MonitoringViewPanel, type MonitoringView } from "./monitoring-view";
-const titles = {
+const titles: Record<MonitoringView, string> = {
   health: "Digital Health Vitals",
   seo: "SEO Insights",
   security: "Security Posture",
   revenue: "Lead-form Health",
+  reputation: "Reputation & Review Intelligence",
 };
 export async function MonitoringPage({ view }: { view: MonitoringView }) {
   const identity = await getCurrentUser();

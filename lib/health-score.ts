@@ -40,6 +40,7 @@ export interface HealthScoreObservation {
   monitorId: string;
   monitorType: string;
   status: string | null | undefined;
+  score?: number | null;
   checkedAt: Date | string | null | undefined;
 }
 
@@ -133,6 +134,10 @@ function categoryForMonitorType(monitorType: string): HealthScoreCategory | null
     case "SSL":
     case "SECURITY":
       return "SECURITY";
+    case "REPUTATION":
+    case "GOOGLE_GBP":
+    case "BUSINESS_PROFILE":
+      return "REPUTATION";
     default:
       return null;
   }
@@ -149,6 +154,14 @@ function categoryForRule(ruleId: string): HealthScoreCategory | null {
     ruleId === "monitor.links"
   ) {
     return "WEBSITE";
+  }
+  if (
+    ruleId === "RULE_GBP_LOW_RATING" ||
+    ruleId === "RULE_GBP_UNANSWERED_REVIEWS" ||
+    ruleId.startsWith("monitor.reputation") ||
+    ruleId.startsWith("reputation.")
+  ) {
+    return "REPUTATION";
   }
   return null;
 }
@@ -213,12 +226,18 @@ export function calculateDigitalHealthScore(
           ACTIVE_ISSUE_STATUSES.has(issue.status) && categoryForRule(issue.ruleId) === category,
       )
       .sort(latestFirst);
+    const observationWithScore = categoryObservations.find((item) => typeof item.score === "number");
     const upCount = categoryObservations.filter((item) => item.status === "UP").length;
     const downCount = categoryObservations.filter((item) => item.status === "DOWN").length;
     const errorCount = categoryObservations.filter((item) => item.status === "ERROR").length;
     const resultCount = upCount + downCount + errorCount;
     const measurableCount = upCount + downCount;
-    const baseScore = measurableCount === 0 ? null : Math.round((upCount * 100) / measurableCount);
+    const baseScore =
+      observationWithScore && typeof observationWithScore.score === "number"
+        ? observationWithScore.score
+        : measurableCount === 0
+          ? null
+          : Math.round((upCount * 100) / measurableCount);
     const penalty = categoryIssues.reduce(
       (highest, issue) => Math.max(highest, SEVERITY_PENALTIES[issue.severity] ?? 0),
       0,

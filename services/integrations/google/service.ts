@@ -32,6 +32,7 @@ import {
   fetchGBPMetrics,
   type GBPReportSummary,
 } from "@/services/integrations/google/gbp-collector";
+import { captureHealthScoreSnapshot } from "@/services/health/repository";
 
 export interface SyncResult {
   integrationId: string;
@@ -133,6 +134,14 @@ export async function syncGoogleIntegration(
           updatedAt: new Date(),
         },
       });
+
+      if (integration.provider === "BUSINESS_PROFILE") {
+        try {
+          await captureHealthScoreSnapshot({ organizationId: scope.organizationId }, tx as any);
+        } catch {
+          // Non-blocking snapshot refresh
+        }
+      }
 
       return {
         integrationId: integration.id,

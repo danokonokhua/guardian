@@ -99,9 +99,10 @@ export function DashboardShell({
               ["/dashboard/seo", "SEO intelligence"],
               ["/status-pages", "Client status pages"],
               ["/billing", "Plans & billing"],
-              ["/seo", "SEO monitor"],
+              ["/seo", "SEO insights"],
               ["/security", "Security posture"],
               ["/revenue", "Lead-form health"],
+              ["/reputation", "Reputation & reviews"],
             ] as const
           ).map(([href, label]) => (
             <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>
@@ -162,7 +163,7 @@ export function DashboardShell({
           <nav className="command-mobile-shortcuts" aria-label="Workspace views">
             <Link href="/briefings">Briefing</Link>
             <Link href="/dashboard/integrations">Google integrations</Link>
-            <Link href="/dashboard/seo">SEO intelligence</Link>
+            <Link href="/reputation">Reputation</Link>
             <Link href="/status-pages">Status pages</Link>
             <Link href="/billing">Billing</Link>
             <Link href="/dashboard/executive">Executive</Link>

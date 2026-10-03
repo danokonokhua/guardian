@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { HealthData } from "@/app/health-panel";
@@ -44,6 +44,15 @@ export const viewConfig = {
     rules: ["monitor.form"],
     limit:
       "These checks inspect server-rendered forms and optional safe probes. They do not submit leads, confirm downstream delivery, or calculate lost revenue.",
+  },
+  reputation: {
+    title: "Reputation & Review Intelligence",
+    description: "Monitor customer ratings, unanswered review volume, and local search presence.",
+    types: ["REPUTATION", "BUSINESS_PROFILE", "GOOGLE_GBP"],
+    categories: ["REPUTATION"],
+    rules: ["RULE_GBP_LOW_RATING", "RULE_GBP_UNANSWERED_REVIEWS", "monitor.reputation"],
+    limit:
+      "Reputation signals are synchronized from verified Google Business Profiles. Automatic reply publishing is not performed without operator review.",
   },
 };
 export type MonitoringView = keyof typeof viewConfig;

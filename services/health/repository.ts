@@ -3,11 +3,72 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import type { PrismaTransactionHost, TenantScope } from "@/db/tenant";
 import { withGucContext, withTenantTransaction } from "@/db/tenant";
-import { calculateDigitalHealthScore, type DigitalHealthScore } from "@/lib/health-score";
+import {
+  calculateDigitalHealthScore,
+  type DigitalHealthScore,
+  type HealthScoreObservation,
+} from "@/lib/health-score";
 import {
   generateGroundedRecommendations,
   type GroundedRecommendation,
 } from "@/lib/recommendations";
+
+function extractReputationObservations(
+  integrations: Array<{
+    id: string;
+    status: string;
+    lastSyncAt: Date | null;
+    syncSummary: Prisma.JsonValue;
+  }>,
+): HealthScoreObservation[] {
+  return (integrations ?? []).flatMap((int) => {
+    if (int.status !== "CONNECTED" && int.status !== "ERROR") return [];
+    if (int.status === "ERROR") {
+      return [
+        {
+          id: int.id,
+          monitorId: int.id,
+          monitorType: "REPUTATION",
+          status: "ERROR",
+          checkedAt: int.lastSyncAt ?? new Date(),
+        },
+      ];
+    }
+    const summary = int.syncSummary as {
+      averageRating?: number;
+      totalReviewCount?: number;
+      ratingHealth?: "HEALTHY" | "WATCH" | "CRITICAL";
+    } | null;
+
+    if (!summary || typeof summary.averageRating !== "number") {
+      return [
+        {
+          id: int.id,
+          monitorId: int.id,
+          monitorType: "REPUTATION",
+          status: "UP",
+          score: 100,
+          checkedAt: int.lastSyncAt ?? new Date(),
+        },
+      ];
+    }
+
+    const rating = Math.min(5, Math.max(0, summary.averageRating));
+    const score = Math.round((rating / 5) * 100);
+    const status = summary.ratingHealth === "CRITICAL" ? "DOWN" : "UP";
+
+    return [
+      {
+        id: int.id,
+        monitorId: int.id,
+        monitorType: "REPUTATION",
+        status,
+        score,
+        checkedAt: int.lastSyncAt ?? new Date(),
+      },
+    ];
+  });
+}
 
 export interface HealthOverview {
   healthScore: DigitalHealthScore;
@@ -76,7 +137,7 @@ export interface HealthOverview {
 
 export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> {
   return withTenantTransaction(scope, async (tx) => {
-    const [monitors, results, issues, scoreHistory] = await Promise.all([
+    const [monitors, results, issues, scoreHistory, gbpIntegrations] = await Promise.all([
       tx.monitor.findMany({
         where: { organizationId: scope.organizationId, enabled: true },
         select: {
@@ -153,18 +214,36 @@ export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> 
           calculatedAt: true,
         },
       }),
+      (tx as any).googleIntegration?.findMany
+        ? (tx as any).googleIntegration.findMany({
+            where: {
+              organizationId: scope.organizationId,
+              provider: "BUSINESS_PROFILE",
+            },
+            select: {
+              id: true,
+              status: true,
+              lastSyncAt: true,
+              syncSummary: true,
+            },
+          })
+        : Promise.resolve([]),
     ]);
 
+    const gbpObservations = extractReputationObservations(gbpIntegrations);
     const latestStatuses = monitors.map((monitor) => monitor.results[0]?.status);
     const activeStatuses = new Set(["OPEN", "ACKNOWLEDGED", "IN_PROGRESS"]);
     const healthScore = calculateDigitalHealthScore(
-      monitors.map((monitor) => ({
-        id: monitor.results[0]?.id ?? `pending:${monitor.id}`,
-        monitorId: monitor.id,
-        monitorType: monitor.type,
-        status: monitor.results[0]?.status,
-        checkedAt: monitor.results[0]?.checkedAt,
-      })),
+      [
+        ...monitors.map((monitor) => ({
+          id: monitor.results[0]?.id ?? `pending:${monitor.id}`,
+          monitorId: monitor.id,
+          monitorType: monitor.type,
+          status: monitor.results[0]?.status,
+          checkedAt: monitor.results[0]?.checkedAt,
+        })),
+        ...gbpObservations,
+      ],
       issues.map((issue) => ({
         id: issue.id,
         ruleId: issue.ruleId,
@@ -196,24 +275,38 @@ export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> 
       recommendations,
       healthScoreHistory: scoreHistory,
       summary: {
-        monitors: monitors.length,
-        up: latestStatuses.filter((status) => status === "UP").length,
-        down: latestStatuses.filter((status) => status === "DOWN").length,
-        error: latestStatuses.filter((status) => status === "ERROR").length,
+        monitors: monitors.length + gbpObservations.length,
+        up: latestStatuses.filter((status) => status === "UP").length + gbpObservations.filter((o) => o.status === "UP").length,
+        down: latestStatuses.filter((status) => status === "DOWN").length + gbpObservations.filter((o) => o.status === "DOWN").length,
+        error: latestStatuses.filter((status) => status === "ERROR").length + gbpObservations.filter((o) => o.status === "ERROR").length,
         pending: latestStatuses.filter((status) => status === undefined).length,
         activeIssues: issues.filter((issue) => activeStatuses.has(issue.status)).length,
         recoveredIssues: issues.filter((issue) => issue.status === "RESOLVED").length,
       },
-      recentResults: results.map((result) => ({
-        id: result.id,
-        status: result.status,
-        checkedAt: result.checkedAt,
-        responseTimeMs: result.responseTimeMs,
-        httpStatusCode: result.httpStatusCode,
-        monitorType: result.monitor.type,
-        websiteId: result.website.id,
-        websiteName: result.website.label || result.website.hostname,
-      })),
+      recentResults: [
+        ...results.map((result) => ({
+          id: result.id,
+          status: result.status,
+          checkedAt: result.checkedAt,
+          responseTimeMs: result.responseTimeMs,
+          httpStatusCode: result.httpStatusCode,
+          monitorType: result.monitor.type,
+          websiteId: result.website.id,
+          websiteName: result.website.label || result.website.hostname,
+        })),
+        ...((gbpIntegrations ?? []) as any[])
+          .filter((int) => int.status === "CONNECTED" && int.lastSyncAt)
+          .map((int) => ({
+            id: `gbp-${int.id}`,
+            status: (int.syncSummary as any)?.ratingHealth === "CRITICAL" ? "DOWN" : "UP",
+            checkedAt: int.lastSyncAt,
+            responseTimeMs: null,
+            httpStatusCode: 200,
+            monitorType: "REPUTATION",
+            websiteId: int.id,
+            websiteName: "Google Business Profile",
+          })),
+      ],
       issues: issues.map((issue) => ({
         id: issue.id,
         ruleId: issue.ruleId,
@@ -263,7 +356,7 @@ export function captureHealthScoreSnapshot(
   return withGucContext(
     { organizationId: scope.organizationId },
     async (tx) => {
-      const [monitors, issues] = await Promise.all([
+      const [monitors, issues, gbpIntegrations] = await Promise.all([
         tx.monitor.findMany({
           where: { organizationId: scope.organizationId, enabled: true },
           select: {
@@ -294,16 +387,34 @@ export function captureHealthScoreSnapshot(
             lastSeenAt: true,
           },
         }),
+        (tx as any).googleIntegration?.findMany
+          ? (tx as any).googleIntegration.findMany({
+              where: {
+                organizationId: scope.organizationId,
+                provider: "BUSINESS_PROFILE",
+              },
+              select: {
+                id: true,
+                status: true,
+                lastSyncAt: true,
+                syncSummary: true,
+              },
+            })
+          : Promise.resolve([]),
       ]);
+      const gbpObservations = extractReputationObservations(gbpIntegrations);
       const calculatedAt = new Date();
       const score = calculateDigitalHealthScore(
-        monitors.map((monitor) => ({
-          id: monitor.results[0]?.id ?? `pending:${monitor.id}`,
-          monitorId: monitor.id,
-          monitorType: monitor.type,
-          status: monitor.results[0]?.status,
-          checkedAt: monitor.results[0]?.checkedAt,
-        })),
+        [
+          ...monitors.map((monitor) => ({
+            id: monitor.results[0]?.id ?? `pending:${monitor.id}`,
+            monitorId: monitor.id,
+            monitorType: monitor.type,
+            status: monitor.results[0]?.status,
+            checkedAt: monitor.results[0]?.checkedAt,
+          })),
+          ...gbpObservations,
+        ],
         issues,
         calculatedAt,
       );

@@ -4,12 +4,14 @@ const mocks = vi.hoisted(() => ({
   findMonitors: vi.fn(),
   findIssues: vi.fn(),
   createScore: vi.fn(),
+  findGoogleIntegration: vi.fn(),
 }));
 
 const transaction = {
   monitor: { findMany: mocks.findMonitors },
   issue: { findMany: mocks.findIssues },
   healthScore: { create: mocks.createScore },
+  googleIntegration: { findMany: mocks.findGoogleIntegration },
 };
 
 vi.mock("@/db/client", () => ({ getPrisma: vi.fn() }));
@@ -52,6 +54,7 @@ describe("health score persistence", () => {
         lastSeenAt: new Date("2026-09-11T12:00:00Z"),
       },
     ]);
+    mocks.findGoogleIntegration.mockResolvedValue([]);
     mocks.createScore.mockResolvedValue({ id: "score-1" });
   });
 
@@ -95,5 +98,39 @@ describe("health score persistence", () => {
         (component: { organization: unknown }) => component.organization,
       ),
     ).toBe(true);
+  });
+
+  it("includes Google Business Profile reputation data in the persisted snapshot", async () => {
+    mocks.findGoogleIntegration.mockResolvedValue([
+      {
+        id: "gbp-1",
+        status: "CONNECTED",
+        lastSyncAt: new Date("2026-09-11T12:00:00Z"),
+        syncSummary: {
+          averageRating: 4.8,
+          totalReviewCount: 24,
+          unansweredReviewsCount: 0,
+          ratingHealth: "HEALTHY",
+        },
+      },
+    ]);
+
+    const score = await captureHealthScoreSnapshot({ organizationId: "org-a" });
+
+    // 50 (website 25 + lead 25) + 10 (reputation) = 60
+    expect(score.coverageWeight).toBe(60);
+    expect(mocks.createScore).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        components: {
+          create: expect.arrayContaining([
+            expect.objectContaining({
+              category: "REPUTATION",
+              score: 96,
+              state: "MEASURED",
+            }),
+          ]),
+        },
+      }),
+    });
   });
 });
