@@ -28,54 +28,111 @@ export const POST = withRoute(async (request, { requestId }) => {
 
     // Map common Stripe events
     if (event.eventType.startsWith("customer.subscription.")) {
-      const plan = event.plan || "PRO";
-      const status: SubscriptionStatus =
-        event.status === "active"
-          ? "ACTIVE"
-          : event.status === "past_due"
-            ? "PAST_DUE"
-            : event.status === "canceled"
-              ? "CANCELED"
-              : "ACTIVE";
+      if (event.eventType === "customer.subscription.deleted") {
+        await prisma.organization.update({
+          where: { id: event.organizationId },
+          data: { plan: "FREE" },
+        });
 
-      await prisma.organization.update({
-        where: { id: event.organizationId },
-        data: { plan },
-      });
+        await prisma.subscription.upsert({
+          where: { organizationId: event.organizationId },
+          create: {
+            organizationId: event.organizationId,
+            plan: "FREE",
+            status: "CANCELED",
+            interval: "MONTHLY",
+            provider: "STRIPE",
+            providerCustomerId: event.providerCustomerId,
+            providerSubscriptionId: event.providerSubscriptionId,
+          },
+          update: {
+            plan: "FREE",
+            status: "CANCELED",
+            provider: "STRIPE",
+            providerCustomerId: event.providerCustomerId,
+            providerSubscriptionId: event.providerSubscriptionId,
+          },
+        });
+      } else {
+        const plan = event.plan || "PRO";
+        const status: SubscriptionStatus =
+          event.status === "active"
+            ? "ACTIVE"
+            : event.status === "past_due"
+              ? "PAST_DUE"
+              : event.status === "canceled"
+                ? "CANCELED"
+                : event.status === "trialing"
+                  ? "TRIALING"
+                  : "ACTIVE";
 
-      await prisma.subscription.upsert({
-        where: { organizationId: event.organizationId },
-        create: {
-          organizationId: event.organizationId,
-          plan,
-          status,
-          provider: "STRIPE",
-          providerCustomerId: event.providerCustomerId,
-          providerSubscriptionId: event.providerSubscriptionId,
-        },
-        update: {
-          plan,
-          status,
-          provider: "STRIPE",
-          providerCustomerId: event.providerCustomerId,
-          providerSubscriptionId: event.providerSubscriptionId,
-        },
-      });
+        await prisma.organization.update({
+          where: { id: event.organizationId },
+          data: { plan },
+        });
+
+        await prisma.subscription.upsert({
+          where: { organizationId: event.organizationId },
+          create: {
+            organizationId: event.organizationId,
+            plan,
+            status,
+            interval: event.interval ?? "MONTHLY",
+            provider: "STRIPE",
+            providerCustomerId: event.providerCustomerId,
+            providerSubscriptionId: event.providerSubscriptionId,
+          },
+          update: {
+            plan,
+            status,
+            interval: event.interval ?? "MONTHLY",
+            provider: "STRIPE",
+            providerCustomerId: event.providerCustomerId,
+            providerSubscriptionId: event.providerSubscriptionId,
+          },
+        });
+      }
     }
 
-    if (event.eventType === "invoice.payment_succeeded" && event.amountCents) {
+    if (
+      (event.eventType === "invoice.payment_succeeded" || event.eventType === "invoice.paid") &&
+      event.amountCents
+    ) {
       await prisma.billingInvoice.create({
         data: {
           organizationId: event.organizationId,
           amountCents: event.amountCents,
           status: "PAID",
-          invoiceNumber: event.invoiceNumber,
-          hostedInvoiceUrl: event.hostedInvoiceUrl,
-          pdfUrl: event.pdfUrl,
+          invoiceNumber: event.invoiceNumber ?? `INV-${Date.now().toString().slice(-6)}`,
+          hostedInvoiceUrl: event.hostedInvoiceUrl ?? "https://billing.stripe.com/p/session/test_invoice",
+          pdfUrl: event.pdfUrl ?? "https://pay.stripe.com/invoice/test.pdf",
+          paidAt: new Date(),
         },
       });
     }
   }
 
-  return jsonResponse({ received: true }, 200);
+  return jsonResponse(
+    {
+      received: true,
+      eventType: event.eventType,
+      simulated: Boolean(event.isSimulated),
+    },
+    200,
+  );
+});
+
+export const GET = withRoute(async () => {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const isLiveConfigured = Boolean(
+    stripeKey && stripeKey.startsWith("sk_") && webhookSecret && webhookSecret.startsWith("whsec_"),
+  );
+
+  return jsonResponse({
+    status: "ok",
+    mode: isLiveConfigured ? "live" : "sandbox",
+    webhookConfigured: Boolean(webhookSecret && webhookSecret.startsWith("whsec_")),
+    signingMethod: isLiveConfigured ? "hmac_sha256" : "sandbox_bypass_allowed",
+  });
 });

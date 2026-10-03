@@ -57,6 +57,7 @@ export function BillingOverview({
   const [summary, setSummary] = useState<BillingSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(Boolean(organizationId));
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  const [simulating, setSimulating] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -243,6 +244,43 @@ export function BillingOverview({
       }
     } catch {
       setMessage("Unable to open billing portal.");
+    }
+  };
+
+  const handleSimulateWebhook = async (
+    eventType: string,
+    targetPlan?: string,
+    amountCents?: number,
+  ) => {
+    if (!organizationId) return;
+    setSimulating(true);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/v1/organizations/${organizationId}/billing/simulate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventType,
+          plan: targetPlan,
+          amountCents,
+        }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setMessage(
+          `Simulated Stripe webhook (${eventType}) processed successfully!`,
+        );
+        const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) =>
+          r.json(),
+        );
+        if (refreshed.data) setSummary(refreshed.data);
+      } else {
+        setMessage(json.error?.message ?? "Failed to simulate webhook event.");
+      }
+    } catch {
+      setMessage("Failed to trigger webhook simulation.");
+    } finally {
+      setSimulating(false);
     }
   };
 
@@ -463,6 +501,54 @@ export function BillingOverview({
               </article>
             );
           })}
+        </div>
+      </section>
+
+      {/* Stripe Sandbox & Demo Simulation Controls */}
+      <section className="mt-10 p-5 rounded-xl border border-amber-600/30 bg-amber-950/20 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              Stripe Sandbox & Demo Mode
+            </span>
+          </div>
+          <span className="text-xs text-neutral-400">
+            Simulate Stripe webhook events without live payment credentials
+          </span>
+        </div>
+        <p className="text-sm text-neutral-300 mb-4">
+          Demonstrate end-to-end plan upgrades, subscription renewals, and invoice receipt generation in real-time:
+        </p>
+        <div className="flex flex-wrap gap-2.5">
+          <button
+            onClick={() => handleSimulateWebhook("customer.subscription.updated", "GROWTH", 2900)}
+            disabled={simulating}
+            className="button-secondary compact text-xs"
+          >
+            {simulating ? "Processing…" : "Simulate Growth Upgrade ($29)"}
+          </button>
+          <button
+            onClick={() => handleSimulateWebhook("customer.subscription.updated", "PRO", 5900)}
+            disabled={simulating}
+            className="button-secondary compact text-xs"
+          >
+            {simulating ? "Processing…" : "Simulate Pro Upgrade ($59)"}
+          </button>
+          <button
+            onClick={() => handleSimulateWebhook("invoice.payment_succeeded", undefined, 5900)}
+            disabled={simulating}
+            className="button-secondary compact text-xs"
+          >
+            {simulating ? "Processing…" : "Simulate Invoice Payment ($59.00)"}
+          </button>
+          <button
+            onClick={() => handleSimulateWebhook("customer.subscription.deleted")}
+            disabled={simulating}
+            className="button-secondary compact text-xs text-rose-300 hover:text-rose-200"
+          >
+            {simulating ? "Processing…" : "Simulate Cancelation"}
+          </button>
         </div>
       </section>
 

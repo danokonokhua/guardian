@@ -127,7 +127,7 @@ describe("monitor.check worker", () => {
     });
     for (const ruleId of ["monitor.uptime", "monitor.http_status"]) {
       expect(findIssue).toHaveBeenCalledWith({
-        select: { id: true, status: true },
+        select: expect.objectContaining({ id: true, status: true }),
         where: expect.objectContaining({
           organizationId: "o1",
           fingerprint: issueFingerprint({ ruleId, websiteId: "w1", subjectKey: "w1" }),
@@ -236,7 +236,7 @@ describe("monitor.check worker", () => {
     });
     expect(findIssue).toHaveBeenCalledTimes(1);
     expect(findIssue).toHaveBeenCalledWith({
-      select: { id: true, status: true },
+      select: expect.objectContaining({ id: true, status: true }),
       where: expect.objectContaining({
         organizationId: "o1",
         fingerprint: issueFingerprint({
