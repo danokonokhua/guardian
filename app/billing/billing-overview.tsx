@@ -19,7 +19,7 @@ interface BillingSummary {
     maxWebsites: number;
     maxBusinesses: number;
     maxTeamMembers: number;
-    minFrequencyMinutes: number | null;
+    minFrequencyMinutes: number;
     historyDays: number;
   };
   usage: {
@@ -110,112 +110,65 @@ export function BillingOverview({
             </Link>
           </div>
         </section>
-
-        {/* Plan Catalog — real data even in static/preview mode */}
-        <section className="mt-8">
+        <section>
           <div className="billing-section-heading">
             <span className="eyebrow">PLAN CATALOG</span>
-            <h2>A plan for every stage of your business.</h2>
-            <p>All paid plans include a 14-day free trial — no credit card required.</p>
+            <h2>A plan for every stage.</h2>
+            <p>Pricing, included features, and usage allowances will appear once configured.</p>
           </div>
           <div className="billing-plan-grid">
-            {BILLING_PLANS.slice(0, 6).map((p) => {
-              const isEnterprise = p.id === "ENTERPRISE";
-              const monthlyDisplay = isEnterprise
-                ? "Custom"
-                : `$${(p.monthlyPriceCents / 100).toFixed(0)}/mo`;
-              const annualDisplay =
-                !isEnterprise && p.annualPriceCents > 0
-                  ? `$${(p.annualPriceCents / 100).toFixed(0)}/yr`
-                  : null;
-
-              return (
-                <article
-                  className={`setup-card billing-plan ${p.id === plan ? "billing-selected ring-1 ring-emerald-500/50" : ""}`}
-                  key={p.id}
-                >
-                  <div className="flex flex-wrap justify-between gap-3">
-                    <div>
-                      <h3 className="font-bold text-white">{p.name}</h3>
-                      <p className="text-xs text-neutral-400 mt-0.5">{p.tagline}</p>
-                    </div>
-                    {plan && p.id === plan && <span className="status-pill">CURRENT PLAN</span>}
+            {BILLING_PLANS.slice(0, 6).map((p) => (
+              <article
+                className={`setup-card billing-plan ${p.id === plan ? "billing-selected" : ""}`}
+                key={p.id}
+              >
+                <div className="flex flex-wrap justify-between gap-3">
+                  <h3>{p.name}</h3>
+                  {plan && p.id === plan && <span className="status-pill">CURRENT PLAN</span>}
+                </div>
+                <p className="billing-price">Pricing not configured</p>
+                <dl>
+                  <div>
+                    <dt>Included features</dt>
+                    <dd>To be configured</dd>
                   </div>
-
-                  <div className="mt-3">
-                    <span className="text-2xl font-extrabold text-white">{monthlyDisplay}</span>
-                    {annualDisplay && (
-                      <span className="ml-2 text-xs text-neutral-400">{annualDisplay} billed annually</span>
-                    )}
+                  <div>
+                    <dt>Usage allowances</dt>
+                    <dd>To be configured</dd>
                   </div>
-
-                  <dl className="mt-4 space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">Websites</dt>
-                      <dd className="text-white font-medium">
-                        {p.limits.maxWebsites === Infinity ? "Unlimited" : p.limits.maxWebsites}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">Clients / businesses</dt>
-                      <dd className="text-white font-medium">
-                        {p.limits.maxBusinesses === Infinity ? "Unlimited" : p.limits.maxBusinesses}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">Team seats</dt>
-                      <dd className="text-white font-medium">
-                        {p.limits.maxTeamMembers === Infinity ? "Unlimited" : p.limits.maxTeamMembers}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">History</dt>
-                      <dd className="text-white font-medium">
-                        {p.limits.historyDays === 0
-                          ? "Snapshot"
-                          : p.limits.historyDays === Infinity
-                            ? "Custom"
-                            : `${p.limits.historyDays} days`}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">AI insights / mo</dt>
-                      <dd className="text-white font-medium">
-                        {p.limits.aiInsightsPerMonth === null
-                          ? "Custom"
-                          : p.limits.aiInsightsPerMonth === 0
-                            ? "None"
-                            : p.limits.aiInsightsPerMonth}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">Continuous monitoring</dt>
-                      <dd className={p.features.continuousMonitoring ? "text-emerald-400 font-medium" : "text-neutral-500"}>
-                        {p.features.continuousMonitoring ? "✓ Yes" : "✗ No"}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-neutral-400">Google integrations</dt>
-                      <dd className={p.features.googleIntegrations ? "text-emerald-400 font-medium" : "text-neutral-500"}>
-                        {p.features.googleIntegrations ? "✓ Yes" : "✗ No"}
-                      </dd>
-                    </div>
-                    {p.hasTrial && (
-                      <div className="flex justify-between">
-                        <dt className="text-neutral-400">14-day free trial</dt>
-                        <dd className="text-emerald-400 font-medium">✓ No card needed</dd>
-                      </div>
-                    )}
-                  </dl>
-                </article>
-              );
-            })}
+                  <div>
+                    <dt>Subscription options</dt>
+                    <dd>Not available yet</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
           </div>
         </section>
+        <div className="billing-details-grid">
+          {[
+            {
+              title: "Usage & allowances",
+              text: "Plan-based usage metering is not connected. Monitoring activity is available in your operations dashboard.",
+            },
+            {
+              title: "Payment method",
+              text: "No payment-provider information is available. Payment methods cannot be added here yet.",
+            },
+            {
+              title: "Invoices & receipts",
+              text: "Invoice history is unavailable until billing is connected. This does not indicate whether charges exist elsewhere.",
+            },
+          ].map((item) => (
+            <section className="setup-card" key={item.title}>
+              <h2>{item.title}</h2>
+              <p>{item.text}</p>
+            </section>
+          ))}
+        </div>
       </>
     );
   }
-
 
   const handleCheckout = async (targetPlanId: string) => {
     setProcessingPlan(targetPlanId);
@@ -489,11 +442,7 @@ export function BillingOverview({
                   </div>
                   <div>
                     <dt>Check frequency</dt>
-                    <dd>
-                      {p.limits.minFrequencyMinutes === null
-                        ? "Snapshot"
-                        : `Every ${p.limits.minFrequencyMinutes} min`}
-                    </dd>
+                    <dd>Every {p.limits.minFrequencyMinutes} min</dd>
                   </div>
                 </dl>
                 <div className="mt-4">

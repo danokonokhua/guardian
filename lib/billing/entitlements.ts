@@ -65,3 +65,14 @@ export function assertCanUseGoogleIntegrations(planId: string): void {
   assertCanUseFeature(planId, "googleIntegrations");
 }
 
+/** Asserts an organization plan has access to Advanced SEO (GROWTH, PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseAdvancedSeo(planId: string): void {
+  assertCanUseFeature(planId, "advancedSeo");
+}
+
+/** Asserts an organization plan has access to Synthetic Form Tests (PRO+). */
+export function assertCanUseSyntheticFormTests(planId: string): void {
+  assertCanUseFeature(planId, "syntheticFormTests");
+}
+
+

@@ -96,9 +96,10 @@ export function DashboardShell({
               ["/dashboard/executive", "Executive overview"],
               ["/briefings", "Operational briefing"],
               ["/dashboard/integrations", "Google integrations"],
+              ["/dashboard/seo", "SEO intelligence"],
               ["/status-pages", "Client status pages"],
               ["/billing", "Plans & billing"],
-              ["/seo", "SEO insights"],
+              ["/seo", "SEO monitor"],
               ["/security", "Security posture"],
               ["/revenue", "Lead-form health"],
             ] as const
@@ -161,6 +162,7 @@ export function DashboardShell({
           <nav className="command-mobile-shortcuts" aria-label="Workspace views">
             <Link href="/briefings">Briefing</Link>
             <Link href="/dashboard/integrations">Google integrations</Link>
+            <Link href="/dashboard/seo">SEO intelligence</Link>
             <Link href="/status-pages">Status pages</Link>
             <Link href="/billing">Billing</Link>
             <Link href="/dashboard/executive">Executive</Link>
