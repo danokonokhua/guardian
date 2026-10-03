@@ -3,6 +3,7 @@ import "server-only";
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
 import { getPlanLimits, TRIAL_DURATION_DAYS } from "@/config/billing-plans";
+import { isLiveBillingConfigured } from "@/services/billing/provider";
 import type { Plan, SubscriptionStatus, BillingInterval, InvoiceStatus } from "@prisma/client";
 
 export interface SubscriptionRecord {
@@ -59,6 +60,7 @@ export interface BillingSummary {
     daysRemaining: number | null;
   };
   invoices: InvoiceRecord[];
+  livePaymentConnected?: boolean;
 }
 
 export async function getBillingSummary(scope: TenantScope): Promise<BillingSummary | null> {
@@ -117,6 +119,7 @@ export async function getBillingSummary(scope: TenantScope): Promise<BillingSumm
         daysRemaining,
       },
       invoices: org.billingInvoices,
+      livePaymentConnected: isLiveBillingConfigured(),
     };
   });
 }

@@ -232,12 +232,14 @@ export class MockBillingProvider implements BillingProvider {
     params: CheckoutSessionParams,
   ): Promise<{ url: string; sessionId: string }> {
     const sessionId = `mock_session_${Date.now()}_${params.organizationId}`;
-    const url = `${params.successUrl}?session_id=${sessionId}&mock_checkout=true&plan=${params.plan}&interval=${params.interval}`;
+    const separator = params.successUrl.includes("?") ? "&" : "?";
+    const url = `${params.successUrl}${separator}session_id=${sessionId}&mock_checkout=true&plan=${params.plan}&interval=${params.interval}`;
     return { url, sessionId };
   }
 
   async createCustomerPortalSession(params: CustomerPortalParams): Promise<{ url: string }> {
-    return { url: `${params.returnUrl}?mock_portal=true` };
+    const separator = params.returnUrl.includes("?") ? "&" : "?";
+    return { url: `${params.returnUrl}${separator}mock_portal=true` };
   }
 
   async handleWebhook(payload: string, signature: string): Promise<WebhookEventResult | null> {
@@ -372,3 +374,10 @@ export function getBillingProvider(): BillingProvider {
 
   return new MockBillingProvider();
 }
+
+/** Checks whether production live Stripe billing is configured. */
+export function isLiveBillingConfigured(): boolean {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  return Boolean(stripeKey && stripeKey.startsWith("sk_"));
+}
+

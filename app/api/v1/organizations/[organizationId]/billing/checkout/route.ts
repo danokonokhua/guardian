@@ -22,7 +22,9 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
   }
 
   const interval: BillingInterval = body.interval === "ANNUAL" ? "ANNUAL" : "MONTHLY";
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const proto = request.headers.get("x-forwarded-proto") || "https";
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+  const baseUrl = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || "");
 
   const successUrl =
     body.successUrl || `${baseUrl}/billing?session_id={CHECKOUT_SESSION_ID}&success=true`;
@@ -38,5 +40,8 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
     customerEmail: context.user.email,
   });
 
-  return apiSuccess(session, requestId, 200);
+  return apiSuccess({
+    ...session,
+    livePaymentConnected: Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith("sk_")),
+  }, requestId, 200);
 });
