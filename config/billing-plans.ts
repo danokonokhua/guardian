@@ -59,6 +59,7 @@ export const BILLING_PLANS = [
       issueDetection: true,         // basic
       businessImpactExplanation: true, // basic
       fixRecommendations: true,     // basic
+      automatedRemediation: false,
       // Alerts
       inAppAlerts: false,
       emailAlerts: false,
@@ -137,6 +138,7 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
+      automatedRemediation: false,
       inAppAlerts: true,
       emailAlerts: true,
       digests: true,                // monthly only
@@ -207,6 +209,7 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
+      automatedRemediation: true,   // manual approval only
       inAppAlerts: true,
       emailAlerts: true,
       digests: true,                // daily + weekly + monthly
@@ -278,6 +281,7 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
+      automatedRemediation: true,
       inAppAlerts: true,
       emailAlerts: true,
       digests: true,
@@ -348,6 +352,7 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
+      automatedRemediation: true,
       inAppAlerts: true,
       emailAlerts: true,
       digests: true,
@@ -418,6 +423,7 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
+      automatedRemediation: true,
       inAppAlerts: true,
       emailAlerts: true,
       digests: true,
@@ -489,6 +495,7 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
+      automatedRemediation: true,
       inAppAlerts: true,
       emailAlerts: true,
       digests: true,

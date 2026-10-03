@@ -110,6 +110,12 @@ export function assertCanUseAgencyBranding(planId: string): void {
   assertCanUseFeature(planId, "agencyBranding");
 }
 
+/** Asserts an organization plan has access to Automated Remediation (GROWTH, PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseAutomatedRemediation(planId: string): void {
+  assertCanUseFeature(planId, "automatedRemediation");
+}
+
+
 
 
 

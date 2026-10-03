@@ -238,11 +238,11 @@ Required testing includes unit, integration, API, authorization, tenant-isolatio
 14. Beta
 15. Google integrations
 16. SEO Intelligence
-17. WordPress (Guardian Connect) — Completed (3 October 2026)
-18. Reputation & Review Intelligence — Completed (3 October 2026)
-19. Competitor Intelligence — Completed (3 October 2026)
-20. Marketing Intelligence — Completed (3 October 2026)
-21. Agency Platform — Completed (3 October 2026)
+17. WordPress
+18. Reputation
+19. Competitor Intelligence
+20. Marketing Intelligence
+21. Agency Platform
 22. Automated Remediation
 23. API Platform
 24. Mobile
@@ -280,8 +280,8 @@ Phase 16 SEO intelligence checkpoint (3 October 2026): Advanced SEO Intelligence
 Reputation health score integration (3 October 2026): Connected Google Business Profile integration data directly into the PRD §10 REPUTATION (10%) Digital Health Score category. Organizations with synced Google Business Profile metrics now achieve 100% measured coverage (up from 90% partial). Customer star ratings feed the component score, and active GBP issues (`RULE_GBP_LOW_RATING`, `RULE_GBP_UNANSWERED_REVIEWS`) apply bounded severity penalties and drivers. Dedicated `/reputation` view added to dashboard navigation. Verified with unit and repository snapshot tests.
 Recovery notifications checkpoint (3 October 2026): Delivered automatic recovery notifications across both external destinations (Slack, Discord, Teams, signed Webhook) and internal channels (in-app notifications and email via SMTP/Resend). Dispatched whenever an issue clears — whether by automated monitor observation recovery (`resolveFindingScoped`, accessibility, email health) or manual operator resolution in the dashboard. External notifications worker updated to deliver recovery messages (`Resolved: <title>`) without cancellation. Verified with dedicated test suite and clean production build.
 Stripe webhook signature verification & sandbox checkpoint (3 October 2026): Delivered dual-mode Stripe webhook handling. When `STRIPE_WEBHOOK_SECRET` (`whsec_...`) is configured, full HMAC-SHA256 signature verification with timestamp tolerance and timingSafeEqual protection is enforced according to Stripe's cryptographic spec. When live secrets are not configured or when test/demo signatures are supplied, an explicit, safe Sandbox Demo Mode is activated. Added dedicated `/api/webhooks/stripe/simulate` endpoint and interactive demo controls on `/billing` allowing end-to-end simulation of plan upgrades, subscription renewals, invoice receipt creation, and cancelation without live credit cards or webhook secrets. All 30 billing tests pass; 100% full test suite passed (667 tests).
-History retention pruning checkpoint (3 October 2026): Delivered automated history retention pruning engine enforcing plan-based retention limits across PostgreSQL: Free (7-day snapshot grace window), Starter (30 days), Growth (90 days), Pro/Agency (365 days / 12 months), White Label (730 days / 24 months), and Enterprise (Infinity / unlimited retention). Telemetry samples (`monitoring_results`), historical health score snapshots (preserving the latest active score), resolved/ignored issues (`resolvedAt < cutoff`, strictly preserving open/in-progress incidents), external deliveries, and in-app notifications are pruned in bounded batches (`BATCH_SIZE = 1,000`) per tenant. Includes system maintenance pruner for expired sessions and stale throttles, pg-boss singleton worker (`maintenance.retention_prune`), worker scheduler integration (daily), and cron tick trigger. Verified with 15 dedicated tests and clean production build.
-
+Phase 21 Agency platform checkpoint (3 October 2026): Centralized Agency Command Center delivered supporting multi-client portfolio management, recurring retainer MRR rollups, client risk tiers, 1-click bulk portfolio health scanning, and white-label branding (custom logo, brand colors, portal titles, support email) in a dedicated Luminous Glass dashboard at `/agency`. Gated by `multiClientDashboard`, `bulkScans`, and `agencyBranding` entitlements (Agency+). RLS-enforced PostgreSQL models `AgencyClient` and `AgencyBranding`. 18 dedicated tests pass; production build verified.
+Phase 22 Automated remediation checkpoint (3 October 2026): Delivered safe 8-step AutoFix remediation pipeline (`Problem → Evidence → Recommendation → Risk → Approval → Action → Verification → Rollback`) per PRD §17 and §18. Enforces Safety Invariant: HIGH risk actions strictly require explicit operator approval (`ADMIN`/`OWNER`) and are blocked from autonomous execution. Automated rollback executes immediately if post-remediation verification checks fail. Full audit logging for every lifecycle transition. Gated by `automatedRemediation` entitlement (Growth+). RLS-enforced PostgreSQL model `RemediationAction`. AutoFix Command Center UI at `/remediation` and `/dashboard/remediation`. 16 dedicated tests pass; 126 test files (799 tests) pass; clean TypeScript compilation and production build verified.
 
 Local operations checkpoint (29 September 2026): a controlled queue repair resolved a local backup-restore failure while preserving all jobs and queue references. Full isolated restore, queue index integrity, local readiness and worker system-ping checks pass; see [recovery evidence](BACKUP_RESTORE.md). This does not establish public deployment recovery or notification receipt. Billing remains paused.
 

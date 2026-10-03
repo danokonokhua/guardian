@@ -318,6 +318,7 @@ model Organization {
   marketingMetricSnapshots MarketingMetricSnapshot[]
   agencyClients            AgencyClient[]
   agencyBranding           AgencyBranding?
+  remediationActions       RemediationAction[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -457,6 +458,7 @@ model Website {
   reviews            BusinessReview[]
   competitors        Competitor[]
   marketingCampaigns MarketingCampaign[]
+  remediationActions RemediationAction[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -592,6 +594,7 @@ model Issue {
   assignedToId      String?
   assignedTo        User?            @relation("IssueAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
   activities        IssueActivity[]
+  remediationActions RemediationAction[]
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 
@@ -1019,6 +1022,45 @@ model AgencyBranding {
 
   @@map("agency_brandings")
 }
+
+/// Automated & Operator-Approved Remediation Actions (PRD §17 & §18 AutoFix pipeline).
+model RemediationAction {
+  id                 String    @id @default(uuid())
+  organizationId     String
+  issueId            String?
+  websiteId          String?
+  actionType         String    // DISABLE_WP_DEBUG, INJECT_SECURITY_HEADERS, PURGE_EDGE_CACHE, UPDATE_WORDPRESS_CORE, RETEST_FORM_ENDPOINT, REMOVE_NOINDEX_HEADER, etc.
+  title              String
+  description        String
+  riskLevel          String    @default("LOW") // LOW, MEDIUM, HIGH
+  problem            String
+  evidence           Json      @default("{}")
+  recommendation     String
+  status             String    @default("PENDING_APPROVAL") // PENDING_APPROVAL, APPROVED, EXECUTING, VERIFYING, COMPLETED, FAILED, ROLLED_BACK, REJECTED
+  autoExecutable     Boolean   @default(false)
+  requestedById      String?
+  approvedById       String?
+  approvedAt         DateTime?
+  executedAt         DateTime?
+  verifiedAt         DateTime?
+  rolledBackAt       DateTime?
+  executionResult    Json      @default("{}")
+  verificationResult Json      @default("{}")
+  rollbackPlan       Json      @default("{}")
+  auditLog           Json      @default("[]")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  issue        Issue?       @relation(fields: [issueId], references: [id], onDelete: SetNull)
+  website      Website?     @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([issueId])
+  @@map("remediation_actions")
+}
+
 
 
 
