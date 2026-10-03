@@ -14,9 +14,7 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
   if (!summary) throw new NotFoundError("Organization not found.");
 
   const body = (await request.json().catch(() => ({}))) as { returnUrl?: string };
-  const proto = request.headers.get("x-forwarded-proto") || "https";
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
-  const baseUrl = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || "");
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const returnUrl = body.returnUrl || `${baseUrl}/billing`;
 
   const provider = getBillingProvider();
@@ -26,8 +24,5 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
     providerCustomerId: summary.subscription?.providerCustomerId,
   });
 
-  return apiSuccess({
-    ...portal,
-    livePaymentConnected: Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith("sk_")),
-  }, requestId, 200);
+  return apiSuccess(portal, requestId, 200);
 });

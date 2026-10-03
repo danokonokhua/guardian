@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { withRoute } from "@/lib/api";
 import { AppError, UnauthorizedError } from "@/lib/errors";
 import { enqueueSystemPing } from "@/lib/jobs/system-ping";
+import { enqueueRetentionPruneJob } from "@/lib/jobs/retention-prune";
 import { serverConfig } from "@/config/server";
 
 function hasValidCronSecret(request: Request, configuredSecret: string): boolean {
@@ -36,6 +37,7 @@ export const POST = withRoute(async (request, context) => {
     throw new UnauthorizedError("Cron authentication is required.");
   }
 
+  void enqueueRetentionPruneJob(undefined, { triggeredBy: "cron_tick" }).catch(() => null);
   const result = await enqueueSystemPing();
   return new Response(JSON.stringify({ data: result }), {
     status: 202,

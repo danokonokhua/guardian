@@ -32,15 +32,19 @@ async function main(): Promise<void> {
   const boss = await startJobBoss();
   const { registerExternalNotificationWorker } =
     await import("@/lib/notification-destinations/worker");
+  const { registerRetentionPruneWorker, enqueueRetentionPruneJob } =
+    await import("@/lib/jobs/retention-prune");
   await registerExternalNotificationWorker(boss);
   await registerSystemPingWorker(boss);
   await registerMonitorCheckWorker(boss);
   await registerNotificationWorker(boss, productionNotificationProvider);
   await registerSlaEscalationWorker(boss);
+  await registerRetentionPruneWorker(boss);
 
   const runSchedulers = async (): Promise<void> => {
     await scheduleDueMonitors(boss);
     await scheduleDueSlaEscalations(boss);
+    await enqueueRetentionPruneJob(boss, { triggeredBy: "worker_scheduler" });
   };
   const schedulerTimer = setInterval(() => {
     void runSchedulers().catch((error: unknown) =>
@@ -50,7 +54,10 @@ async function main(): Promise<void> {
   void runSchedulers().catch((error: unknown) =>
     logger.error("guardian_scheduler_error", { error }),
   );
-  logger.info("guardian_worker_started", { worker: "system.ping", schedulers: ["monitor", "sla"] });
+  logger.info("guardian_worker_started", {
+    worker: "system.ping",
+    schedulers: ["monitor", "sla", "retention_prune"],
+  });
 
   const shutdown = async (signal: string): Promise<void> => {
     logger.info("guardian_worker_stopping", { signal });

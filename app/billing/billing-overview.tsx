@@ -43,7 +43,6 @@ interface BillingSummary {
     paidAt: string | null;
     createdAt: string;
   }>;
-  livePaymentConnected?: boolean;
 }
 
 export function BillingOverview({
@@ -177,30 +176,6 @@ export function BillingOverview({
     setMessage(null);
 
     try {
-      // In sandbox mode (live Stripe not connected), switch plan directly in-app
-      if (summary?.livePaymentConnected === false) {
-        const changeRes = await fetch(`/api/v1/organizations/${organizationId}/billing`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "change_plan",
-            plan: targetPlanId,
-          }),
-        });
-        const changeJson = await changeRes.json();
-        if (changeJson.data) {
-          setMessage(
-            `Live payment gateway is not connected. Switched to ${getPlanDefinition(targetPlanId).name} plan in Sandbox Mode (no credit card charged).`,
-          );
-          const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) => r.json());
-          if (refreshed.data) setSummary(refreshed.data);
-        } else {
-          setMessage(changeJson.error?.message ?? "Unable to update plan.");
-        }
-        return;
-      }
-
-      // Live payment mode: call checkout API
       const res = await fetch(`/api/v1/organizations/${organizationId}/billing/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -211,12 +186,7 @@ export function BillingOverview({
       });
 
       const json = await res.json();
-      if (
-        json.data?.url &&
-        json.data?.livePaymentConnected !== false &&
-        !json.data.url.includes("mock_checkout=true") &&
-        !json.data.url.includes("localhost")
-      ) {
+      if (json.data?.url) {
         window.location.href = json.data.url;
       } else {
         const changeRes = await fetch(`/api/v1/organizations/${organizationId}/billing`, {
@@ -229,9 +199,7 @@ export function BillingOverview({
         });
         const changeJson = await changeRes.json();
         if (changeJson.data) {
-          setMessage(
-            `Live payment gateway is not connected. Switched to ${getPlanDefinition(targetPlanId).name} plan in Sandbox Mode (no credit card charged).`,
-          );
+          setMessage(`Successfully switched to ${getPlanDefinition(targetPlanId).name} plan.`);
           const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) => r.json());
           if (refreshed.data) setSummary(refreshed.data);
         }
@@ -265,26 +233,14 @@ export function BillingOverview({
   };
 
   const handlePortal = async () => {
-    if (summary?.livePaymentConnected === false) {
-      setMessage("Stripe Customer Portal is unavailable because live payments are not connected yet.");
-      return;
-    }
-
     try {
       const res = await fetch(`/api/v1/organizations/${organizationId}/billing/portal`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
       const json = await res.json();
-      if (
-        json.data?.url &&
-        json.data?.livePaymentConnected !== false &&
-        !json.data.url.includes("mock_portal=true") &&
-        !json.data.url.includes("localhost")
-      ) {
+      if (json.data?.url) {
         window.location.href = json.data.url;
-      } else {
-        setMessage("Stripe Customer Portal is unavailable because live payments are not connected yet.");
       }
     } catch {
       setMessage("Unable to open billing portal.");
@@ -340,21 +296,6 @@ export function BillingOverview({
         <div className="mb-6 text-xs text-neutral-400 animate-pulse">
           Refreshing plan and resource allocations…
         </div>
-      )}
-
-      {/* Live Payment Status Notice */}
-      {summary && summary.livePaymentConnected === false && (
-        <aside className="mb-6 p-4 rounded-xl bg-amber-950/40 border border-amber-600/50 flex items-start gap-3">
-          <span className="text-amber-400 text-lg leading-none mt-0.5">⚠️</span>
-          <div>
-            <strong className="text-amber-300 text-sm font-semibold block">
-              Live Stripe Payment Gateway Not Connected (Sandbox Demo Mode)
-            </strong>
-            <p className="text-xs text-neutral-300 mt-1">
-              Live Stripe payment credentials are not configured on this server. Selecting a plan switches your organization tier directly in Sandbox Mode without charging a real credit card, and will not redirect to external checkout.
-            </p>
-          </div>
-        </aside>
       )}
 
       {/* Trial Countdown Banner */}
