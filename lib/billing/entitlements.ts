@@ -90,6 +90,12 @@ export function assertCanUseReputationMonitoring(planId: string): void {
   assertCanUseFeature(planId, "reputationMonitoring");
 }
 
+/** Asserts an organization plan has access to Marketing Intelligence (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseMarketingIntelligence(planId: string): void {
+  assertCanUseFeature(planId, "marketingIntelligence");
+}
+
+
 
 
 

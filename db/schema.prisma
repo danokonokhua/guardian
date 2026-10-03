@@ -314,6 +314,8 @@ model Organization {
   reviews                  BusinessReview[]
   competitors              Competitor[]
   competitorSnapshots      CompetitorSnapshot[]
+  marketingCampaigns       MarketingCampaign[]
+  marketingMetricSnapshots MarketingMetricSnapshot[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -452,6 +454,7 @@ model Website {
   wordpressConnection WordpressConnection?
   reviews            BusinessReview[]
   competitors        Competitor[]
+  marketingCampaigns MarketingCampaign[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -913,6 +916,61 @@ model CompetitorSnapshot {
   @@index([organizationId, snapshotDate])
   @@map("competitor_snapshots")
 }
+
+/// Marketing campaigns tracked across Google Ads, Meta, LinkedIn, Email platforms, and CRM.
+model MarketingCampaign {
+  id                 String    @id @default(uuid())
+  organizationId     String
+  websiteId          String?
+  channel            String    // GOOGLE_ADS, META_ADS, LINKEDIN_ADS, EMAIL_MARKETING, DIRECT_CRM
+  externalCampaignId String?
+  name               String
+  status             String    @default("ACTIVE") // ACTIVE, PAUSED, COMPLETED, ARCHIVED
+  currency           String    @default("USD")
+  budgetDailyCents   Int?
+  startDate          DateTime?
+  endDate            DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website?                  @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+  metricSnapshots MarketingMetricSnapshot[]
+
+  @@unique([organizationId, channel, externalCampaignId])
+  @@index([organizationId])
+  @@index([organizationId, channel])
+  @@index([organizationId, status])
+  @@map("marketing_campaigns")
+}
+
+/// Periodic performance metrics (impressions, clicks, spend, leads, CPL, ROAS) for marketing campaigns.
+model MarketingMetricSnapshot {
+  id               String   @id @default(uuid())
+  campaignId       String
+  organizationId   String
+  periodStart      DateTime
+  periodEnd        DateTime
+  impressions      Int      @default(0)
+  clicks           Int      @default(0)
+  spendCents       Int      @default(0)
+  conversions      Int      @default(0)
+  revenueCents     Int?     @default(0)
+  ctrPct           Float    @default(0.0)
+  cpcCents         Int      @default(0)
+  costPerLeadCents Int      @default(0)
+  roas             Float?   @default(0.0)
+  metadata         Json     @default("{}")
+  createdAt        DateTime @default(now())
+
+  campaign     MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, periodStart])
+  @@index([organizationId, periodStart])
+  @@map("marketing_metric_snapshots")
+}
+
 
 
 

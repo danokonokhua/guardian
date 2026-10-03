@@ -104,6 +104,7 @@ export function DashboardShell({
               ["/revenue", "Lead-form health"],
               ["/reputation", "Reputation & reviews"],
               ["/competitors", "Competitor intelligence"],
+              ["/marketing", "Marketing intelligence"],
             ] as const
           ).map(([href, label]) => (
             <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>
