@@ -63,13 +63,14 @@ export async function deliverExternal(
           },
         })
       : null;
+    const isRecovery = delivery.dedupKey.startsWith("recovery:");
     if (
       (delivery.statusMessage !== null &&
         (!statusMessage.success || !statusPage || !delivery.destination.enabled)) ||
       (delivery.issueId &&
         (!delivery.destination.enabled ||
           !issue ||
-          ["RESOLVED", "IGNORED"].includes(issue.status))) ||
+          (!isRecovery && ["RESOLVED", "IGNORED"].includes(issue.status)))) ||
       !DESTINATION_CHANNELS.includes(delivery.destination.channel as DestinationChannel)
     ) {
       await tx.externalDelivery.update({
@@ -99,16 +100,20 @@ export async function deliverExternal(
   });
   if (!claimed) return;
   const { delivery, issue, statusMessage } = claimed;
+  const isRecovery = delivery.dedupKey.startsWith("recovery:");
   const message: ExternalMessage = {
     deliveryId,
     organizationId,
     issueId: delivery.issueId,
-    title: statusMessage?.title ?? issue?.title ?? "Guardian test notification",
+    title:
+      statusMessage?.title ??
+      (isRecovery && issue?.title ? `Resolved: ${issue.title}` : (issue?.title ?? "Guardian test notification")),
     body:
       statusMessage?.body ??
-      issue?.summary ??
-      "Your Guardian notification destination is reachable.",
-    severity: issue?.severity ?? "INFO",
+      (isRecovery
+        ? `Service has recovered. ${issue?.summary ?? ""}`.trim()
+        : (issue?.summary ?? "Your Guardian notification destination is reachable.")),
+    severity: isRecovery ? "INFO" : (issue?.severity ?? "INFO"),
     test: !delivery.issueId && !statusMessage,
     ...(statusMessage ? { event: "guardian.status" as const } : {}),
     createdAt: delivery.createdAt.toISOString(),

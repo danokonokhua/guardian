@@ -4,6 +4,7 @@ import type { IssueSeverity, Prisma } from "@prisma/client";
 import { getPrisma } from "@/db/client";
 import { withGucContext, type PrismaTransactionHost, type TenantScope } from "@/db/tenant";
 import { upsertSlaDispatch } from "@/lib/jobs/dispatch";
+import { dispatchIssueRecoveryNotifications } from "@/services/issues/recovery";
 
 export interface Finding {
   organizationId: string;
@@ -136,7 +137,14 @@ export async function resolveFindingScoped(
           organizationId: scope.organizationId,
           status: { not: "RESOLVED" },
         },
-        select: { id: true, status: true },
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          severity: true,
+          ruleId: true,
+          status: true,
+        },
       });
       if (!existing) return;
       const resolvedAt = new Date();
@@ -153,6 +161,16 @@ export async function resolveFindingScoped(
           toStatus: "RESOLVED",
           metadata: { source: "monitor" },
         },
+      });
+      await dispatchIssueRecoveryNotifications(tx as any, scope.organizationId, {
+        id: existing.id,
+        organizationId: scope.organizationId,
+        title: existing.title,
+        summary: existing.summary,
+        severity: existing.severity,
+        ruleId: existing.ruleId,
+        resolvedAt,
+        resolvedBy: "SYSTEM",
       });
     },
     client,

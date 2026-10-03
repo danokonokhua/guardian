@@ -2,6 +2,7 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import { withGucContext } from "@/db/tenant";
 import { issueFingerprint, recordFindingWithClient } from "@/lib/issue-engine";
+import { dispatchIssueRecoveryNotifications } from "@/services/issues/recovery";
 import { collectAccessibility } from "@/lib/accessibility/collector";
 import {
   ACCESSIBILITY_RULES,
@@ -74,6 +75,16 @@ export async function persistAccessibility(
               toStatus: "RESOLVED",
               metadata: { source: "accessibility_html" },
             },
+          });
+          await dispatchIssueRecoveryNotifications(tx, monitor.organizationId, {
+            id: issue.id,
+            organizationId: monitor.organizationId,
+            title: issue.title,
+            summary: issue.summary,
+            severity: issue.severity,
+            ruleId: issue.ruleId,
+            resolvedAt: now,
+            resolvedBy: "SYSTEM",
           });
         }
       }

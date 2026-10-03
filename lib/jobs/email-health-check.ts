@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { getPrisma } from "@/db/client";
 import { withGucContext } from "@/db/tenant";
 import { issueFingerprint, recordFindingWithClient } from "@/lib/issue-engine";
+import { dispatchIssueRecoveryNotifications } from "@/services/issues/recovery";
 import { collectEmailHealth } from "@/lib/email-health/collector";
 import {
   EMAIL_PROTOCOLS,
@@ -84,6 +85,16 @@ export async function persistEmailHealth(
             toStatus: "RESOLVED",
             metadata: { source: "email_health" },
           },
+        });
+        await dispatchIssueRecoveryNotifications(tx, monitor.organizationId, {
+          id: issue.id,
+          organizationId: monitor.organizationId,
+          title: issue.title,
+          summary: issue.summary,
+          severity: issue.severity,
+          ruleId: issue.ruleId,
+          resolvedAt: now,
+          resolvedBy: "SYSTEM",
         });
       }
     }

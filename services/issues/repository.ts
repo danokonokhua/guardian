@@ -3,6 +3,7 @@ import "server-only";
 import type { IssueSeverity, IssueStatus, Prisma } from "@prisma/client";
 import { NotFoundError } from "@/lib/errors";
 import { withTenantTransaction, type TenantScope } from "@/db/tenant";
+import { dispatchIssueRecoveryNotifications } from "@/services/issues/recovery";
 
 export interface IssueRecord {
   id: string;
@@ -199,7 +200,15 @@ export async function updateIssueLifecycle(
   return withTenantTransaction(scope, async (tx) => {
     const existing = await tx.issue.findFirst({
       where: { id: issueId, organizationId: scope.organizationId },
-      select: { id: true, status: true, assignedToId: true },
+      select: {
+        id: true,
+        status: true,
+        assignedToId: true,
+        title: true,
+        summary: true,
+        severity: true,
+        ruleId: true,
+      },
     });
     if (!existing) throw new NotFoundError("Issue");
 
@@ -247,6 +256,19 @@ export async function updateIssueLifecycle(
           assignedToId: input.assignedToId ?? existing.assignedToId,
         },
       });
+
+      if (input.status === "RESOLVED") {
+        await dispatchIssueRecoveryNotifications(tx, scope.organizationId, {
+          id: existing.id,
+          organizationId: scope.organizationId,
+          title: existing.title,
+          summary: existing.summary,
+          severity: existing.severity,
+          ruleId: existing.ruleId,
+          resolvedAt: data.resolvedAt as Date,
+          resolvedBy: "USER",
+        });
+      }
     }
     if (input.assignedToId !== undefined && input.assignedToId !== existing.assignedToId) {
       await tx.issueActivity.create({
