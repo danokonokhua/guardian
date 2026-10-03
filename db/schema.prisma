@@ -312,6 +312,8 @@ model Organization {
   googleIntegrations       GoogleIntegration[]
   wordpressConnections     WordpressConnection[]
   reviews                  BusinessReview[]
+  competitors              Competitor[]
+  competitorSnapshots      CompetitorSnapshot[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -449,6 +451,7 @@ model Website {
   googleIntegrations GoogleIntegration[]
   wordpressConnection WordpressConnection?
   reviews            BusinessReview[]
+  competitors        Competitor[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -860,5 +863,56 @@ model BusinessReview {
   @@index([organizationId, hasReply])
   @@map("business_reviews")
 }
+
+/// Competitors monitored for strategic intelligence, SEO posture, speed, and promotional offers.
+model Competitor {
+  id             String    @id @default(uuid())
+  organizationId String
+  websiteId      String?
+  name           String
+  domain         String
+  targetUrl      String
+  status         String    @default("ACTIVE") // ACTIVE, PAUSED, ARCHIVED
+  lastCheckedAt  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website?             @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+  snapshots    CompetitorSnapshot[]
+
+  @@unique([organizationId, domain])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@map("competitors")
+}
+
+/// Timestamped snapshots of competitor website signals, metadata, promotional offers, and SEO shifts.
+model CompetitorSnapshot {
+  id             String   @id @default(uuid())
+  competitorId   String
+  organizationId String
+  snapshotDate   DateTime @default(now())
+  httpStatus     Int?
+  responseTimeMs Int?
+  pageTitle      String?
+  metaDescription String?
+  h1             String?
+  detectedOffer  String?
+  seoScore       Int?     @default(70)
+  contentHash    String?
+  hasChanges     Boolean  @default(false)
+  changeSummary  String?
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  competitor   Competitor   @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([competitorId, snapshotDate])
+  @@index([organizationId, snapshotDate])
+  @@map("competitor_snapshots")
+}
+
 
 

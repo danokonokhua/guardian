@@ -80,5 +80,16 @@ export function assertCanUseWordpressConnect(planId: string): void {
   assertCanUseFeature(planId, "wordpressConnect");
 }
 
+/** Asserts an organization plan has access to Competitor Intelligence (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseCompetitorIntelligence(planId: string): void {
+  assertCanUseFeature(planId, "competitorIntelligence");
+}
+
+/** Asserts an organization plan has access to Reputation Monitoring (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseReputationMonitoring(planId: string): void {
+  assertCanUseFeature(planId, "reputationMonitoring");
+}
+
+
 
 
