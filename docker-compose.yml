@@ -87,6 +87,8 @@ services:
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
+      DIRECT_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
+      PGBOSS_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       CRON_SECRET: ${CRON_SECRET}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       TRUSTED_PROXY: ${TRUSTED_PROXY:-false}
@@ -135,6 +137,8 @@ services:
       NODE_ENV: production
       APP_ENV: ${APP_ENV:-production}
       DATABASE_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
+      DIRECT_URL: postgresql://${POSTGRES_APP_USER:-guardian_app}:${POSTGRES_APP_PASSWORD:-}@postgres:5432/${POSTGRES_DB}
+      PGBOSS_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       CRON_SECRET: ${CRON_SECRET}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       SMTP_HOST: ${SMTP_HOST}
