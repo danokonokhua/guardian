@@ -47,6 +47,7 @@ export const POST = withRoute(async (request) => {
   });
   if (!sent) {
     logger.warn("guardian_password_reset_link", { email: user.email, resetUrl });
+    console.log(`[GUARDIAN PASSWORD RESET LINK] Email: ${user.email} -> ${resetUrl}`);
   }
   return jsonResponse(GENERIC_RESPONSE);
 });

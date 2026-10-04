@@ -111,7 +111,7 @@ export async function generateCooDirectivesForOrg(
 
   for (const site of websites) {
     let sslDays: number | null = null;
-    const latencies: number[] = [];
+    let latencies: number[] = [];
     let formFailures = 0;
     let formTotal = 0;
 
@@ -143,7 +143,7 @@ export async function generateCooDirectivesForOrg(
     const criticalIssues = site.issues.filter((i) => i.severity === "CRITICAL").length;
 
     const unansweredReviews = site.reviews.filter((r) => !r.replyText).length;
-    const avgRating =
+    let avgRating =
       site.reviews.length > 0
         ? site.reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / site.reviews.length
         : 4.8;

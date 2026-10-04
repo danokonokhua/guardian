@@ -3,7 +3,6 @@ import "server-only";
 import { createTransport } from "nodemailer";
 import type { EmailNotificationAdapter } from "@/lib/notifications";
 import { serverConfig } from "@/config/server";
-import { logger } from "@/lib/logger";
 
 export interface TransactionalEmail {
   to: string;
@@ -20,7 +19,7 @@ function createSmtpMailer(): ((message: TransactionalEmail) => Promise<void>) | 
   const hasUser = config.smtpUser !== undefined;
   const hasPassword = config.smtpPassword !== undefined;
   if (hasUser !== hasPassword) {
-    logger.warn("SMTP_USER and SMTP_PASSWORD must be configured together.");
+    console.warn("SMTP_USER and SMTP_PASSWORD must be configured together.");
     return null;
   }
 
@@ -55,7 +54,7 @@ export async function sendTransactionalEmail(message: TransactionalEmail): Promi
     await send(message);
     return true;
   } catch (error) {
-    logger.warn("transactional_email_failed", { error: String(error) });
+    console.warn("transactional_email_failed", error);
     return false;
   }
 }

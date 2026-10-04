@@ -70,8 +70,6 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
           setWebsites(list);
           if (list.length > 0 && !selectedWebsiteId) {
             setSelectedWebsiteId(list[0].id);
-          } else if (list.length === 0) {
-            setLoading(false);
           }
         }
       })
@@ -87,10 +85,12 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
   // 2. Fetch WordPress connection for the selected website
   useEffect(() => {
     if (!selectedWebsiteId) {
+      setLoading(false);
       return;
     }
 
     let cancelled = false;
+    setLoading(true);
     fetch(`/api/v1/organizations/${organizationId}/websites/${selectedWebsiteId}/wordpress`)
       .then(async (r) => {
         if (!r.ok) throw new Error("Could not load WordPress connection.");

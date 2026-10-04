@@ -49,6 +49,7 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
 
     const query = new URLSearchParams();
     if (filterRating !== "all") query.set("rating", filterRating);
