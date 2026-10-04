@@ -35,8 +35,10 @@ export interface WebhookEventResult {
 }
 
 export interface BillingProvider {
-  createCheckoutSession(params: CheckoutSessionParams): Promise<{ url: string; sessionId: string }>;
-  createCustomerPortalSession(params: CustomerPortalParams): Promise<{ url: string }>;
+  createCheckoutSession(
+    params: CheckoutSessionParams,
+  ): Promise<{ url: string; sessionId: string; isSimulated?: boolean }>;
+  createCustomerPortalSession(params: CustomerPortalParams): Promise<{ url: string; isSimulated?: boolean }>;
   handleWebhook(payload: string, signature: string): Promise<WebhookEventResult | null>;
 }
 
@@ -229,14 +231,19 @@ export function parseWebhookPayload(payload: string): WebhookEventResult | null 
 export class MockBillingProvider implements BillingProvider {
   async createCheckoutSession(
     params: CheckoutSessionParams,
-  ): Promise<{ url: string; sessionId: string }> {
+  ): Promise<{ url: string; sessionId: string; isSimulated: boolean }> {
     const sessionId = `mock_session_${Date.now()}_${params.organizationId}`;
-    const url = `${params.successUrl}?session_id=${sessionId}&mock_checkout=true&plan=${params.plan}&interval=${params.interval}`;
-    return { url, sessionId };
+    const cleanUrl = params.successUrl.replace("{CHECKOUT_SESSION_ID}", sessionId);
+    const separator = cleanUrl.includes("?") ? "&" : "?";
+    const url = `${cleanUrl}${separator}mock_checkout=true&plan=${params.plan}&interval=${params.interval}`;
+    return { url, sessionId, isSimulated: true };
   }
 
-  async createCustomerPortalSession(params: CustomerPortalParams): Promise<{ url: string }> {
-    return { url: `${params.returnUrl}?mock_portal=true` };
+  async createCustomerPortalSession(
+    params: CustomerPortalParams,
+  ): Promise<{ url: string; isSimulated: boolean }> {
+    const separator = params.returnUrl.includes("?") ? "&" : "?";
+    return { url: `${params.returnUrl}${separator}mock_portal=true`, isSimulated: true };
   }
 
   async handleWebhook(payload: string, signature: string): Promise<WebhookEventResult | null> {

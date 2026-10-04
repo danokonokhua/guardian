@@ -172,6 +172,11 @@ export function BillingOverview({
   }
 
   const handleCheckout = async (targetPlanId: string) => {
+    if (targetPlanId === "ENTERPRISE") {
+      window.location.href = "/contact?plan=ENTERPRISE";
+      return;
+    }
+
     setProcessingPlan(targetPlanId);
     setMessage(null);
 
@@ -182,29 +187,37 @@ export function BillingOverview({
         body: JSON.stringify({
           plan: targetPlanId,
           interval: "MONTHLY",
+          successUrl: `${window.location.origin}/billing?session_id={CHECKOUT_SESSION_ID}&success=true`,
+          cancelUrl: `${window.location.origin}/billing?canceled=true`,
         }),
       });
 
       const json = await res.json();
-      if (json.data?.url) {
+      // If live Stripe checkout is configured, redirect to the hosted Stripe checkout session
+      if (json.data?.url && json.data?.isLive) {
         window.location.href = json.data.url;
-      } else {
-        const changeRes = await fetch(`/api/v1/organizations/${organizationId}/billing`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "change_plan",
-            plan: targetPlanId,
-          }),
-        });
-        const changeJson = await changeRes.json();
-        if (changeJson.data) {
-          setMessage(`Successfully switched to ${getPlanDefinition(targetPlanId).name} plan.`);
-          const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then(
-            (r) => r.json(),
-          );
-          if (refreshed.data) setSummary(refreshed.data);
-        }
+        return;
+      }
+
+      // In testing / sandbox mode (before live Stripe keys are connected),
+      // switch the plan directly in-app without bouncing to external URLs
+      const changeRes = await fetch(`/api/v1/organizations/${organizationId}/billing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "change_plan",
+          plan: targetPlanId,
+        }),
+      });
+      const changeJson = await changeRes.json();
+      if (changeJson.data) {
+        setMessage(
+          `Sandbox Mode: Successfully switched to the ${getPlanDefinition(targetPlanId).name} plan.`,
+        );
+        const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then(
+          (r) => r.json(),
+        );
+        if (refreshed.data) setSummary(refreshed.data);
       }
     } catch {
       setMessage("Unable to update plan. Please try again.");
@@ -241,10 +254,17 @@ export function BillingOverview({
       const res = await fetch(`/api/v1/organizations/${organizationId}/billing/portal`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          returnUrl: `${window.location.origin}/billing`,
+        }),
       });
       const json = await res.json();
-      if (json.data?.url) {
+      if (json.data?.url && json.data?.isLive) {
         window.location.href = json.data.url;
+      } else {
+        setMessage(
+          "Sandbox Mode: Stripe Customer Portal is active. In production with live Stripe credentials, this opens the hosted Stripe billing management portal.",
+        );
       }
     } catch {
       setMessage("Unable to open billing portal.");
