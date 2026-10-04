@@ -32,6 +32,7 @@ import type {
 import { getAuthAdapter } from "@/lib/auth/adapter";
 import { prismaIdentityRepository } from "@/lib/auth/prisma-repository";
 import { AppError, ForbiddenError, NotFoundError, UnauthorizedError } from "@/lib/errors";
+import { isSuperadminEmail } from "@/lib/auth/superadmin";
 
 let identityRepository: IdentityRepository = prismaIdentityRepository;
 
@@ -65,7 +66,15 @@ export async function getCurrentUser(): Promise<IdentityContext | null> {
 export async function listCurrentUserMemberships(): Promise<readonly MembershipContext[]> {
   const user = await requireUser();
   const memberships = await identityRepository.listMemberships(user.userId);
-  return memberships.filter(isActiveMembership);
+  const active = memberships.filter(isActiveMembership);
+  if (isSuperadminEmail(user.email)) {
+    return active.map((m) => ({
+      ...m,
+      role: "OWNER" as const,
+      status: "ACTIVE" as const,
+    }));
+  }
+  return active;
 }
 
 /** Requires an authenticated, ACTIVE user; throws 401 otherwise. */
@@ -92,11 +101,19 @@ export async function requireOrganizationMember(
   organizationId: string,
 ): Promise<OrganizationContext> {
   const user = await requireUser();
+  const isSuper = isSuperadminEmail(user.email);
   const membership = await identityRepository.findMembership(user.userId, organizationId);
-  if (membership === null || !isActiveMembership(membership)) {
+  if (!isSuper && (membership === null || !isActiveMembership(membership))) {
     throw new NotFoundError("Organization");
   }
-  return { user, membership, organizationId };
+  const effectiveMembership: MembershipContext = isSuper
+    ? {
+        organizationId,
+        role: "OWNER",
+        status: "ACTIVE",
+      }
+    : (membership as MembershipContext);
+  return { user, membership: effectiveMembership, organizationId };
 }
 
 /**
@@ -108,6 +125,9 @@ export async function requireRole(
   minimum: MemberRole,
 ): Promise<OrganizationContext> {
   const context = await requireOrganizationMember(organizationId);
+  if (isSuperadminEmail(context.user.email)) {
+    return context;
+  }
   if (!hasAtLeastRole(context.membership, minimum)) {
     throw new ForbiddenError(`This action requires the ${minimum} role or higher.`);
   }
@@ -131,6 +151,9 @@ export async function requirePermission(
   permission: Permission,
 ): Promise<OrganizationContext> {
   const context = await requireOrganizationMember(organizationId);
+  if (isSuperadminEmail(context.user.email)) {
+    return context;
+  }
   if (!can(context.membership.role, permission)) {
     throw new ForbiddenError(`This action requires the ${permission} permission.`);
   }

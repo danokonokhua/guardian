@@ -6,6 +6,7 @@ import type { PrismaClient } from "@prisma/client";
 import { getPrisma } from "@/db/client";
 import { ConflictError, ValidationError } from "@/lib/errors";
 import { hashPassword, validatePassword } from "@/lib/auth/password";
+import { isSuperadminEmail } from "@/lib/auth/superadmin";
 
 export interface SignupInput {
   email: string;
@@ -73,12 +74,15 @@ export async function registerAccount(
       // inserts, even though this request has no existing session yet.
       await tx.$executeRaw`SELECT set_config('app.org_id', ${organizationId}, true)`;
       await tx.$executeRaw`SELECT set_config('app.user_id', ${userId}, true)`;
+      const isSuper = isSuperadminEmail(email);
       await tx.organization.create({
         data: {
           id: organizationId,
           name: organizationName,
           slug: `${slugBase(organizationName)}-${organizationId.slice(0, 8)}`,
           ownerId: userId,
+          plan: isSuper ? "ENTERPRISE" : "FREE",
+          subscriptionStatus: isSuper ? "ACTIVE" : undefined,
         },
       });
       await tx.organizationMember.create({

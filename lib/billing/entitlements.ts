@@ -15,6 +15,7 @@ export interface OrganizationUsage {
 
 /** Asserts an organization has quota to add a website. */
 export function assertCanAddWebsite(currentCount: number, planId: string): void {
+  if (planId?.toUpperCase() === "ENTERPRISE") return;
   const limits = getPlanLimits(planId);
   if (currentCount >= limits.maxWebsites) {
     const plan = getPlanDefinition(planId);
@@ -26,6 +27,7 @@ export function assertCanAddWebsite(currentCount: number, planId: string): void 
 
 /** Asserts an organization has quota to add a business. */
 export function assertCanAddBusiness(currentCount: number, planId: string): void {
+  if (planId?.toUpperCase() === "ENTERPRISE") return;
   const limits = getPlanLimits(planId);
   if (currentCount >= limits.maxBusinesses) {
     const plan = getPlanDefinition(planId);
@@ -37,6 +39,7 @@ export function assertCanAddBusiness(currentCount: number, planId: string): void
 
 /** Asserts an organization has quota to invite a new team member. */
 export function assertCanAddMember(currentCount: number, planId: string): void {
+  if (planId?.toUpperCase() === "ENTERPRISE") return;
   const limits = getPlanLimits(planId);
   if (currentCount >= limits.maxTeamMembers) {
     const plan = getPlanDefinition(planId);
@@ -51,6 +54,7 @@ export function assertCanUseFeature(
   planId: string,
   featureName: keyof ReturnType<typeof getPlanFeatures>,
 ): void {
+  if (planId?.toUpperCase() === "ENTERPRISE") return;
   const features = getPlanFeatures(planId);
   if (!features[featureName]) {
     const plan = getPlanDefinition(planId);

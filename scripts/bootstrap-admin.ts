@@ -61,6 +61,8 @@ async function main(): Promise<void> {
           name,
           slug: `${slugBase}-${organizationId.slice(0, 8)}`,
           ownerId: user.id,
+          plan: "ENTERPRISE",
+          subscriptionStatus: "ACTIVE",
         },
       });
       await tx.organizationMember.create({
@@ -72,6 +74,24 @@ async function main(): Promise<void> {
           joinedAt: new Date(),
         },
       });
+    });
+  } else {
+    await withGucContext({ userId: user.id }, async (tx) => {
+      await tx.organizationMember.updateMany({
+        where: { userId: user.id },
+        data: { role: "OWNER", status: "ACTIVE" },
+      });
+      const userMemberships = await tx.organizationMember.findMany({
+        where: { userId: user.id },
+        select: { organizationId: true },
+      });
+      const orgIds = userMemberships.map((m) => m.organizationId);
+      if (orgIds.length > 0) {
+        await tx.organization.updateMany({
+          where: { id: { in: orgIds } },
+          data: { plan: "ENTERPRISE", subscriptionStatus: "ACTIVE" },
+        });
+      }
     });
   }
 
