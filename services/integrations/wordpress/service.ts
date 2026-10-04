@@ -24,6 +24,7 @@ import {
 } from "@/services/integrations/wordpress/repository";
 import { captureHealthScoreSnapshot } from "@/services/health/repository";
 import { issueFingerprint, resolveFindingScoped } from "@/lib/issue-engine";
+import { logger } from "@/lib/logger";
 
 export interface ConnectWordpressInput {
   websiteId: string;
@@ -158,7 +159,7 @@ export async function connectWordpressSite(
 ): Promise<ConnectWordpressResult> {
   const { websiteId, isSandbox = false } = input;
 
-  return withTenantTransaction(scope, async (tx) => {
+  const result = await withTenantTransaction(scope, async (tx) => {
     // 1. Verify website belongs to organization
     const website = await tx.website.findFirst({
       where: { id: websiteId, organizationId: scope.organizationId },
@@ -167,7 +168,8 @@ export async function connectWordpressSite(
       throw new NotFoundError("Website not found in organization.");
     }
 
-    const siteUrl = input.siteUrl || `https://${website.hostname}`;
+    const cleanHostname = website.hostname.replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+    const siteUrl = input.siteUrl || `https://${cleanHostname}`;
     const tokenInfo = generateWordpressToken(isSandbox);
     const context = `${scope.organizationId}:${websiteId}`;
     const tokenEncrypted = encryptWordpressToken(tokenInfo.token, context);
@@ -246,14 +248,24 @@ export async function connectWordpressSite(
       });
     }
 
-    // Refresh digital health score
-    await captureHealthScoreSnapshot(scope);
-
     return {
       connection,
       token: tokenInfo.token,
     };
   });
+
+  // Refresh digital health score outside database transaction (best effort)
+  try {
+    await captureHealthScoreSnapshot(scope);
+  } catch (err) {
+    logger.warn("health_score_snapshot_after_wp_connect_failed", {
+      organizationId: scope.organizationId,
+      websiteId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  return result;
 }
 
 export async function syncWordpressSite(
@@ -266,7 +278,7 @@ export async function syncWordpressSite(
     throw new NotFoundError("WordPress connection not found.");
   }
 
-  return withTenantTransaction(scope, async (tx) => {
+  const result = await withTenantTransaction(scope, async (tx) => {
     let telemetry: WordpressTelemetryPayload;
 
     if (connection.isSandbox) {
@@ -282,7 +294,8 @@ export async function syncWordpressSite(
         throw new Error("Unable to decrypt pairing credentials.");
       }
 
-      const probeUrl = `${connection.siteUrl.replace(/\/+$/, "")}/wp-json/guardian/v1/health`;
+      const baseSiteUrl = connection.siteUrl.replace(/\/+$/, "");
+      const probeUrl = `${baseSiteUrl}/wp-json/guardian/v1/health`;
       try {
         const response = await fetch(probeUrl, {
           method: "GET",
@@ -294,12 +307,36 @@ export async function syncWordpressSite(
           signal: AbortSignal.timeout(6000),
         });
 
-        if (!response.ok) {
+        if (response.ok) {
+          const rawData = await response.json();
+          telemetry = WordpressTelemetrySchema.parse(rawData);
+        } else if (response.status === 404) {
+          // Plugin is not yet active on the WordPress site. Probe core /wp-json/ to verify site reachability.
+          const coreResponse = await fetch(`${baseSiteUrl}/wp-json/`, {
+            method: "GET",
+            headers: { Accept: "application/json", "User-Agent": "Guardian-Health-Monitor/1.0" },
+            signal: AbortSignal.timeout(6000),
+          });
+          if (coreResponse.ok) {
+            const serverHdr =
+              coreResponse.headers.get("server") ||
+              (coreResponse.headers.get("x-litespeed-cache") ? "LiteSpeed" : "Web Server");
+            telemetry = {
+              wpVersion: "WordPress (Awaiting Plugin)",
+              phpVersion: "Awaiting Plugin",
+              serverSoftware: serverHdr,
+              debugMode: false,
+              httpsEnforced: baseSiteUrl.startsWith("https://"),
+              updatesAvailable: { core: 0, plugins: 0, themes: 0 },
+              plugins: [],
+              themes: [],
+            };
+          } else {
+            throw new Error(`WordPress core REST API returned HTTP ${coreResponse.status}`);
+          }
+        } else {
           throw new Error(`WordPress probe responded with HTTP ${response.status}`);
         }
-
-        const rawData = await response.json();
-        telemetry = WordpressTelemetrySchema.parse(rawData);
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : "Sync probe failed";
         await tx.wordpressConnection.update({
@@ -339,14 +376,24 @@ export async function syncWordpressSite(
       tx,
     );
 
-    // Refresh health score
-    await captureHealthScoreSnapshot(scope);
-
     return {
       connection: updated,
       anomalies,
     };
   });
+
+  // Refresh health score outside transaction (best effort)
+  try {
+    await captureHealthScoreSnapshot(scope);
+  } catch (err) {
+    logger.warn("health_score_snapshot_after_wp_sync_failed", {
+      organizationId: scope.organizationId,
+      websiteId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  return result;
 }
 
 /**
@@ -414,9 +461,17 @@ export async function ingestWordpressWebhook(
       { organizationId: connection.organizationId, websiteId: connection.websiteId },
       tx,
     );
-
-    await captureHealthScoreSnapshot(scope);
   });
+
+  try {
+    await captureHealthScoreSnapshot(scope);
+  } catch (err) {
+    logger.warn("health_score_snapshot_after_wp_webhook_failed", {
+      organizationId: scope.organizationId,
+      websiteId: connection.websiteId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   return {
     ok: true,
@@ -467,8 +522,16 @@ export async function disconnectWordpressSite(
         );
       }
     }
-
-    // Refresh health score
-    await captureHealthScoreSnapshot(scope);
   });
+
+  // Refresh health score outside transaction (best effort)
+  try {
+    await captureHealthScoreSnapshot(scope);
+  } catch (err) {
+    logger.warn("health_score_snapshot_after_wp_disconnect_failed", {
+      organizationId: scope.organizationId,
+      websiteId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 }

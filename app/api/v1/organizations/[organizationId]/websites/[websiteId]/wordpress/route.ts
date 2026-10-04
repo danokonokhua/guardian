@@ -3,6 +3,7 @@ import { createTenantScope } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { requirePermission } from "@/lib/auth/context";
 import { assertCanUseWordpressConnect } from "@/lib/billing/entitlements";
+import { parseWith } from "@/lib/validation";
 import { getBillingSummary } from "@/services/billing/repository";
 import {
   connectWordpressSite,
@@ -11,7 +12,16 @@ import {
 import { findWordpressConnection } from "@/services/integrations/wordpress/repository";
 
 const connectSchema = z.object({
-  siteUrl: z.string().url().optional(),
+  siteUrl: z
+    .string()
+    .trim()
+    .optional()
+    .transform((val) => {
+      if (!val) return undefined;
+      const clean = val.replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+      return clean ? `https://${clean}` : undefined;
+    })
+    .pipe(z.string().url().optional()),
   isSandbox: z.boolean().default(false),
 });
 
@@ -50,7 +60,8 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
   const billing = await getBillingSummary(tenantScope);
   const plan = billing?.plan ?? "PRO";
 
-  const body = connectSchema.parse(await request.json().catch(() => ({})));
+  const rawBody = await request.json().catch(() => ({}));
+  const body = parseWith(connectSchema, rawBody, "WordPress connection");
 
   // Sandbox demo mode is accessible to all tiers so users can test & evaluate
   if (!body.isSandbox) {

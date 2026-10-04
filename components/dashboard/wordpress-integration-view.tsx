@@ -54,6 +54,8 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
   const [error, setError] = useState<string | null>(null);
   const [generatedToken, setGeneratedToken] = useState<string | null>(null);
   const [showPairModal, setShowPairModal] = useState(false);
+  const [copiedToken, setCopiedToken] = useState(false);
+  const [copiedWebhook, setCopiedWebhook] = useState(false);
   const [reload, setReload] = useState(0);
 
   // 1. Fetch available websites for this organization
@@ -120,7 +122,8 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
     setError(null);
     try {
       const selectedSite = websites.find((w) => w.id === selectedWebsiteId);
-      const siteUrl = selectedSite ? `https://${selectedSite.hostname}` : undefined;
+      const cleanHost = selectedSite?.hostname?.replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+      const siteUrl = cleanHost ? `https://${cleanHost}` : undefined;
 
       const res = await fetch(
         `/api/v1/organizations/${organizationId}/websites/${selectedWebsiteId}/wordpress`,
@@ -133,7 +136,10 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
 
       const body = await res.json();
       if (!res.ok) {
-        throw new Error(body.error?.message || "Failed to initiate WordPress connection.");
+        const errorMsg =
+          body.error?.message ||
+          (typeof body.error === "string" ? body.error : "Failed to initiate WordPress connection.");
+        throw new Error(errorMsg);
       }
 
       setConnection(body.data.connection);
@@ -508,29 +514,60 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
             </h4>
             <p className="text-xs text-slate-400 leading-relaxed mb-4">
               To connect via the Guardian Connect WordPress plugin, enter the webhook endpoint and
-              pairing token in your WordPress Admin:
+              pairing token in your WordPress Admin (under <strong>Settings → Guardian Connect</strong>):
             </p>
 
-            <div className="space-y-3 font-mono text-xs">
+            <div className="space-y-4 font-mono text-xs">
               <div>
                 <span className="text-slate-400 block mb-1">Webhook Ingestion Endpoint:</span>
-                <input
-                  type="text"
-                  readOnly
-                  value={webhookUrl}
-                  className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-slate-200 select-all"
-                />
-              </div>
-
-              {generatedToken && (
-                <div>
-                  <span className="text-slate-400 block mb-1">Active Pairing Token:</span>
+                <div className="flex items-center gap-2">
                   <input
                     type="text"
                     readOnly
-                    value={generatedToken}
-                    className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-emerald-400 select-all"
+                    value={webhookUrl}
+                    className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-slate-200 select-all"
                   />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(webhookUrl);
+                      setCopiedWebhook(true);
+                      setTimeout(() => setCopiedWebhook(false), 2000);
+                    }}
+                    className="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs shrink-0 transition-colors"
+                  >
+                    {copiedWebhook ? "✓ Copied" : "Copy"}
+                  </button>
+                </div>
+              </div>
+
+              {generatedToken ? (
+                <div>
+                  <span className="text-slate-400 block mb-1">Active Pairing Token:</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={generatedToken}
+                      className="w-full bg-slate-900 border border-white/10 rounded px-3 py-2 text-emerald-400 select-all"
+                    />
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedToken);
+                        setCopiedToken(true);
+                        setTimeout(() => setCopiedToken(false), 2000);
+                      }}
+                      className="px-3 py-2 rounded bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 text-xs shrink-0 transition-colors"
+                    >
+                      {copiedToken ? "✓ Copied" : "Copy Token"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 rounded-lg bg-slate-900/60 border border-white/5 text-slate-400">
+                  Token Prefix: <code className="text-emerald-400">{connection.tokenPrefix}...</code>
+                  <p className="mt-1 text-[11px] text-slate-500 font-sans">
+                    Pairing tokens are encrypted and only shown once upon connection. If you need a new token, click Disconnect and reconnect.
+                  </p>
                 </div>
               )}
             </div>
@@ -552,7 +589,17 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
               {generatedToken}
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex items-center justify-end gap-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(generatedToken);
+                  setCopiedToken(true);
+                  setTimeout(() => setCopiedToken(false), 2000);
+                }}
+                className="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-colors"
+              >
+                {copiedToken ? "✓ Copied to Clipboard" : "Copy Token"}
+              </button>
               <button
                 onClick={() => setShowPairModal(false)}
                 className="button-primary text-xs px-4 py-2"

@@ -67,6 +67,45 @@ describe("WordPress Service", () => {
       expect(healthRepo.captureHealthScoreSnapshot).toHaveBeenCalledWith(scope);
     });
 
+    it("connects a live site with live pairing token prefix without anomaly detection", async () => {
+      const fakeWebsite = { id: "site-live", hostname: "gabofarms.com" };
+      const fakeLiveConn = {
+        id: "wp-conn-live",
+        organizationId: "org-1",
+        websiteId: "site-live",
+        siteUrl: "https://gabofarms.com",
+        tokenEncrypted: "v1.dummy",
+        tokenPrefix: "gcon_live_123456",
+        status: "CONNECTED",
+        isSandbox: false,
+      };
+
+      const mockTx = {
+        website: {
+          findFirst: vi.fn().mockResolvedValue(fakeWebsite),
+        },
+        wordpressConnection: {
+          upsert: vi.fn().mockResolvedValue(fakeLiveConn),
+        },
+      };
+
+      vi.spyOn(tenantDb, "withTenantTransaction").mockImplementation(async (_scope, callback) => {
+        return callback(mockTx as any);
+      });
+
+      const detectSpy = vi.spyOn(wpCollector, "detectWordpressAnomalies");
+
+      const result = await connectWordpressSite(scope, {
+        websiteId: "site-live",
+        isSandbox: false,
+      });
+
+      expect(result.connection).toEqual(fakeLiveConn);
+      expect(result.token.startsWith("gcon_live_")).toBe(true);
+      expect(detectSpy).not.toHaveBeenCalled();
+      expect(healthRepo.captureHealthScoreSnapshot).toHaveBeenCalledWith(scope);
+    });
+
     it("throws NotFoundError if website is not found in organization", async () => {
       const mockTx = {
         website: {
