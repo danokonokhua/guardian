@@ -149,6 +149,8 @@ services:
       MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Guardian Alerts}
     command: ["npm", "run", "worker"]
+    healthcheck:
+      disable: true
     depends_on:
       bootstrap:
         condition: service_completed_successfully
