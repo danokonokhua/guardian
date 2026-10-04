@@ -286,12 +286,20 @@ export function PricingAndFaqSection() {
               and custom integrations.
             </p>
           </div>
-          <Link
-            href="/pricing"
-            className="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-white/10 hover:bg-white/15 text-white border border-white/20 transition-all active:scale-95"
-          >
-            Explore all tiers & features ↗
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/contact?plan=ENTERPRISE"
+              className="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-[#00F0FF] text-[#0A0D14] shadow-[0_0_20px_rgba(0,240,255,0.4)] hover:bg-[#38F4FF] hover:shadow-[0_0_28px_rgba(0,240,255,0.6)] transition-all active:scale-95"
+            >
+              Contact Sales ↗
+            </Link>
+            <Link
+              href="/pricing"
+              className="whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-white/10 hover:bg-white/15 text-white border border-white/20 transition-all active:scale-95"
+            >
+              Explore all tiers ↗
+            </Link>
+          </div>
         </div>
       </section>
 

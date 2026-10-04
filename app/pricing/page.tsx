@@ -31,6 +31,12 @@ export default function PricingPage() {
             Free audit
           </Link>
           <Link
+            href="/contact"
+            className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+          >
+            Contact Sales
+          </Link>
+          <Link
             href="/login"
             className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
           >
@@ -213,7 +219,7 @@ export default function PricingPage() {
                 <Link
                   href={
                     isEnterprise
-                      ? "/audit"
+                      ? "/contact?plan=ENTERPRISE"
                       : `/signup?plan=${plan.id}&interval=${annual ? "annual" : "monthly"}`
                   }
                   className={`w-full text-center py-3.5 rounded-2xl text-sm font-semibold tracking-wide transition-all active:scale-95 shadow-md ${
