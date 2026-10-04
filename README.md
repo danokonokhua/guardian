@@ -100,6 +100,96 @@ Guardian compiles an explainable 0–100 Digital Health Score updated in real ti
 
 ---
 
+## 📖 How to Use Guardian (Step-by-Step User Guide)
+
+Whether you are a solo business owner, an MSP engineer, or an agency managing dozens of client domains, Guardian provides an intuitive workflow from initial discovery to autonomous operations:
+
+### 1. Account Setup & Initial Onboarding
+
+1. **Register**: Go to [`/signup`](http://localhost:3000/signup) to create your primary organization owner account (or [`/login`](http://localhost:3000/login) to sign in).
+2. **Add Your First Website**: Navigate to **Websites** and enter your target URL (e.g. `https://mybusiness.com`).
+3. **Automated Discovery**: Guardian instantly provisions and schedules background telemetry probes:
+   - Synthetic HTTP/HTTPS availability & response latency.
+   - SSL certificate runway & chain validation.
+   - DNS authoritative baseline drift.
+   - Technical SEO (meta tags, robots.txt, sitemaps).
+   - Core Web Vitals & basic security posture.
+4. **Tag Revenue & Lead CTAs**: In website settings, specify the CSS selectors or endpoints for your primary lead generation mechanisms (contact forms, checkout buttons, booking calendars, WhatsApp CTAs, or phone links).
+
+### 2. Daily Monitoring & Health Assessment
+
+- **Executive Pulse (`/dashboard`)**: Check your aggregate **Digital Health Score (0–100)**, active critical incidents, revenue-at-risk, and real-time uptime status.
+- **Digital Health Breakdown (`/health`)**: Inspect the 6 weighted vectors:
+  - _Website & Uptime_ (25%)
+  - _Lead Generation & Revenue_ (25%)
+  - _Performance & Core Web Vitals_ (15%)
+  - _SEO Intelligence_ (15%)
+  - _Security Posture_ (10%)
+  - _Reputation & Reviews_ (10%)
+- **Revenue Protection Hub (`/revenue`)**: Verify that lead forms are actively receiving submissions and no silent script errors or 5xx submission failures are occurring.
+- **Incident Command Center (`/issues`)**: Triage issues by severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`), view SLA breach countdown timers, and track Mean Time to Recovery (MTTR).
+
+### 3. Resolving Issues with AutoFix Remediation (`/remediation`)
+
+1. Navigate to [`/remediation`](http://localhost:3000/remediation) or open the **AutoFix** tab on any active issue.
+2. Review the recommended remediation plan (e.g. DNS failover, Cloudflare cache purge, SSL renewal trigger, robots.txt restoration, or WordPress vulnerability patch).
+3. Click **"Approve & Execute"**: Guardian dispatches the action with execution verification logs.
+4. **Safety Net**: If needed, click **"Rollback"** to instantly revert the action to the previous state snapshot.
+
+### 4. Strategic Operations with the AI COO (`/coo`)
+
+1. Navigate to [`/coo`](http://localhost:3000/coo) to review the **Executive Operations Briefing**.
+2. Guardian synthesizes multi-vector signals into actionable directives prioritized into:
+   - `P0_IMMEDIATE` — Critical risks costing money right now.
+   - `P1_THIS_WEEK` — High-priority performance, SEO, or security bottlenecks.
+   - `P2_THIS_MONTH` — Strategic operational optimizations.
+   - `P3_STRATEGIC` — Long-term competitive positioning.
+3. Inspect the estimated **Business Impact ($USD)** and click **"Execute"** to initiate cross-system improvements.
+
+### 5. Failure Prevention with Predictive Intelligence (`/predictive`)
+
+1. Open [`/predictive`](http://localhost:3000/predictive) to view runway forecasts.
+2. Check predictive risk meters for:
+   - Certificate expiration runway (days remaining before browser warnings).
+   - Latency acceleration slopes (predicting server saturation before crashes).
+   - Conversion velocity drops (early warning of lead capture decay).
+3. Implement preventive actions before customer-facing disruptions occur.
+
+### 6. Connecting Integrations & Ecosystem (`/marketplace` & `/integrations`)
+
+- **Team Alerts**: Go to [`/marketplace`](http://localhost:3000/marketplace) and install connectors for Slack, Discord, Microsoft Teams, PagerDuty, or Datadog.
+- **Google Intelligence**: Connect Google Search Console, Google Analytics 4, and Google Business Profile under `/integrations` to sync search rankings, organic traffic, and customer reviews.
+- **WordPress Bridge**: Pair your WordPress site by generating a secure pairing token to monitor plugins, themes, and core updates remotely.
+
+### 7. Agency Portfolio & Client Management (`/agency`)
+
+- **Client Organization Management**: Manage multiple client brands within isolated workspaces with PostgreSQL Row-Level Security (RLS).
+- **White-Label Client Status Pages (`/status-pages`)**: Create publicly accessible or password-protected status pages with agency branding and custom domain mapping (`status.youragency.com`).
+- **Executive PDF Reports**: Schedule automated weekly and monthly health digests dispatched directly to client executives.
+
+### 8. Mobile Command & Instant Push Alerts (`/mobile`)
+
+1. Open Guardian on your mobile device (iOS Safari or Android Chrome) and navigate to [`/mobile`](http://localhost:3000/mobile).
+2. Tap **"Add to Home Screen"** to install the standalone Progressive Web App (PWA).
+3. Tap **"Enable Push Notifications"** to receive instant hardware-encrypted alerts (RFC 8291 / 8292) when critical incidents occur.
+4. Use the sticky mobile bottom navigation for 1-tap incident triage on the go.
+
+### 9. Developer API & CLI Automation (`/developer`)
+
+- **API Keys**: Generate scoped API keys under [`/developer`](http://localhost:3000/developer) with SHA-256 security.
+- **REST Endpoints**: Ingest health metrics, manage websites, or trigger remediation via `/api/v1/organizations/{orgId}/...`.
+- **OpenAPI Documentation**: Access the complete OpenAPI 3.1 specification at [`/api/v1/openapi.json`](http://localhost:3000/api/v1/openapi.json).
+
+### 10. Instant Public Website Audit (`/audit`)
+
+- **Web Audit**: Visit [`/audit`](http://localhost:3000/audit) for a free, unauthenticated diagnostic audit of any public website URL.
+- **CLI Audit**: Run instant multi-vector audits directly from your terminal:
+  ```bash
+  npm run audit:validate -- https://example.com --detailed
+  ```
+
+---
+
 ## 🛠️ Technology Stack
 
 | Layer               | Technology                        | Description                                    |
