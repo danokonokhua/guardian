@@ -323,6 +323,7 @@ model Organization {
   apiKeys                  ApiKey[]
   mobilePushSubscriptions  MobilePushSubscription[]
   marketplaceInstalls      MarketplaceInstall[]
+  predictiveForecasts      PredictiveForecast[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -463,6 +464,7 @@ model Website {
   competitors        Competitor[]
   marketingCampaigns MarketingCampaign[]
   remediationActions RemediationAction[]
+  predictiveForecasts PredictiveForecast[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -1131,4 +1133,33 @@ model MarketplaceInstall {
   @@index([pluginId])
   @@map("marketplace_installs")
 }
+
+/// Phase 26: Predictive Intelligence & Failure Forecasting (PRD §20, §23, §25).
+model PredictiveForecast {
+  id                String    @id @default(uuid())
+  organizationId    String
+  websiteId         String?
+  targetVector      String    // "SSL_EXPIRY", "UPTIME_ANOMALY", "LEAD_COLLAPSE", "PERFORMANCE_DEGRADATION", "SEO_VISIBILITY_DROP", "DNS_HEALTH"
+  riskLevel         String    // "LOW", "MODERATE", "HIGH", "CRITICAL"
+  probabilityScore  Float     // 0.00 to 1.00 (e.g. 0.85 = 85% probability)
+  predictedWindow   String    // e.g. "NEXT_24_HOURS", "NEXT_7_DAYS", "NEXT_30_DAYS"
+  forecastRunwayDays Int?     // e.g. 4 days until SSL expiry or outage runway
+  title             String    // e.g. "Impending SSL Expiration Risk"
+  predictedImpact   String    // Business revenue/traffic impact projection
+  underlyingSignals Json      @default("[]") // Recent anomalies, metric trends, latency slopes
+  preventiveAction  String    // Proactive recommended fix before incident triggers
+  status            String    @default("ACTIVE") // "ACTIVE", "ACKNOWLEDGED", "RESOLVED", "DISMISSED"
+  generatedAt       DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website?     @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([organizationId, targetVector])
+  @@index([organizationId, riskLevel])
+  @@index([websiteId])
+  @@map("predictive_forecasts")
+}
+
 

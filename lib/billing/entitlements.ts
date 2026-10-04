@@ -125,6 +125,11 @@ export function assertCanUseMarketplace(planId: string): void {
   assertCanUseFeature(planId, "marketplaceIntegrations");
 }
 
+/** Asserts an organization plan has access to Predictive Intelligence (GROWTH, PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUsePredictiveIntelligence(planId: string): void {
+  assertCanUseFeature(planId, "predictiveIntelligence");
+}
+
 /** Returns the allowed requests per minute for an API key based on the organization's plan tier. */
 export function getPlanRateLimitPerMinute(planId: string): number {
   const normalized = planId.toUpperCase();

@@ -110,6 +110,7 @@ export function DashboardShell({
               ["/developer", "Developer & API"],
               ["/mobile", "Mobile command"],
               ["/marketplace", "Marketplace & plugins"],
+              ["/predictive", "Predictive intelligence"],
             ] as const
           ).map(([href, label]) => (
             <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>
