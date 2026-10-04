@@ -130,6 +130,11 @@ export function assertCanUsePredictiveIntelligence(planId: string): void {
   assertCanUseFeature(planId, "predictiveIntelligence");
 }
 
+/** Asserts an organization plan has access to AI COO Executive Directives (PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseAiCoo(planId: string): void {
+  assertCanUseFeature(planId, "aiCooExecutiveDirectives");
+}
+
 /** Returns the allowed requests per minute for an API key based on the organization's plan tier. */
 export function getPlanRateLimitPerMinute(planId: string): number {
   const normalized = planId.toUpperCase();

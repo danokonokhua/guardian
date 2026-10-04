@@ -324,6 +324,7 @@ model Organization {
   mobilePushSubscriptions  MobilePushSubscription[]
   marketplaceInstalls      MarketplaceInstall[]
   predictiveForecasts      PredictiveForecast[]
+  cooDirectives            CooDirective[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -465,6 +466,7 @@ model Website {
   marketingCampaigns MarketingCampaign[]
   remediationActions RemediationAction[]
   predictiveForecasts PredictiveForecast[]
+  cooDirectives       CooDirective[]
 
   @@unique([organizationId, hostname])
   @@index([organizationId])
@@ -1160,6 +1162,39 @@ model PredictiveForecast {
   @@index([organizationId, riskLevel])
   @@index([websiteId])
   @@map("predictive_forecasts")
+}
+
+/// Phase 27 (Final Phase): AI COO Strategic Directives & Autonomous Operations (PRD §16, §17, §23, §25).
+model CooDirective {
+  id                   String    @id @default(uuid())
+  organizationId       String
+  websiteId            String?
+  category             String    // "REVENUE_PROTECTION", "INFRASTRUCTURE_RESILIENCE", "CONVERSION_RATE", "SEO_DOMINANCE", "REPUTATION_SAFEGUARD"
+  priorityTier         String    // "P0_IMMEDIATE", "P1_THIS_WEEK", "P2_THIS_MONTH", "P3_STRATEGIC"
+  urgencyScore         Int       // 0 to 100
+  title                String
+  executiveSummary     String    // CEO/COO business justification
+  businessImpactUsd    Int       // Estimated financial impact / opportunity value in USD
+  effortEstimation     String    // "LOW_EFFORT", "MODERATE_EFFORT", "HIGH_EFFORT"
+  crossDomainEvidence  Json      @default("{}") // Synthesis of Website, Leads, Performance, SEO, Security, Reputation, Competitors
+  operationalAction    String    // Concrete execution directive
+  autoFixAvailable     Boolean   @default(false)
+  status               String    @default("PENDING") // "PENDING", "APPROVED", "EXECUTED", "DISMISSED"
+  approvedById         String?
+  approvedAt           DateTime?
+  executedAt           DateTime?
+  executionResult      Json      @default("{}")
+  generatedAt          DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  website      Website?     @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([organizationId, priorityTier])
+  @@index([organizationId, status])
+  @@index([websiteId])
+  @@map("coo_directives")
 }
 
 
