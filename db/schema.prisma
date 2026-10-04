@@ -322,6 +322,7 @@ model Organization {
   remediationActions       RemediationAction[]
   apiKeys                  ApiKey[]
   mobilePushSubscriptions  MobilePushSubscription[]
+  marketplaceInstalls      MarketplaceInstall[]
 
   @@index([ownerId])
   @@map("organizations")
@@ -1106,5 +1107,28 @@ model MobilePushSubscription {
   @@index([organizationId])
   @@index([userId])
   @@map("mobile_push_subscriptions")
+}
+
+/// Phase 25: Marketplace Platform Integrations & Plugins (PRD §20, §21, §23).
+model MarketplaceInstall {
+  id             String    @id @default(uuid())
+  organizationId String
+  pluginId       String    // catalog id e.g. "slack-interactive", "datadog-telemetry", "pagerduty-incidents"
+  status         String    @default("ACTIVE") // ACTIVE, PAUSED, ERROR, DISABLED
+  config         Json      @default("{}") // public safe config (endpoints, channel names, thresholds)
+  encryptedCredentials String? // AES-256-GCM encrypted credentials / API keys / secrets
+  installedById  String?
+  lastSyncAt     DateTime?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, pluginId])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([pluginId])
+  @@map("marketplace_installs")
 }
 

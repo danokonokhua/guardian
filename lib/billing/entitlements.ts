@@ -120,6 +120,11 @@ export function assertCanUseApiAccess(planId: string): void {
   assertCanUseFeature(planId, "apiAccess");
 }
 
+/** Asserts an organization plan has access to Marketplace Integrations (GROWTH, PRO, AGENCY, WHITE_LABEL, ENTERPRISE). */
+export function assertCanUseMarketplace(planId: string): void {
+  assertCanUseFeature(planId, "marketplaceIntegrations");
+}
+
 /** Returns the allowed requests per minute for an API key based on the organization's plan tier. */
 export function getPlanRateLimitPerMinute(planId: string): number {
   const normalized = planId.toUpperCase();

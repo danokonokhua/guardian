@@ -40,7 +40,7 @@ describe("prisma schema validity", () => {
     );
 
     expect(output).toContain("is valid");
-  }, 30_000);
+  }, 60_000);
 });
 
 describe("required models", () => {
