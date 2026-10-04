@@ -2,6 +2,7 @@ import Link from "next/link";
 import AuditForm from "@/app/audit/audit-form";
 import { Brand } from "@/components/ui/brand";
 import { GlassCard } from "@/components/ui/glass-card";
+import { PricingAndFaqSection } from "@/components/landing/pricing-and-faq-section";
 
 const features = [
   {
@@ -51,6 +52,18 @@ export default function HomePage() {
               className="hidden md:inline-block text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-colors"
             >
               Platform
+            </a>
+            <a
+              href="#pricing"
+              className="hidden sm:inline-block text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-colors"
+            >
+              Pricing
+            </a>
+            <a
+              href="#faq"
+              className="hidden md:inline-block text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-colors"
+            >
+              FAQs
             </a>
             <Link
               href="/audit"
@@ -299,6 +312,9 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Pricing & FAQs Section */}
+        <PricingAndFaqSection />
+
         {/* Closing CTA */}
         <section>
           <GlassCard variant="elevated" glow="violet" className="text-center p-12 sm:p-16">
@@ -311,29 +327,57 @@ export default function HomePage() {
             <p className="text-neutral-300 text-base max-w-xl mx-auto mb-8 leading-relaxed">
               Your first website health check takes under 30 seconds and requires no account.
             </p>
-            <Link
-              href="/audit"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold uppercase tracking-wider bg-[#00F0FF] text-[#0A0D14] shadow-[0_0_24px_rgba(0,240,255,0.45)] hover:bg-[#38F4FF] hover:shadow-[0_0_32px_rgba(0,240,255,0.65)] active:scale-95 transition-all"
-            >
-              Run a free audit <span aria-hidden="true">↗</span>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/audit"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold uppercase tracking-wider bg-[#00F0FF] text-[#0A0D14] shadow-[0_0_24px_rgba(0,240,255,0.45)] hover:bg-[#38F4FF] hover:shadow-[0_0_32px_rgba(0,240,255,0.65)] active:scale-95 transition-all"
+              >
+                Run a free audit <span aria-hidden="true">↗</span>
+              </Link>
+              <Link
+                href="/signup"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-sm font-semibold tracking-wide bg-white/10 text-white border border-white/20 hover:bg-white/15 hover:border-white/30 active:scale-95 transition-all backdrop-blur-md shadow-sm"
+              >
+                Create your workspace
+              </Link>
+            </div>
           </GlassCard>
         </section>
       </main>
 
       {/* Frosted Footer */}
       <footer className="relative z-10 border-t border-white/10 mt-24 py-12 px-6 backdrop-blur-xl bg-[#0A0D14]/75">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <Brand />
-          <p className="text-xs text-neutral-400 font-mono">
-            Protect. Understand. Grow. · Times shown in UTC
-          </p>
-          <Link
-            href="/login"
-            className="text-xs font-medium text-neutral-300 hover:text-white transition-colors"
-          >
-            Sign in to your workspace ↗
-          </Link>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <Brand />
+            <span className="hidden sm:inline text-neutral-600">|</span>
+            <p className="text-xs text-neutral-400 font-mono">
+              Protect. Understand. Grow. · Autonomous Digital Operations
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-neutral-300">
+            <a href="#features" className="hover:text-white transition-colors">
+              Platform
+            </a>
+            <a href="#pricing" className="hover:text-white transition-colors">
+              Pricing
+            </a>
+            <a href="#faq" className="hover:text-white transition-colors">
+              FAQs
+            </a>
+            <Link href="/audit" className="hover:text-white transition-colors">
+              Free Audit
+            </Link>
+            <Link href="/pricing" className="hover:text-white transition-colors">
+              Plans
+            </Link>
+            <Link href="/login" className="hover:text-white transition-colors">
+              Sign In
+            </Link>
+            <Link href="/signup" className="text-[#00F0FF] hover:underline font-bold">
+              Get Started ↗
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
