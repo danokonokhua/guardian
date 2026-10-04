@@ -91,4 +91,109 @@ describe("MonitoringPanel", () => {
       await screen.findByText("Unable to load monitors (request monitor-request-123)"),
     ).toBeInTheDocument();
   });
+
+  it("renders website hostname and category badge on monitor cards instead of raw UUIDs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.endsWith("/monitors")) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                data: [
+                  {
+                    id: "monitor-domain",
+                    websiteId: "site-gabo",
+                    type: "DOMAIN_EXPIRY",
+                    enabled: true,
+                    frequencyMinutes: 1440,
+                  },
+                ],
+              }),
+            ),
+          );
+        }
+        if (url.endsWith("/websites")) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                data: [
+                  {
+                    id: "site-gabo",
+                    hostname: "gabofarms.com",
+                    label: "Gabo Farms",
+                    verifyStatus: "VERIFIED",
+                  },
+                ],
+              }),
+            ),
+          );
+        }
+        return Promise.reject(new Error(`Unexpected ${url}`));
+      }),
+    );
+
+    render(<MonitoringPanel organizationId={ORGANIZATION_ID} />);
+
+    // Check that Gabo Farms (gabofarms.com) is displayed prominently in both card and select option
+    const siteMatches = await screen.findAllByText("Gabo Farms (gabofarms.com)");
+    expect(siteMatches.length).toBeGreaterThanOrEqual(1);
+    // Check that SEO & Domain category badge is present
+    expect(screen.getAllByText("SEO & Domain").length).toBeGreaterThanOrEqual(1);
+    // Check heading for the check
+    expect(screen.getByRole("heading", { name: "Domain registration expiry" })).toBeInTheDocument();
+  });
+
+  it("surfaces clear backend error message when monitor creation conflicts", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string, init?: RequestInit) => {
+        if (url.endsWith("/monitors") && init?.method === "POST") {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                error: {
+                  code: "CONFLICT",
+                  message: "A monitor of this type already exists for this website.",
+                  requestId: "req-conflict-999",
+                },
+              }),
+              { status: 409, headers: { "x-request-id": "req-conflict-999" } },
+            ),
+          );
+        }
+        if (url.endsWith("/monitors")) {
+          return Promise.resolve(new Response(JSON.stringify({ data: [] })));
+        }
+        if (url.endsWith("/websites")) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                data: [
+                  {
+                    id: "site-1",
+                    hostname: "gabofarms.com",
+                    label: "Gabo Farms",
+                    verifyStatus: "VERIFIED",
+                  },
+                ],
+              }),
+            ),
+          );
+        }
+        return Promise.reject(new Error(`Unexpected ${url}`));
+      }),
+    );
+
+    render(<MonitoringPanel organizationId={ORGANIZATION_ID} />);
+
+    // Select website and click Add check
+    const addButton = await screen.findByRole("button", { name: "Add check" });
+    addButton.click();
+
+    expect(
+      await screen.findByText("A monitor of this type already exists for this website."),
+    ).toBeInTheDocument();
+  });
 });
+

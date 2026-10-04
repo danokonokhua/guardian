@@ -1,6 +1,6 @@
 import "server-only";
 
-import { ConflictError } from "@/lib/errors";
+import { ConflictError, NotFoundError } from "@/lib/errors";
 import { expiryConfigSchema } from "@/lib/domain-expiry/config";
 import { parseWith } from "@/lib/validation";
 import type { MonitorType } from "@prisma/client";
@@ -67,7 +67,7 @@ export function createMonitor(
       where: { id: input.websiteId, organizationId: scope.organizationId },
       select: { id: true },
     });
-    if (!website) throw new Error("Website not found.");
+    if (!website) throw new NotFoundError("Website");
     const monitor = await tx.monitor.create({
       data: { organizationId: scope.organizationId, ...input },
       select,

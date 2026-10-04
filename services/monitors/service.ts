@@ -36,8 +36,16 @@ export async function configureMonitor(scope: TenantScope, input: unknown): Prom
         config: object;
       },
     );
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("Unique constraint")) {
+  } catch (error: unknown) {
+    const isConflict =
+      (error instanceof Error &&
+        (error.message.toLowerCase().includes("unique constraint") ||
+          error.message.includes("P2002"))) ||
+      (typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code: unknown }).code === "P2002");
+    if (isConflict) {
       throw new ConflictError("A monitor of this type already exists for this website.");
     }
     throw error;
