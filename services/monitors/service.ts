@@ -13,6 +13,7 @@ import {
 import type { TenantScope } from "@/db/tenant";
 import type { PgBoss } from "pg-boss";
 import { getJobBoss, startJobBoss } from "@/lib/jobs/boss";
+import { getPrisma } from "@/db/client";
 import {
   JOB_EXPIRE_SECONDS,
   JOB_RETRY_DELAY_SECONDS,
@@ -20,12 +21,55 @@ import {
   MONITOR_CHECK_JOB,
 } from "@/lib/jobs/constants";
 
+let enumsEnsured = false;
+
+export async function ensureMonitorTypeEnums(): Promise<void> {
+  if (enumsEnsured) return;
+  try {
+    const prisma = getPrisma();
+    if (!prisma?.$executeRawUnsafe) return;
+    const typesToEnsure = [
+      "SECURITY",
+      "DNS",
+      "DOMAIN_EXPIRY",
+      "EMAIL_HEALTH",
+      "ACCESSIBILITY",
+    ];
+    for (const t of typesToEnsure) {
+      try {
+        await prisma.$executeRawUnsafe(`ALTER TYPE "MonitorType" ADD VALUE IF NOT EXISTS '${t}';`);
+      } catch {
+        // Ignore if already present
+      }
+    }
+
+    try {
+      await prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS "domain_expiry_alerts" (
+          "id" TEXT NOT NULL PRIMARY KEY,
+          "organizationId" TEXT NOT NULL REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+          "domain" TEXT NOT NULL,
+          "expiresAt" TIMESTAMP(3) NOT NULL,
+          "thresholdDays" INTEGER NOT NULL,
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+    } catch {
+      // Ignore if already exists
+    }
+    enumsEnsured = true;
+  } catch {
+    // Ignore if database connection is not active
+  }
+}
+
 export function listConfiguredMonitors(scope: TenantScope): Promise<MonitorRecord[]> {
   return listMonitors(scope);
 }
 
 export async function configureMonitor(scope: TenantScope, input: unknown): Promise<MonitorRecord> {
   const parsed = parseMonitorConfig(input);
+  await ensureMonitorTypeEnums();
   try {
     return await createMonitor(
       scope,
@@ -37,15 +81,41 @@ export async function configureMonitor(scope: TenantScope, input: unknown): Prom
         config: object;
       },
     );
-  } catch (error: unknown) {
+  } catch (rawError: unknown) {
+    let error: unknown = rawError;
     if (error instanceof AppError) {
       throw error;
     }
-    const message = error instanceof Error ? error.message : String(error);
-    const code =
+    let message = error instanceof Error ? error.message : String(error);
+    let code =
       typeof error === "object" && error !== null && "code" in error
         ? String((error as { code: unknown }).code)
         : "";
+
+    // If PostgreSQL enum was missing, heal it immediately and retry once
+    if (message.includes("invalid input value for enum") || message.includes("22P02")) {
+      enumsEnsured = false;
+      await ensureMonitorTypeEnums();
+      try {
+        return await createMonitor(
+          scope,
+          parsed as {
+            websiteId: string;
+            type: MonitorType;
+            enabled: boolean;
+            frequencyMinutes: number;
+            config: object;
+          },
+        );
+      } catch (retryError) {
+        error = retryError;
+        message = retryError instanceof Error ? retryError.message : String(retryError);
+        code =
+          typeof retryError === "object" && retryError !== null && "code" in retryError
+            ? String((retryError as { code: unknown }).code)
+            : "";
+      }
+    }
 
     if (
       message.toLowerCase().includes("unique constraint") ||

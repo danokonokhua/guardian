@@ -69,7 +69,7 @@ export async function upsertMonitorDispatch(
       "monitor_type" = EXCLUDED."monitor_type",
       "enabled" = EXCLUDED."enabled",
       "frequency_minutes" = EXCLUDED."frequency_minutes",
-      "next_run_at" = CASE WHEN ${Boolean(dispatch.nextRunAt)} THEN ${nextRunAt} ELSE "guardian_jobs"."monitor_dispatch"."next_run_at" END,
+      "next_run_at" = COALESCE(${dispatch.nextRunAt ?? null}, "guardian_jobs"."monitor_dispatch"."next_run_at"),
       "updated_at" = CURRENT_TIMESTAMP
   `;
 }
