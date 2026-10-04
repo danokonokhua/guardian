@@ -2,13 +2,8 @@ import { z } from "zod";
 import { createTenantScope } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { requirePermission } from "@/lib/auth/context";
-import {
-  findAgencyClientById,
-} from "@/services/agency/repository";
-import {
-  updateAgencyClientDetails,
-  removeAgencyClient,
-} from "@/services/agency/service";
+import { findAgencyClientById } from "@/services/agency/repository";
+import { updateAgencyClientDetails, removeAgencyClient } from "@/services/agency/service";
 import { NotFoundError } from "@/lib/errors";
 
 const updateSchema = z.object({
@@ -58,4 +53,3 @@ export const DELETE = withApiRoute(async (_request, { params, requestId }) => {
 
   return apiSuccess({ deleted: true }, requestId);
 });
-

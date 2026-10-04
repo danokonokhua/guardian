@@ -39,12 +39,8 @@ export async function MobileHubDashboardPage() {
         title="Mobile Command & Web Push"
         description="Progressive Web App installation, real-time RFC 8291 Web Push incident alerts, and mobile device management."
       >
-        <MobileHubView
-          key={membership.organizationId}
-          organizationId={membership.organizationId}
-        />
+        <MobileHubView key={membership.organizationId} organizationId={membership.organizationId} />
       </DashboardShell>
     </DashboardOrganizationProvider>
   );
 }
-

@@ -7,6 +7,7 @@ const { sendMail, createTransport } = vi.hoisted(() => {
 
 vi.mock("nodemailer", () => ({ createTransport }));
 vi.mock("@/config/server", () => ({
+  appConfig: { logLevel: "info" },
   serverConfig: {
     server: {
       smtpHost: "smtp.example.test",

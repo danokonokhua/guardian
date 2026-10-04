@@ -55,7 +55,7 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
 
       const response = await getCatalogRoute(
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/marketplace`),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -86,7 +86,7 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(201);
@@ -102,7 +102,7 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ config: {} }),
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(400);
@@ -124,14 +124,14 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: "PAUSED" }),
-          }
+          },
         ),
         {
           params: Promise.resolve({
             organizationId: ORG,
             pluginId: "slack-notifications",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(200);
@@ -140,7 +140,7 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
       expect(marketplaceServiceMock.setPluginStatus).toHaveBeenCalledWith(
         expect.anything(),
         "slack-notifications",
-        "PAUSED"
+        "PAUSED",
       );
     });
   });
@@ -152,14 +152,14 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
       const response = await deletePluginRoute(
         new Request(
           `https://guardian.test/api/v1/organizations/${ORG}/marketplace/slack-notifications`,
-          { method: "DELETE" }
+          { method: "DELETE" },
         ),
         {
           params: Promise.resolve({
             organizationId: ORG,
             pluginId: "slack-notifications",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(200);
@@ -167,7 +167,7 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
       expect(json.data.uninstalled).toBe(true);
       expect(marketplaceServiceMock.uninstallMarketplacePlugin).toHaveBeenCalledWith(
         expect.anything(),
-        "slack-notifications"
+        "slack-notifications",
       );
     });
   });
@@ -182,14 +182,14 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
       const response = await testPluginRoute(
         new Request(
           `https://guardian.test/api/v1/organizations/${ORG}/marketplace/slack-notifications/test`,
-          { method: "POST" }
+          { method: "POST" },
         ),
         {
           params: Promise.resolve({
             organizationId: ORG,
             pluginId: "slack-notifications",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(200);
@@ -197,7 +197,7 @@ describe("Marketplace Platform REST API Routes (PRD §20, §21, §23)", () => {
       expect(json.data.success).toBe(true);
       expect(marketplaceServiceMock.testMarketplacePlugin).toHaveBeenCalledWith(
         expect.anything(),
-        "slack-notifications"
+        "slack-notifications",
       );
     });
   });

@@ -15,7 +15,9 @@ describe("Agency Platform Service", () => {
     it("normalizes domains and strips protocols and paths", () => {
       expect(normalizeClientDomain("client.com")).toBe("client.com");
       expect(normalizeClientDomain("https://CLIENT.COM/")).toBe("client.com");
-      expect(normalizeClientDomain("http://sub.domain.co.uk/path?ref=123")).toBe("sub.domain.co.uk");
+      expect(normalizeClientDomain("http://sub.domain.co.uk/path?ref=123")).toBe(
+        "sub.domain.co.uk",
+      );
     });
 
     it("throws ValidationError for invalid domains", () => {
@@ -73,9 +75,7 @@ describe("Agency Platform Service", () => {
 
   describe("bulkScanPortfolio & branding entitlements", () => {
     it("throws ForbiddenError for bulk scans on unsupported plans", async () => {
-      await expect(
-        bulkScanPortfolio(scope, { planId: "FREE" }),
-      ).rejects.toThrow(ForbiddenError);
+      await expect(bulkScanPortfolio(scope, { planId: "FREE" })).rejects.toThrow(ForbiddenError);
     });
 
     it("throws ForbiddenError for white-label branding on unsupported plans", async () => {
@@ -85,4 +85,3 @@ describe("Agency Platform Service", () => {
     });
   });
 });
-

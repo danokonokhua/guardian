@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildGoogleAuthUrl,
-  isGoogleOAuthConfigured,
-} from "@/lib/integrations/google/oauth";
+import { buildGoogleAuthUrl, isGoogleOAuthConfigured } from "@/lib/integrations/google/oauth";
 
 describe("Google OAuth URL generation", () => {
   it("generates fallback mock URL when Google client credentials are not configured", () => {
@@ -17,4 +14,3 @@ describe("Google OAuth URL generation", () => {
     expect(typeof isGoogleOAuthConfigured()).toBe("boolean");
   });
 });
-

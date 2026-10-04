@@ -13,4 +13,3 @@ export const GET = withApiRoute(async (_request, { params, requestId }) => {
   const overview = await getMobileHubOverview(tenantScope);
   return apiSuccess(overview, requestId);
 });
-

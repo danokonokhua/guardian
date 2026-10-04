@@ -75,4 +75,3 @@ export interface CompetitorHeadToHeadSummary {
   avgCompetitorSpeedMs: number | null;
   competitors: CompetitorHeadToHeadItem[];
 }
-

@@ -72,11 +72,17 @@ export async function registerCompetitor(
     );
     if (org?.plan) assertCanUseCompetitorIntelligence(org.plan);
   }
-  if (!input.name || input.name.trim().length === 0) throw new ValidationError("Competitor name is required");
+  if (!input.name || input.name.trim().length === 0)
+    throw new ValidationError("Competitor name is required");
   const { domain, targetUrl } = normalizeCompetitorUrl(input.urlOrDomain);
   const existing = await findCompetitorByDomain(scope, domain);
   if (existing) throw new ConflictError(`Competitor "${domain}" already monitored`);
-  const competitor = await createCompetitor(scope, { websiteId: input.websiteId ?? null, name: input.name.trim(), domain, targetUrl });
+  const competitor = await createCompetitor(scope, {
+    websiteId: input.websiteId ?? null,
+    name: input.name.trim(),
+    domain,
+    targetUrl,
+  });
   return probeCompetitor(scope, competitor.id, { isSandbox: input.isSandbox });
 }
 
@@ -93,7 +99,13 @@ export async function probeCompetitor(
   const diff = compareCompetitorSnapshots(probe, previousSnapshot);
   const snapshot = await recordSnapshot(scope, competitorId, probe, diff);
   const anomalies = await withTenantTransaction(scope, async (tx) =>
-    detectCompetitorAnomalies(competitor, probe, diff, { organizationId: scope.organizationId, websiteId: competitor.websiteId }, tx),
+    detectCompetitorAnomalies(
+      competitor,
+      probe,
+      diff,
+      { organizationId: scope.organizationId, websiteId: competitor.websiteId },
+      tx,
+    ),
   );
   return { competitor, snapshot, diff, anomalies };
 }
@@ -105,7 +117,11 @@ export async function syncAllCompetitors(
   const competitors = await listCompetitors(scope);
   const results: ProbeResultSummary[] = [];
   for (const c of competitors.filter((x) => x.status === "ACTIVE")) {
-    try { results.push(await probeCompetitor(scope, c.id, options)); } catch { /* continue */ }
+    try {
+      results.push(await probeCompetitor(scope, c.id, options));
+    } catch {
+      /* continue */
+    }
   }
   return { probedCount: results.length, results };
 }
@@ -113,7 +129,11 @@ export async function syncAllCompetitors(
 export async function getCompetitorDetails(
   scope: TenantScope,
   competitorId: string,
-): Promise<{ competitor: CompetitorRecord; latestSnapshot: CompetitorSnapshotRecord | null; snapshots: CompetitorSnapshotRecord[] }> {
+): Promise<{
+  competitor: CompetitorRecord;
+  latestSnapshot: CompetitorSnapshotRecord | null;
+  snapshots: CompetitorSnapshotRecord[];
+}> {
   const competitor = await findCompetitorById(scope, competitorId);
   if (!competitor) throw new NotFoundError(`Competitor ${competitorId} not found`);
   const [latestSnapshot, snapshots] = await Promise.all([
@@ -132,7 +152,11 @@ export async function updateCompetitorDetails(
   if (!competitor) throw new NotFoundError(`Competitor ${competitorId} not found`);
   let targetUrl = data.targetUrl;
   if (targetUrl) targetUrl = normalizeCompetitorUrl(targetUrl).targetUrl;
-  return updateCompetitor(scope, competitorId, { name: data.name?.trim(), targetUrl, status: data.status });
+  return updateCompetitor(scope, competitorId, {
+    name: data.name?.trim(),
+    targetUrl,
+    status: data.status,
+  });
 }
 
 export async function removeCompetitor(scope: TenantScope, competitorId: string): Promise<boolean> {

@@ -21,11 +21,7 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
   const body = await request.json().catch(() => ({}));
   const validated = parseWith(executeDirectiveSchema, body, "body");
 
-  const result = await executeCooDirective(
-    tenantScope,
-    directiveId,
-    validated.action
-  );
+  const result = await executeCooDirective(tenantScope, directiveId, validated.action);
 
   return apiSuccess(result, requestId);
 });

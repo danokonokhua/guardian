@@ -118,4 +118,3 @@ describe("Mobile Push Notification Services (PRD §21 & §24)", () => {
     expect(overview.vapidPublicKey).toBeDefined();
   });
 });
-

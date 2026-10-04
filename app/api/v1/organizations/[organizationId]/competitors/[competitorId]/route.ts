@@ -51,4 +51,3 @@ export const DELETE = withApiRoute(async (_request, { params, requestId }) => {
 
   return apiSuccess({ deleted: true }, requestId);
 });
-

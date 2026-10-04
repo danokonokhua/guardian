@@ -1,10 +1,7 @@
 import { createTenantScope } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { requirePermission, requireRole } from "@/lib/auth/context";
-import {
-  getCooDirectivesOverview,
-  generateCooDirectivesForOrg,
-} from "@/services/ai-coo/service";
+import { getCooDirectivesOverview, generateCooDirectivesForOrg } from "@/services/ai-coo/service";
 
 export const GET = withApiRoute(async (_request, { params, requestId }) => {
   const { organizationId } = params;

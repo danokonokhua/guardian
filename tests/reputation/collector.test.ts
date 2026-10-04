@@ -7,9 +7,7 @@ describe("Reputation Anomaly Collector", () => {
     const recordSpy = vi
       .spyOn(issueEngine, "recordFindingWithClient")
       .mockResolvedValue({ id: "iss-1", created: true });
-    const resolveSpy = vi
-      .spyOn(issueEngine, "resolveFindingScoped")
-      .mockResolvedValue();
+    const resolveSpy = vi.spyOn(issueEngine, "resolveFindingScoped").mockResolvedValue();
 
     const fakePrisma = {
       website: {
@@ -70,9 +68,7 @@ describe("Reputation Anomaly Collector", () => {
 
   it("resolves findings when metrics are healthy", async () => {
     const recordSpy = vi.spyOn(issueEngine, "recordFindingWithClient");
-    const resolveSpy = vi
-      .spyOn(issueEngine, "resolveFindingScoped")
-      .mockResolvedValue();
+    const resolveSpy = vi.spyOn(issueEngine, "resolveFindingScoped").mockResolvedValue();
 
     const fakePrisma = {
       website: {

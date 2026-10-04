@@ -82,10 +82,40 @@ const NEGATIVE_WORDS = new Set([
 
 const THEMES: Record<string, string[]> = {
   "Customer Service": ["service", "support", "help", "staff", "rep", "agent", "team", "personnel"],
-  "Reliability": ["reliable", "reliability", "uptime", "down", "outage", "stable", "crash", "broken"],
-  "Speed & Performance": ["fast", "quick", "speed", "slow", "delay", "wait", "responsive", "lag", "latency"],
-  "Pricing & Billing": ["price", "pricing", "cost", "expensive", "cheap", "value", "worth", "refund", "charge", "billing"],
-  "Product Quality": ["quality", "feature", "easy", "intuitive", "confusing", "simple", "accurate", "accurate"],
+  Reliability: ["reliable", "reliability", "uptime", "down", "outage", "stable", "crash", "broken"],
+  "Speed & Performance": [
+    "fast",
+    "quick",
+    "speed",
+    "slow",
+    "delay",
+    "wait",
+    "responsive",
+    "lag",
+    "latency",
+  ],
+  "Pricing & Billing": [
+    "price",
+    "pricing",
+    "cost",
+    "expensive",
+    "cheap",
+    "value",
+    "worth",
+    "refund",
+    "charge",
+    "billing",
+  ],
+  "Product Quality": [
+    "quality",
+    "feature",
+    "easy",
+    "intuitive",
+    "confusing",
+    "simple",
+    "accurate",
+    "accurate",
+  ],
 };
 
 export function analyzeReviewSentiment(
@@ -93,7 +123,10 @@ export function analyzeReviewSentiment(
   starRating: number,
 ): SentimentAnalysisResult {
   const normalized = comment.toLowerCase();
-  const words = normalized.replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+  const words = normalized
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
 
   let posCount = 0;
   let negCount = 0;
@@ -105,12 +138,20 @@ export function analyzeReviewSentiment(
 
   // Base score from stars (1 -> 0.1, 2 -> 0.3, 3 -> 0.5, 4 -> 0.75, 5 -> 0.95)
   const starBase =
-    starRating === 1 ? 0.1 : starRating === 2 ? 0.3 : starRating === 3 ? 0.5 : starRating === 4 ? 0.8 : 0.95;
+    starRating === 1
+      ? 0.1
+      : starRating === 2
+        ? 0.3
+        : starRating === 3
+          ? 0.5
+          : starRating === 4
+            ? 0.8
+            : 0.95;
 
   // Lexical modifier (-0.2 to +0.2)
   const totalTokens = Math.max(1, posCount + negCount);
   const textPolarity = (posCount - negCount) / totalTokens;
-  const lexicalAdjustment = (posCount === 0 && negCount === 0) ? 0 : textPolarity * 0.2;
+  const lexicalAdjustment = posCount === 0 && negCount === 0 ? 0 : textPolarity * 0.2;
 
   const rawScore = Math.max(0, Math.min(1, starBase + lexicalAdjustment));
   const sentimentScore = Math.round(rawScore * 100) / 100;
@@ -183,9 +224,7 @@ export function calculateReputationMetrics(
   // Keyword frequency aggregation
   const keywordCounts: Record<string, number> = {};
   for (const review of reviews) {
-    const kwList = Array.isArray(review.sentimentKeywords)
-      ? review.sentimentKeywords
-      : [];
+    const kwList = Array.isArray(review.sentimentKeywords) ? review.sentimentKeywords : [];
     for (const kw of kwList) {
       keywordCounts[kw] = (keywordCounts[kw] || 0) + 1;
     }

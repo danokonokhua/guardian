@@ -2,10 +2,7 @@ import { z } from "zod";
 import { createTenantScope } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { requirePermission } from "@/lib/auth/context";
-import {
-  getReputationOverview,
-  recordReview,
-} from "@/services/reputation/service";
+import { getReputationOverview, recordReview } from "@/services/reputation/service";
 
 const ingestSchema = z.object({
   authorName: z.string().trim().min(1),

@@ -33,9 +33,9 @@ describe("WordPress Secrets & Cryptography", () => {
     const { token } = generateWordpressToken();
     const encrypted = encryptWordpressToken(token, "org-123:website-456");
 
-    expect(() =>
-      decryptWordpressToken(encrypted, "wrong-org:website-456"),
-    ).toThrow(/Failed to decrypt WordPress token/);
+    expect(() => decryptWordpressToken(encrypted, "wrong-org:website-456")).toThrow(
+      /Failed to decrypt WordPress token/,
+    );
   });
 
   it("fails to decrypt tampered ciphertext", () => {
@@ -46,8 +46,8 @@ describe("WordPress Secrets & Cryptography", () => {
     parts[3] = Buffer.from("tampered_data").toString("base64");
     const tampered = parts.join(".");
 
-    expect(() =>
-      decryptWordpressToken(tampered, "org-123:website-456"),
-    ).toThrow(/Failed to decrypt WordPress token/);
+    expect(() => decryptWordpressToken(tampered, "org-123:website-456")).toThrow(
+      /Failed to decrypt WordPress token/,
+    );
   });
 });

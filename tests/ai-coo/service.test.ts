@@ -1,10 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { assertCanUseAiCoo } from "@/lib/billing/entitlements";
 import { ForbiddenError, NotFoundError } from "@/lib/errors";
-import {
-  getCooDirectivesOverview,
-  executeCooDirective,
-} from "@/services/ai-coo/service";
+import { getCooDirectivesOverview, executeCooDirective } from "@/services/ai-coo/service";
 import * as repository from "@/services/ai-coo/repository";
 
 vi.mock("@/services/ai-coo/repository");
@@ -132,7 +129,7 @@ describe("AI COO Service & Execution Lifecycle (PRD §16, §17, §23, §25)", ()
         expect.objectContaining({
           status: "APPROVED",
           approvedById: mockTenantScope.userId,
-        })
+        }),
       );
     });
 
@@ -176,16 +173,16 @@ describe("AI COO Service & Execution Lifecycle (PRD §16, §17, §23, §25)", ()
             success: true,
             businessImpactCapturedUsd: 1000,
           }),
-        })
+        }),
       );
     });
 
     it("throws NotFoundError when directive is not found", async () => {
       vi.spyOn(repository, "findCooDirectiveById").mockResolvedValue(null);
 
-      await expect(
-        executeCooDirective(mockTenantScope, "missing-dir", "EXECUTE")
-      ).rejects.toThrow(NotFoundError);
+      await expect(executeCooDirective(mockTenantScope, "missing-dir", "EXECUTE")).rejects.toThrow(
+        NotFoundError,
+      );
     });
   });
 });

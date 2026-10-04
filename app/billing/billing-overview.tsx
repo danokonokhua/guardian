@@ -200,7 +200,9 @@ export function BillingOverview({
         const changeJson = await changeRes.json();
         if (changeJson.data) {
           setMessage(`Successfully switched to ${getPlanDefinition(targetPlanId).name} plan.`);
-          const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) => r.json());
+          const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then(
+            (r) => r.json(),
+          );
           if (refreshed.data) setSummary(refreshed.data);
         }
       }
@@ -222,7 +224,9 @@ export function BillingOverview({
       const json = await res.json();
       if (json.data) {
         setMessage("Your 14-day Pro trial has started!");
-        const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) => r.json());
+        const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) =>
+          r.json(),
+        );
         if (refreshed.data) setSummary(refreshed.data);
       }
     } catch {
@@ -267,9 +271,7 @@ export function BillingOverview({
       });
       const json = await res.json();
       if (res.ok) {
-        setMessage(
-          `Simulated Stripe webhook (${eventType}) processed successfully!`,
-        );
+        setMessage(`Simulated Stripe webhook (${eventType}) processed successfully!`);
         const refreshed = await fetch(`/api/v1/organizations/${organizationId}/billing`).then((r) =>
           r.json(),
         );
@@ -302,7 +304,9 @@ export function BillingOverview({
       {summary?.trial?.isTrialing && (
         <aside className="mb-6 p-4 rounded-xl bg-indigo-950/40 border border-indigo-700/60 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">14-Day Free Trial</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+              14-Day Free Trial
+            </span>
             <p className="text-sm text-neutral-200 mt-1">
               You are enjoying the <strong>{currentPlan?.name ?? "Pro"}</strong> plan for free.{" "}
               {summary.trial.daysRemaining !== null ? (
@@ -325,7 +329,11 @@ export function BillingOverview({
           <h2>{currentPlan?.name ?? (plan ? billingPlanLabel(plan) : "Plan unavailable")}</h2>
           <p>{organizationName}</p>
           <span className="status-pill">
-            {summary?.subscription?.status ? summary.subscription.status : currentPlanId && currentPlanId !== "FREE" ? "ACTIVE" : "FREE TIER"}
+            {summary?.subscription?.status
+              ? summary.subscription.status
+              : currentPlanId && currentPlanId !== "FREE"
+                ? "ACTIVE"
+                : "FREE TIER"}
           </span>
         </div>
         <div className="billing-status">
@@ -365,13 +373,18 @@ export function BillingOverview({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="setup-card">
-            <span className="text-xs uppercase tracking-wider text-neutral-400">Websites Monitored</span>
+            <span className="text-xs uppercase tracking-wider text-neutral-400">
+              Websites Monitored
+            </span>
             <div className="mt-2 flex items-baseline justify-between">
               <span className="text-2xl font-bold text-white">
                 {summary?.usage?.websitesCount ?? 0}
               </span>
               <span className="text-sm text-neutral-400">
-                / {currentPlan?.limits.maxWebsites === Infinity ? "Unlimited" : currentPlan?.limits.maxWebsites ?? 1}
+                /{" "}
+                {currentPlan?.limits.maxWebsites === Infinity
+                  ? "Unlimited"
+                  : (currentPlan?.limits.maxWebsites ?? 1)}
               </span>
             </div>
             <div className="w-full bg-neutral-800 rounded-full h-2 mt-3 overflow-hidden">
@@ -381,8 +394,10 @@ export function BillingOverview({
                   width: `${Math.min(
                     100,
                     ((summary?.usage?.websitesCount ?? 0) /
-                      (currentPlan?.limits.maxWebsites === Infinity ? 100 : currentPlan?.limits.maxWebsites ?? 1)) *
-                      100
+                      (currentPlan?.limits.maxWebsites === Infinity
+                        ? 100
+                        : (currentPlan?.limits.maxWebsites ?? 1))) *
+                      100,
                   )}%`,
                 }}
               ></div>
@@ -390,13 +405,18 @@ export function BillingOverview({
           </div>
 
           <div className="setup-card">
-            <span className="text-xs uppercase tracking-wider text-neutral-400">Client Profiles</span>
+            <span className="text-xs uppercase tracking-wider text-neutral-400">
+              Client Profiles
+            </span>
             <div className="mt-2 flex items-baseline justify-between">
               <span className="text-2xl font-bold text-white">
                 {summary?.usage?.businessesCount ?? 0}
               </span>
               <span className="text-sm text-neutral-400">
-                / {currentPlan?.limits.maxBusinesses === Infinity ? "Unlimited" : currentPlan?.limits.maxBusinesses ?? 1}
+                /{" "}
+                {currentPlan?.limits.maxBusinesses === Infinity
+                  ? "Unlimited"
+                  : (currentPlan?.limits.maxBusinesses ?? 1)}
               </span>
             </div>
             <div className="w-full bg-neutral-800 rounded-full h-2 mt-3 overflow-hidden">
@@ -406,8 +426,10 @@ export function BillingOverview({
                   width: `${Math.min(
                     100,
                     ((summary?.usage?.businessesCount ?? 0) /
-                      (currentPlan?.limits.maxBusinesses === Infinity ? 100 : currentPlan?.limits.maxBusinesses ?? 1)) *
-                      100
+                      (currentPlan?.limits.maxBusinesses === Infinity
+                        ? 100
+                        : (currentPlan?.limits.maxBusinesses ?? 1))) *
+                      100,
                   )}%`,
                 }}
               ></div>
@@ -421,7 +443,10 @@ export function BillingOverview({
                 {summary?.usage?.membersCount ?? 0}
               </span>
               <span className="text-sm text-neutral-400">
-                / {currentPlan?.limits.maxTeamMembers === Infinity ? "Unlimited" : currentPlan?.limits.maxTeamMembers ?? 1}
+                /{" "}
+                {currentPlan?.limits.maxTeamMembers === Infinity
+                  ? "Unlimited"
+                  : (currentPlan?.limits.maxTeamMembers ?? 1)}
               </span>
             </div>
             <div className="w-full bg-neutral-800 rounded-full h-2 mt-3 overflow-hidden">
@@ -431,8 +456,10 @@ export function BillingOverview({
                   width: `${Math.min(
                     100,
                     ((summary?.usage?.membersCount ?? 0) /
-                      (currentPlan?.limits.maxTeamMembers === Infinity ? 100 : currentPlan?.limits.maxTeamMembers ?? 1)) *
-                      100
+                      (currentPlan?.limits.maxTeamMembers === Infinity
+                        ? 100
+                        : (currentPlan?.limits.maxTeamMembers ?? 1))) *
+                      100,
                   )}%`,
                 }}
               ></div>
@@ -464,19 +491,27 @@ export function BillingOverview({
                   <h3>{p.name}</h3>
                   {isSelected && <span className="status-pill">CURRENT PLAN</span>}
                 </div>
-                <p className="billing-price">{price} {isEnterprise ? "" : "/mo"}</p>
+                <p className="billing-price">
+                  {price} {isEnterprise ? "" : "/mo"}
+                </p>
                 <dl>
                   <div>
                     <dt>Websites</dt>
-                    <dd>{p.limits.maxWebsites === Infinity ? "Unlimited" : p.limits.maxWebsites}</dd>
+                    <dd>
+                      {p.limits.maxWebsites === Infinity ? "Unlimited" : p.limits.maxWebsites}
+                    </dd>
                   </div>
                   <div>
                     <dt>Clients</dt>
-                    <dd>{p.limits.maxBusinesses === Infinity ? "Unlimited" : p.limits.maxBusinesses}</dd>
+                    <dd>
+                      {p.limits.maxBusinesses === Infinity ? "Unlimited" : p.limits.maxBusinesses}
+                    </dd>
                   </div>
                   <div>
                     <dt>Team seats</dt>
-                    <dd>{p.limits.maxTeamMembers === Infinity ? "Unlimited" : p.limits.maxTeamMembers}</dd>
+                    <dd>
+                      {p.limits.maxTeamMembers === Infinity ? "Unlimited" : p.limits.maxTeamMembers}
+                    </dd>
                   </div>
                   <div>
                     <dt>Check frequency</dt>
@@ -485,7 +520,10 @@ export function BillingOverview({
                 </dl>
                 <div className="mt-4">
                   {isSelected ? (
-                    <button disabled className="w-full button-secondary compact opacity-60 cursor-default">
+                    <button
+                      disabled
+                      className="w-full button-secondary compact opacity-60 cursor-default"
+                    >
                       Active Plan
                     </button>
                   ) : (
@@ -494,7 +532,11 @@ export function BillingOverview({
                       disabled={isProcessing}
                       className="w-full button-primary compact"
                     >
-                      {isProcessing ? "Connecting…" : isEnterprise ? "Contact Sales" : "Select Plan"}
+                      {isProcessing
+                        ? "Connecting…"
+                        : isEnterprise
+                          ? "Contact Sales"
+                          : "Select Plan"}
                     </button>
                   )}
                 </div>
@@ -518,7 +560,8 @@ export function BillingOverview({
           </span>
         </div>
         <p className="text-sm text-neutral-300 mb-4">
-          Demonstrate end-to-end plan upgrades, subscription renewals, and invoice receipt generation in real-time:
+          Demonstrate end-to-end plan upgrades, subscription renewals, and invoice receipt
+          generation in real-time:
         </p>
         <div className="flex flex-wrap gap-2.5">
           <button
@@ -574,14 +617,21 @@ export function BillingOverview({
                 {summary.invoices.map((inv) => (
                   <tr key={inv.id}>
                     <td className="py-3 px-4">{new Date(inv.createdAt).toLocaleDateString()}</td>
-                    <td className="py-3 px-4 font-mono text-xs">{inv.invoiceNumber ?? inv.id.slice(0, 8)}</td>
+                    <td className="py-3 px-4 font-mono text-xs">
+                      {inv.invoiceNumber ?? inv.id.slice(0, 8)}
+                    </td>
                     <td className="py-3 px-4">${(inv.amountCents / 100).toFixed(2)}</td>
                     <td className="py-3 px-4">
                       <span className="status-pill text-xs">{inv.status}</span>
                     </td>
                     <td className="py-3 px-4 text-right">
                       {inv.pdfUrl ? (
-                        <a href={inv.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">
+                        <a
+                          href={inv.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-400 hover:underline"
+                        >
                           Download PDF
                         </a>
                       ) : (

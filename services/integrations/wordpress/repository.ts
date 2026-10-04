@@ -51,9 +51,7 @@ const select = {
   updatedAt: true,
 } as const;
 
-export function listWordpressConnections(
-  scope: TenantScope,
-): Promise<WordpressConnectionRecord[]> {
+export function listWordpressConnections(scope: TenantScope): Promise<WordpressConnectionRecord[]> {
   return withTenantTransaction(scope, async (tx) =>
     tx.wordpressConnection.findMany({
       where: { organizationId: scope.organizationId },
@@ -142,7 +140,9 @@ export function upsertWordpressConnection(
         ...(input.serverSoftware !== undefined ? { serverSoftware: input.serverSoftware } : {}),
         ...(input.debugMode !== undefined ? { debugMode: input.debugMode } : {}),
         ...(input.httpsEnforced !== undefined ? { httpsEnforced: input.httpsEnforced } : {}),
-        ...(input.updatesAvailable !== undefined ? { updatesAvailable: input.updatesAvailable } : {}),
+        ...(input.updatesAvailable !== undefined
+          ? { updatesAvailable: input.updatesAvailable }
+          : {}),
         ...(input.plugins !== undefined ? { plugins: input.plugins } : {}),
         ...(input.themes !== undefined ? { themes: input.themes } : {}),
         lastSyncAt: new Date(),
@@ -181,7 +181,9 @@ export function updateWordpressConnectionTelemetry(
         ...(input.serverSoftware !== undefined ? { serverSoftware: input.serverSoftware } : {}),
         ...(input.debugMode !== undefined ? { debugMode: input.debugMode } : {}),
         ...(input.httpsEnforced !== undefined ? { httpsEnforced: input.httpsEnforced } : {}),
-        ...(input.updatesAvailable !== undefined ? { updatesAvailable: input.updatesAvailable } : {}),
+        ...(input.updatesAvailable !== undefined
+          ? { updatesAvailable: input.updatesAvailable }
+          : {}),
         ...(input.plugins !== undefined ? { plugins: input.plugins } : {}),
         ...(input.themes !== undefined ? { themes: input.themes } : {}),
         lastError: input.lastError,

@@ -130,7 +130,8 @@ export async function fetchGSCMetrics(
   const totalClicks = rows.reduce((sum, r) => sum + (r.clicks ?? 0), 0);
   const totalImpressions = rows.reduce((sum, r) => sum + (r.impressions ?? 0), 0);
   const avgCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
-  const avgPos = rows.length > 0 ? rows.reduce((sum, r) => sum + (r.position ?? 0), 0) / rows.length : 0;
+  const avgPos =
+    rows.length > 0 ? rows.reduce((sum, r) => sum + (r.position ?? 0), 0) / rows.length : 0;
 
   return analyzeGSCMetrics({
     currentClicks: totalClicks,
@@ -146,4 +147,3 @@ export async function fetchGSCMetrics(
     })),
   });
 }
-

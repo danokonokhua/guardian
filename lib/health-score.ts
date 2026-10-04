@@ -228,7 +228,9 @@ export function calculateDigitalHealthScore(
           ACTIVE_ISSUE_STATUSES.has(issue.status) && categoryForRule(issue.ruleId) === category,
       )
       .sort(latestFirst);
-    const observationWithScore = categoryObservations.find((item) => typeof item.score === "number");
+    const observationWithScore = categoryObservations.find(
+      (item) => typeof item.score === "number",
+    );
     const upCount = categoryObservations.filter((item) => item.status === "UP").length;
     const downCount = categoryObservations.filter((item) => item.status === "DOWN").length;
     const errorCount = categoryObservations.filter((item) => item.status === "ERROR").length;

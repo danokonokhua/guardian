@@ -195,16 +195,10 @@ export async function connectMockGoogleService(
   return integration;
 }
 
-export function listIntegrationsForTenant(
-  scope: TenantScope,
-): Promise<GoogleIntegrationRecord[]> {
+export function listIntegrationsForTenant(scope: TenantScope): Promise<GoogleIntegrationRecord[]> {
   return listGoogleIntegrations(scope);
 }
 
-export function disconnectIntegrationForTenant(
-  scope: TenantScope,
-  id: string,
-): Promise<void> {
+export function disconnectIntegrationForTenant(scope: TenantScope, id: string): Promise<void> {
   return disconnectGoogleIntegration(scope, id);
 }
-

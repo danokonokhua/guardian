@@ -131,8 +131,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
             Google Intelligence & Analytics Hub
           </h2>
           <p className="text-sm text-neutral-300 mt-1 max-w-2xl">
-            Correlate website health with real visitor traffic, search impression drops, and customer
-            reputation to stop silent revenue leaks.
+            Correlate website health with real visitor traffic, search impression drops, and
+            customer reputation to stop silent revenue leaks.
           </p>
         </div>
         <button
@@ -164,8 +164,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
                 Unlock Google Analytics, Search Console & Reputation Tracking
               </h3>
               <p className="text-sm text-neutral-300 mt-2 max-w-xl leading-relaxed">
-                Connect your Google accounts to detect traffic crashes week-over-week, catch de-indexed
-                pages immediately, and monitor Google Business reviews in one place.
+                Connect your Google accounts to detect traffic crashes week-over-week, catch
+                de-indexed pages immediately, and monitor Google Business reviews in one place.
               </p>
             </div>
             <Link
@@ -181,7 +181,11 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
       {/* Grid of 3 Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* GA4 Card */}
-        <GlassCard variant="elevated" glow="none" className="p-6 flex flex-col justify-between space-y-6">
+        <GlassCard
+          variant="elevated"
+          glow="none"
+          className="p-6 flex flex-col justify-between space-y-6"
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-[#00F0FF] font-bold tracking-wider">
@@ -201,7 +205,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
             <div>
               <h3 className="text-lg font-bold text-white">Google Analytics 4 (GA4)</h3>
               <p className="text-xs text-neutral-400 mt-1">
-                Monitors session momentum and triggers alerts on &gt;30% week-over-week traffic drops.
+                Monitors session momentum and triggers alerts on &gt;30% week-over-week traffic
+                drops.
               </p>
             </div>
 
@@ -212,18 +217,24 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
                     <div className="text-2xl font-bold text-white">
                       {ga4.syncSummary.currentSessions?.toLocaleString() ?? "—"}
                     </div>
-                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">7-DAY SESSIONS</div>
+                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">
+                      7-DAY SESSIONS
+                    </div>
                   </div>
                   <div className="p-3 rounded-xl bg-white/5 border border-white/10">
                     <div
                       className={`text-2xl font-bold ${
-                        (ga4.syncSummary.sessionChangePct ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"
+                        (ga4.syncSummary.sessionChangePct ?? 0) >= 0
+                          ? "text-emerald-400"
+                          : "text-rose-400"
                       }`}
                     >
                       {(ga4.syncSummary.sessionChangePct ?? 0) > 0 ? "+" : ""}
                       {ga4.syncSummary.sessionChangePct ?? 0}%
                     </div>
-                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">VS PRIOR WEEK</div>
+                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">
+                      VS PRIOR WEEK
+                    </div>
                   </div>
                 </div>
 
@@ -244,7 +255,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-xs text-neutral-400 text-center">
-                Connect your GA4 stream to receive automated traffic crash detection and conversion tracking.
+                Connect your GA4 stream to receive automated traffic crash detection and conversion
+                tracking.
               </div>
             )}
           </div>
@@ -280,7 +292,11 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
         </GlassCard>
 
         {/* Search Console Card */}
-        <GlassCard variant="elevated" glow="none" className="p-6 flex flex-col justify-between space-y-6">
+        <GlassCard
+          variant="elevated"
+          glow="none"
+          className="p-6 flex flex-col justify-between space-y-6"
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-[#00F0FF] font-bold tracking-wider">
@@ -300,7 +316,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
             <div>
               <h3 className="text-lg font-bold text-white">Google Search Console</h3>
               <p className="text-xs text-neutral-400 mt-1">
-                Detects organic ranking crashes, visibility drops, and critical Google indexing errors.
+                Detects organic ranking crashes, visibility drops, and critical Google indexing
+                errors.
               </p>
             </div>
 
@@ -311,7 +328,9 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
                     <div className="text-2xl font-bold text-white">
                       {gsc.syncSummary.currentClicks?.toLocaleString() ?? "—"}
                     </div>
-                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">28-DAY CLICKS</div>
+                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">
+                      28-DAY CLICKS
+                    </div>
                   </div>
                   <div className="p-3 rounded-xl bg-white/5 border border-white/10">
                     <div className="text-2xl font-bold text-white">
@@ -334,7 +353,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-xs text-neutral-400 text-center">
-                Connect Google Search Console to monitor organic keywords, clicks, and page indexing.
+                Connect Google Search Console to monitor organic keywords, clicks, and page
+                indexing.
               </div>
             )}
           </div>
@@ -370,7 +390,11 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
         </GlassCard>
 
         {/* Business Profile Card */}
-        <GlassCard variant="elevated" glow="none" className="p-6 flex flex-col justify-between space-y-6">
+        <GlassCard
+          variant="elevated"
+          glow="none"
+          className="p-6 flex flex-col justify-between space-y-6"
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-[#00F0FF] font-bold tracking-wider">
@@ -390,7 +414,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
             <div>
               <h3 className="text-lg font-bold text-white">Google Business Profile</h3>
               <p className="text-xs text-neutral-400 mt-1">
-                Monitors local star ratings, customer review velocity, and alerts on unanswered feedback.
+                Monitors local star ratings, customer review velocity, and alerts on unanswered
+                feedback.
               </p>
             </div>
 
@@ -401,13 +426,17 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
                     <div className="text-2xl font-bold text-amber-400">
                       ★ {gbp.syncSummary.averageRating}
                     </div>
-                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">AVERAGE RATING</div>
+                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">
+                      AVERAGE RATING
+                    </div>
                   </div>
                   <div className="p-3 rounded-xl bg-white/5 border border-white/10">
                     <div className="text-2xl font-bold text-white">
                       {gbp.syncSummary.totalReviewCount}
                     </div>
-                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">TOTAL REVIEWS</div>
+                    <div className="text-[10px] font-mono text-neutral-400 mt-0.5">
+                      TOTAL REVIEWS
+                    </div>
                   </div>
                 </div>
 
@@ -416,7 +445,9 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
                     <span className="text-neutral-400">Rating Health:</span>
                     <span
                       className={
-                        gbp.syncSummary.ratingHealth === "HEALTHY" ? "text-emerald-400" : "text-amber-400"
+                        gbp.syncSummary.ratingHealth === "HEALTHY"
+                          ? "text-emerald-400"
+                          : "text-amber-400"
                       }
                     >
                       {gbp.syncSummary.ratingHealth}
@@ -424,7 +455,11 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
                   </div>
                   <div className="flex justify-between">
                     <span className="text-neutral-400">Awaiting Reply:</span>
-                    <span className={gbp.syncSummary.unansweredReviewsCount > 0 ? "text-rose-400 font-bold" : ""}>
+                    <span
+                      className={
+                        gbp.syncSummary.unansweredReviewsCount > 0 ? "text-rose-400 font-bold" : ""
+                      }
+                    >
                       {gbp.syncSummary.unansweredReviewsCount} reviews
                     </span>
                   </div>
@@ -432,7 +467,8 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-xs text-neutral-400 text-center">
-                Connect Google Business Profile to track reviews, ratings, and local map discovery signals.
+                Connect Google Business Profile to track reviews, ratings, and local map discovery
+                signals.
               </div>
             )}
           </div>
@@ -470,4 +506,3 @@ export function GoogleIntegrationsView({ organizationId }: { organizationId: str
     </div>
   );
 }
-

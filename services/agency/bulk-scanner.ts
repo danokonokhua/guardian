@@ -18,7 +18,10 @@ export async function runBulkPortfolioScan(
     try {
       const prevScore = client.healthScore ?? 85;
       // Deterministic slight variation around the baseline
-      const hash = crypto.createHash("md5").update(`${client.clientDomain}-${Date.now()}`).digest("hex");
+      const hash = crypto
+        .createHash("md5")
+        .update(`${client.clientDomain}-${Date.now()}`)
+        .digest("hex");
       const delta = (parseInt(hash.slice(0, 2), 16) % 11) - 5; // -5 to +5
       const newScore = Math.min(100, Math.max(40, prevScore + delta));
 
@@ -54,4 +57,3 @@ export async function runBulkPortfolioScan(
     clientResults,
   };
 }
-

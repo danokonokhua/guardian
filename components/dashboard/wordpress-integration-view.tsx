@@ -70,6 +70,8 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
           setWebsites(list);
           if (list.length > 0 && !selectedWebsiteId) {
             setSelectedWebsiteId(list[0].id);
+          } else if (list.length === 0) {
+            setLoading(false);
           }
         }
       })
@@ -85,12 +87,10 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
   // 2. Fetch WordPress connection for the selected website
   useEffect(() => {
     if (!selectedWebsiteId) {
-      setLoading(false);
       return;
     }
 
     let cancelled = false;
-    setLoading(true);
     fetch(`/api/v1/organizations/${organizationId}/websites/${selectedWebsiteId}/wordpress`)
       .then(async (r) => {
         if (!r.ok) throw new Error("Could not load WordPress connection.");
@@ -181,7 +181,9 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
 
   async function handleDisconnect() {
     if (!selectedWebsiteId) return;
-    if (!confirm("Are you sure you want to disconnect WordPress and remove associated telemetry?")) {
+    if (
+      !confirm("Are you sure you want to disconnect WordPress and remove associated telemetry?")
+    ) {
       return;
     }
     setBusy(true);
@@ -273,16 +275,19 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
               <div>
                 <h3 className="text-lg font-semibold text-white">Guardian Connect for WordPress</h3>
                 <p className="text-xs text-slate-400">
-                  Continuous security intelligence, core/plugin vulnerability detection, and runtime observability.
+                  Continuous security intelligence, core/plugin vulnerability detection, and runtime
+                  observability.
                 </p>
               </div>
             </div>
 
             <p className="mt-4 text-sm text-slate-300 leading-relaxed">
-              Connect your WordPress site to Guardian to automatically track core updates, PHP version status,
-              installed plugins, active themes, and sensitive exposed configurations like{" "}
+              Connect your WordPress site to Guardian to automatically track core updates, PHP
+              version status, installed plugins, active themes, and sensitive exposed configurations
+              like{" "}
               <code className="text-amber-300 bg-amber-400/10 px-1 py-0.5 rounded">WP_DEBUG</code>.
-              Vulnerabilities and outdated packages directly affect your <strong>Security Health Score</strong>.
+              Vulnerabilities and outdated packages directly affect your{" "}
+              <strong>Security Health Score</strong>.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -327,8 +332,12 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
                     )}
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Token Prefix: <code className="text-slate-300">{connection.tokenPrefix}...</code> •
-                    Last synced: {connection.lastSyncAt ? new Date(connection.lastSyncAt).toLocaleString() : "Never"}
+                    Token Prefix:{" "}
+                    <code className="text-slate-300">{connection.tokenPrefix}...</code> • Last
+                    synced:{" "}
+                    {connection.lastSyncAt
+                      ? new Date(connection.lastSyncAt).toLocaleString()
+                      : "Never"}
                   </p>
                 </div>
               </div>
@@ -376,9 +385,7 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
                     {connection.wpVersion || "—"}
                   </span>
                   {connection.updatesAvailable?.core ? (
-                    <span className="text-xs text-amber-400 font-medium">
-                      Update Needed
-                    </span>
+                    <span className="text-xs text-amber-400 font-medium">Update Needed</span>
                   ) : (
                     <span className="text-xs text-emerald-400 font-medium">Latest</span>
                   )}
@@ -496,9 +503,12 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
 
           {/* Plugin Setup & Webhook Reference */}
           <GlassCard className="p-6">
-            <h4 className="text-sm font-semibold text-white mb-2">WordPress Plugin Connection Details</h4>
+            <h4 className="text-sm font-semibold text-white mb-2">
+              WordPress Plugin Connection Details
+            </h4>
             <p className="text-xs text-slate-400 leading-relaxed mb-4">
-              To connect via the Guardian Connect WordPress plugin, enter the webhook endpoint and pairing token in your WordPress Admin:
+              To connect via the Guardian Connect WordPress plugin, enter the webhook endpoint and
+              pairing token in your WordPress Admin:
             </p>
 
             <div className="space-y-3 font-mono text-xs">

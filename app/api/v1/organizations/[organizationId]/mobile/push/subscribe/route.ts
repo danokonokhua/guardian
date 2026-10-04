@@ -33,7 +33,6 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
       endpoint: record.endpoint,
     },
     requestId,
-    201
+    201,
   );
 });
-

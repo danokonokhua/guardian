@@ -30,4 +30,3 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
 
   return apiSuccess({ synced: true, overview }, requestId);
 });
-

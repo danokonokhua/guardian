@@ -4,10 +4,7 @@ import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
 import { assertCanUseAiCoo } from "@/lib/billing/entitlements";
 import { NotFoundError } from "@/lib/errors";
-import {
-  synthesizeExecutiveDirectives,
-  type OrganizationTelemetryAggregate,
-} from "./engine";
+import { synthesizeExecutiveDirectives, type OrganizationTelemetryAggregate } from "./engine";
 import {
   listCooDirectivesByOrg,
   findCooDirectiveById,
@@ -15,11 +12,7 @@ import {
   updateCooDirectiveStatusRecord,
   type CooDirectiveRecord,
 } from "./repository";
-import type {
-  CooCategory,
-  CooPriorityTier,
-  CooDirectiveStatus,
-} from "./types";
+import type { CooCategory, CooPriorityTier, CooDirectiveStatus } from "./types";
 
 export interface CooExecutiveDashboardOverview {
   totalDirectives: number;
@@ -35,18 +28,23 @@ export interface CooExecutiveDashboardOverview {
  */
 export async function getCooDirectivesOverview(
   scope: TenantScope,
-  planId?: string
+  planId?: string,
 ): Promise<CooExecutiveDashboardOverview> {
   const directives = await listCooDirectivesByOrg(scope);
 
-  const p0ImmediateCount = directives.filter((d) => d.priorityTier === "P0_IMMEDIATE" && d.status === "PENDING").length;
-  const p1ThisWeekCount = directives.filter((d) => d.priorityTier === "P1_THIS_WEEK" && d.status === "PENDING").length;
+  const p0ImmediateCount = directives.filter(
+    (d) => d.priorityTier === "P0_IMMEDIATE" && d.status === "PENDING",
+  ).length;
+  const p1ThisWeekCount = directives.filter(
+    (d) => d.priorityTier === "P1_THIS_WEEK" && d.status === "PENDING",
+  ).length;
 
   const totalOpportunityValueUsd = directives
     .filter((d) => d.status === "PENDING" || d.status === "APPROVED")
     .reduce((sum, d) => sum + d.businessImpactUsd, 0);
 
-  let executiveBriefingSummary = "All digital operations channels are operating within optimal parameters.";
+  let executiveBriefingSummary =
+    "All digital operations channels are operating within optimal parameters.";
   if (p0ImmediateCount > 0) {
     executiveBriefingSummary = `⚠️ Urgent: ${p0ImmediateCount} critical revenue-protection directive(s) require immediate operator approval to prevent customer dropoff.`;
   } else if (p1ThisWeekCount > 0) {
@@ -68,7 +66,7 @@ export async function getCooDirectivesOverview(
  */
 export async function generateCooDirectivesForOrg(
   scope: TenantScope,
-  planId?: string
+  planId?: string,
 ): Promise<{
   websitesEvaluated: number;
   directivesGenerated: number;
@@ -79,7 +77,7 @@ export async function generateCooDirectivesForOrg(
       tx.organization.findUnique({
         where: { id: scope.organizationId },
         select: { plan: true },
-      })
+      }),
     );
     effectivePlan = org?.plan ?? "PRO";
   }
@@ -106,14 +104,14 @@ export async function generateCooDirectivesForOrg(
           take: 3,
         },
       },
-    })
+    }),
   );
 
   let directivesCreated = 0;
 
   for (const site of websites) {
     let sslDays: number | null = null;
-    let latencies: number[] = [];
+    const latencies: number[] = [];
     let formFailures = 0;
     let formTotal = 0;
 
@@ -138,13 +136,17 @@ export async function generateCooDirectivesForOrg(
       }
     }
 
-    const avgLatency = latencies.length > 0 ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length) : 650;
+    const avgLatency =
+      latencies.length > 0
+        ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length)
+        : 650;
     const criticalIssues = site.issues.filter((i) => i.severity === "CRITICAL").length;
 
     const unansweredReviews = site.reviews.filter((r) => !r.replyText).length;
-    let avgRating = site.reviews.length > 0
-      ? site.reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / site.reviews.length
-      : 4.8;
+    const avgRating =
+      site.reviews.length > 0
+        ? site.reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / site.reviews.length
+        : 4.8;
 
     const telemetryAggregate: OrganizationTelemetryAggregate = {
       websiteId: site.id,
@@ -181,7 +183,7 @@ export async function generateCooDirectivesForOrg(
 export async function executeCooDirective(
   scope: TenantScope,
   directiveId: string,
-  operatorAction: "APPROVE" | "EXECUTE" | "DISMISS"
+  operatorAction: "APPROVE" | "EXECUTE" | "DISMISS",
 ): Promise<CooDirectiveRecord> {
   const existing = await findCooDirectiveById(scope, directiveId);
   if (!existing) {

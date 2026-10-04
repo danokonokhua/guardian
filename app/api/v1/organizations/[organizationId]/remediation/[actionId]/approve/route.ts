@@ -10,12 +10,7 @@ export const POST = withApiRoute(async (_request, { params, requestId }) => {
   const context = await requirePermission(organizationId, "issue:manage");
   const tenantScope = createTenantScope(context);
 
-  const action = await approveAndExecuteRemediation(
-    tenantScope,
-    actionId,
-    context.user.userId,
-  );
+  const action = await approveAndExecuteRemediation(tenantScope, actionId, context.user.userId);
 
   return apiSuccess(action, requestId);
 });
-

@@ -261,7 +261,8 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
             Agency Command Center & Client Management
           </h2>
           <p className="text-sm text-on-surface-variant">
-            Manage client websites, track managed retainer revenue, run bulk health scans, and customize white-label branding.
+            Manage client websites, track managed retainer revenue, run bulk health scans, and
+            customize white-label branding.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -381,7 +382,8 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
           <div>
             <h3 className="text-base font-semibold text-on-surface">Client Health Matrix</h3>
             <p className="text-xs text-on-surface-variant">
-              Centralized status, digital health scores, and retainers across all agency client accounts
+              Centralized status, digital health scores, and retainers across all agency client
+              accounts
             </p>
           </div>
           <span className="text-xs px-2.5 py-1 rounded-full bg-surface-container-high border border-glass-specular-border text-on-surface-variant">
@@ -409,7 +411,8 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
                   <td colSpan={8} className="py-12 text-center text-on-surface-variant">
                     <p className="text-sm">No clients registered in your agency roster yet.</p>
                     <p className="text-xs mt-1">
-                      Click <strong className="text-on-surface">"+ Add Client"</strong> to register your first client domain.
+                      Click <strong className="text-on-surface">"+ Add Client"</strong> to register
+                      your first client domain.
                     </p>
                   </td>
                 </tr>
@@ -447,8 +450,8 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
                             c.healthScore >= 85
                               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25"
                               : c.healthScore >= 65
-                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/25"
-                              : "bg-rose-500/10 text-rose-400 border border-rose-500/25"
+                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/25"
+                                : "bg-rose-500/10 text-rose-400 border border-rose-500/25"
                           }`}
                         >
                           {c.healthScore} / 100
@@ -460,24 +463,20 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
                             c.riskLevel === "HEALTHY"
                               ? "text-emerald-400"
                               : c.riskLevel === "DEGRADED"
-                              ? "text-amber-400"
-                              : "text-rose-400"
+                                ? "text-amber-400"
+                                : "text-rose-400"
                           }`}
                         >
                           {c.riskLevel === "HEALTHY"
                             ? "✓ Low Risk"
                             : c.riskLevel === "DEGRADED"
-                            ? "⚠️ Degraded"
-                            : "🚨 Critical Risk"}
+                              ? "⚠️ Degraded"
+                              : "🚨 Critical Risk"}
                         </span>
                       </td>
-                      <td className="py-4 font-mono font-medium text-on-surface">
-                        ${retainer}/mo
-                      </td>
+                      <td className="py-4 font-mono font-medium text-on-surface">${retainer}/mo</td>
                       <td className="py-4">
-                        <div className="text-xs text-on-surface">
-                          {c.contactName || "—"}
-                        </div>
+                        <div className="text-xs text-on-surface">{c.contactName || "—"}</div>
                         {c.contactEmail && (
                           <div className="text-[11px] text-on-surface-variant">
                             {c.contactEmail}
@@ -616,7 +615,8 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
           <GlassCard className="w-full max-w-lg p-6" glow="violet">
             <h3 className="text-lg font-bold text-on-surface">White-Label Branding Settings</h3>
             <p className="mt-1 text-xs text-on-surface-variant">
-              Rebrand Guardian with your agency name, logo, custom color palette, and client portal title.
+              Rebrand Guardian with your agency name, logo, custom color palette, and client portal
+              title.
             </p>
 
             {brandingError && (
@@ -744,4 +744,3 @@ export function AgencyView({ organizationId }: { organizationId: string }) {
     </div>
   );
 }
-

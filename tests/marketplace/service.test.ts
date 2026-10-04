@@ -77,8 +77,8 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
         installMarketplacePlugin(
           mockTenantScope,
           { pluginId: "non-existent-plugin", config: {} },
-          "PRO"
-        )
+          "PRO",
+        ),
       ).rejects.toThrow(NotFoundError);
     });
 
@@ -91,8 +91,8 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
             config: {},
             credentials: { routingKey: "12345678" },
           },
-          "GROWTH" // GROWTH is below PRO
-        )
+          "GROWTH", // GROWTH is below PRO
+        ),
       ).rejects.toThrow(ConflictError);
     });
 
@@ -105,8 +105,8 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
             config: {},
             credentials: {}, // missing webhookUrl
           },
-          "PRO"
-        )
+          "PRO",
+        ),
       ).rejects.toThrow(ValidationError);
     });
 
@@ -133,7 +133,7 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
           config: { channel: "#alerts", minSeverity: "HIGH" },
           credentials: { webhookUrl: "https://hooks.slack.com/services/123" },
         },
-        "PRO"
+        "PRO",
       );
 
       expect(result.id).toBe("inst-slack");
@@ -144,7 +144,7 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
           status: "ACTIVE",
           config: { channel: "#alerts", minSeverity: "HIGH" },
           encryptedCredentials: expect.stringMatching(/^v1\./),
-        })
+        }),
       );
     });
   });
@@ -184,7 +184,7 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
         mockTenantScope,
         "slack-notifications",
         "PAUSED",
-        null
+        null,
       );
     });
 
@@ -205,11 +205,11 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
       vi.spyOn(repository, "deleteMarketplaceInstallRecord").mockResolvedValue();
 
       await expect(
-        uninstallMarketplacePlugin(mockTenantScope, "slack-notifications")
+        uninstallMarketplacePlugin(mockTenantScope, "slack-notifications"),
       ).resolves.toBeUndefined();
       expect(repository.deleteMarketplaceInstallRecord).toHaveBeenCalledWith(
         mockTenantScope,
-        "slack-notifications"
+        "slack-notifications",
       );
     });
 
@@ -217,7 +217,7 @@ describe("Marketplace Service & Lifecycle (PRD §20, §21, §23)", () => {
       const { encryptPluginCredentials } = await import("@/services/marketplace/crypto");
       const encrypted = encryptPluginCredentials(
         { webhookUrl: "https://hooks.slack.com/services/123" },
-        `${mockTenantScope.organizationId}:slack-notifications`
+        `${mockTenantScope.organizationId}:slack-notifications`,
       );
 
       vi.spyOn(repository, "findMarketplaceInstallByPluginId").mockResolvedValue({

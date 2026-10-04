@@ -138,11 +138,7 @@ describe("Reputation Service", () => {
         issueIds: [],
       });
 
-      const result = await submitReviewReply(
-        scope,
-        "rev-1",
-        "Thank you for the review!",
-      );
+      const result = await submitReviewReply(scope, "rev-1", "Thank you for the review!");
 
       expect(result.hasReply).toBe(true);
       expect(result.aiSuggestionStatus).toBe("APPROVED");

@@ -44,7 +44,6 @@ Mailtrap sender quota exhausted (`550 5.7.1`). Resolved by switching to Resend S
 
 Organization notification destinations verified end-to-end with live Discord incoming webhook. Outbound URL validation accepts both `discord.com` and `discordapp.com` (normalized to `discord.com`). Direct outbound transport and background pg-boss worker delivery (`notification.external` queue via `guardian-worker-1`) both succeeded with HTTP 200. Automated CLI smoke runner created in `scripts/notification-destination-smoke.ts`. External notification delivery is fully operational.
 
-
 ## Roadmap update: 27 September 2026
 
 Billing is paused by explicit user instruction. PRD v2.1 adds DNS (A/AAAA/MX/NS/TXT), domain expiry (90/30/7-day defaults), SPF/DMARC/MTA-STS email-domain health, agency/client status pages, basic accessibility monitoring, and email/Slack/Teams/Discord/webhook channels (retaining in-app).

@@ -31,4 +31,3 @@ export const DELETE = withApiRoute(async (_request, { params, requestId }) => {
   await disconnectIntegrationForTenant(tenantScope, integrationId);
   return apiSuccess({ disconnected: true }, requestId);
 });
-

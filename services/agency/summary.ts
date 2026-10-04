@@ -61,8 +61,7 @@ export function aggregateAgencyPortfolio(
     };
   });
 
-  const averageHealthScore =
-    activeClients > 0 ? Math.round(scoreSum / activeClients) : 100;
+  const averageHealthScore = activeClients > 0 ? Math.round(scoreSum / activeClients) : 100;
 
   return {
     totalClients: clients.length,
@@ -76,4 +75,3 @@ export function aggregateAgencyPortfolio(
     branding,
   };
 }
-

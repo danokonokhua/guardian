@@ -14,4 +14,3 @@ export const POST = withApiRoute(async (_request, { params, requestId }) => {
 
   return apiSuccess(summary, requestId);
 });
-

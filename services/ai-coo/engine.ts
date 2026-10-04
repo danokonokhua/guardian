@@ -1,7 +1,4 @@
-import type {
-  GeneratedDirective,
-  CrossDomainEvidenceSynthesis,
-} from "./types";
+import type { GeneratedDirective, CrossDomainEvidenceSynthesis } from "./types";
 
 export interface OrganizationTelemetryAggregate {
   websiteId: string;
@@ -23,7 +20,7 @@ export interface OrganizationTelemetryAggregate {
  * Performance, SEO, Security, Reputation, and Competitors into prioritized business roadmaps.
  */
 export function synthesizeExecutiveDirectives(
-  telemetry: OrganizationTelemetryAggregate
+  telemetry: OrganizationTelemetryAggregate,
 ): GeneratedDirective[] {
   const directives: GeneratedDirective[] = [];
 
@@ -60,7 +57,10 @@ export function synthesizeExecutiveDirectives(
   };
 
   // 1. Critical Revenue Protection Directive (P0)
-  if (telemetry.formFailureRate > 0.2 || (telemetry.sslDaysRemaining !== null && telemetry.sslDaysRemaining <= 7)) {
+  if (
+    telemetry.formFailureRate > 0.2 ||
+    (telemetry.sslDaysRemaining !== null && telemetry.sslDaysRemaining <= 7)
+  ) {
     const isSsl = telemetry.sslDaysRemaining !== null && telemetry.sslDaysRemaining <= 7;
     directives.push({
       category: "REVENUE_PROTECTION",
@@ -72,7 +72,9 @@ export function synthesizeExecutiveDirectives(
       executiveSummary: isSsl
         ? "Certificate decay cliff within 7 days risks browser blocking 100% of organic traffic and checkout conversions."
         : `Lead form failure rate of ${Math.round(telemetry.formFailureRate * 100)}% is causing an estimated $${crossEvidence.revenueVector?.estimatedRevenueLossMonthly}/mo in lost customer pipeline.`,
-      businessImpactUsd: isSsl ? 8500 : (crossEvidence.revenueVector?.estimatedRevenueLossMonthly ?? 3500),
+      businessImpactUsd: isSsl
+        ? 8500
+        : (crossEvidence.revenueVector?.estimatedRevenueLossMonthly ?? 3500),
       effortEstimation: "LOW_EFFORT",
       operationalAction: isSsl
         ? "Authorize immediate AutoFix TLS certbot cycle and verify DNS challenge propagation."
@@ -92,7 +94,8 @@ export function synthesizeExecutiveDirectives(
       executiveSummary: `Current TTFB/Response time of ${telemetry.averageLatencyMs}ms exceeds the recommended 800ms threshold. Every 100ms of latency reduction correlates with a 1.2% lift in visitor conversion rates.`,
       businessImpactUsd: 2200,
       effortEstimation: "MODERATE_EFFORT",
-      operationalAction: "Enable Cloudflare edge caching, compress unoptimized Hero WebP assets, and prune slow database queries.",
+      operationalAction:
+        "Enable Cloudflare edge caching, compress unoptimized Hero WebP assets, and prune slow database queries.",
       autoFixAvailable: true,
       crossDomainEvidence: crossEvidence,
     });
@@ -108,14 +111,18 @@ export function synthesizeExecutiveDirectives(
       executiveSummary: `${telemetry.missingMetaCount} primary landing pages lack OpenGraph social tags or structured description metadata, reducing CTR in Google SERPs by an estimated 15-25%.`,
       businessImpactUsd: 1800,
       effortEstimation: "LOW_EFFORT",
-      operationalAction: "Auto-generate Schema.org JSON-LD and meta descriptions across indexable routes.",
+      operationalAction:
+        "Auto-generate Schema.org JSON-LD and meta descriptions across indexable routes.",
       autoFixAvailable: true,
       crossDomainEvidence: crossEvidence,
     });
   }
 
   // 4. Reputation & Review Engagement Directive (P2)
-  if (telemetry.unansweredReviews > 0 || (telemetry.starRating !== null && telemetry.starRating < 4.0)) {
+  if (
+    telemetry.unansweredReviews > 0 ||
+    (telemetry.starRating !== null && telemetry.starRating < 4.0)
+  ) {
     directives.push({
       category: "REPUTATION_SAFEGUARD",
       priorityTier: "P2_THIS_MONTH",
@@ -124,7 +131,8 @@ export function synthesizeExecutiveDirectives(
       executiveSummary: `${telemetry.unansweredReviews} customer reviews on Google Business Profile remain unanswered. Active responses to reviews improve Google Map pack rankings and consumer trust.`,
       businessImpactUsd: 1400,
       effortEstimation: "LOW_EFFORT",
-      operationalAction: "Generate and publish empathetic AI responses to pending reviews via Guardian Reputation Hub.",
+      operationalAction:
+        "Generate and publish empathetic AI responses to pending reviews via Guardian Reputation Hub.",
       autoFixAvailable: false,
       crossDomainEvidence: crossEvidence,
     });
@@ -140,7 +148,8 @@ export function synthesizeExecutiveDirectives(
       executiveSummary: `Top competitors currently hold a ${telemetry.competitorTrafficGap}% estimated traffic advantage across core industry keywords.`,
       businessImpactUsd: 4500,
       effortEstimation: "HIGH_EFFORT",
-      operationalAction: "Target identified competitor keyword gaps and establish authoritative topic cluster landing pages.",
+      operationalAction:
+        "Target identified competitor keyword gaps and establish authoritative topic cluster landing pages.",
       autoFixAvailable: false,
       crossDomainEvidence: crossEvidence,
     });

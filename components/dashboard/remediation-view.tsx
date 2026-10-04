@@ -227,7 +227,8 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
             Automated Remediation & AutoFix Engine
           </h2>
           <p className="text-sm text-on-surface-variant">
-            Safe 8-step remediation pipeline with strict operator approval controls and automated rollback protection.
+            Safe 8-step remediation pipeline with strict operator approval controls and automated
+            rollback protection.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -324,9 +325,7 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
       <GlassCard className="p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h3 className="text-base font-semibold text-on-surface">
-              Pending Authorization Queue
-            </h3>
+            <h3 className="text-base font-semibold text-on-surface">Pending Authorization Queue</h3>
             <p className="text-xs text-on-surface-variant">
               High and medium risk remediations staged for operator review and approval
             </p>
@@ -340,7 +339,8 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
           <div className="py-12 text-center text-on-surface-variant">
             <p className="text-sm">Zero pending remediation approvals.</p>
             <p className="text-xs mt-1">
-              Click <strong className="text-on-surface">"Simulate Fix Proposal"</strong> to test the 8-step pipeline with sample data.
+              Click <strong className="text-on-surface">"Simulate Fix Proposal"</strong> to test the
+              8-step pipeline with sample data.
             </p>
           </div>
         ) : (
@@ -351,8 +351,8 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
                 action.riskLevel === "HIGH"
                   ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
                   : action.riskLevel === "MEDIUM"
-                  ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                  : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+                    ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                    : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
 
               return (
                 <div
@@ -436,7 +436,8 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
               Execution & Audit Trail History
             </h3>
             <p className="text-xs text-on-surface-variant">
-              Immutable record of executed remediations, verification checks, and rollback operations
+              Immutable record of executed remediations, verification checks, and rollback
+              operations
             </p>
           </div>
           <span className="text-xs px-2.5 py-1 rounded-full bg-surface-container-high border border-glass-specular-border text-on-surface-variant">
@@ -469,11 +470,14 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
                     action.status === "COMPLETED"
                       ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                       : action.status === "ROLLED_BACK"
-                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                      : "bg-surface-container-high text-on-surface-variant border border-glass-specular-border";
+                        ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                        : "bg-surface-container-high text-on-surface-variant border border-glass-specular-border";
 
                   return (
-                    <tr key={action.id} className="hover:bg-surface-container-high/40 transition-colors">
+                    <tr
+                      key={action.id}
+                      className="hover:bg-surface-container-high/40 transition-colors"
+                    >
                       <td className="py-4">
                         <div className="space-y-0.5">
                           <strong className="text-sm text-on-surface">{action.title}</strong>
@@ -493,9 +497,7 @@ export function RemediationView({ organizationId }: { organizationId: string }) 
                         <span className="font-mono text-xs">{action.riskLevel}</span>
                       </td>
                       <td className="py-4 font-mono text-on-surface-variant">
-                        {action.executedAt
-                          ? new Date(action.executedAt).toLocaleString()
-                          : "—"}
+                        {action.executedAt ? new Date(action.executedAt).toLocaleString() : "—"}
                       </td>
                       <td className="py-4">
                         {action.status === "COMPLETED" ? (

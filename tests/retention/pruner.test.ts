@@ -219,16 +219,17 @@ describe("History Retention Pruner", () => {
     it("iterates all organizations and aggregates metrics", async () => {
       const mockPrisma: any = {
         organization: {
-          findMany: vi.fn().mockResolvedValueOnce([
-            { id: "org-1" },
-            { id: "org-2" },
-          ]),
-          findUnique: vi.fn()
+          findMany: vi.fn().mockResolvedValueOnce([{ id: "org-1" }, { id: "org-2" }]),
+          findUnique: vi
+            .fn()
             .mockResolvedValueOnce({ id: "org-1", plan: "STARTER", subscription: null })
             .mockResolvedValueOnce({ id: "org-2", plan: "ENTERPRISE", subscription: null }),
         },
         monitoringResult: {
-          findMany: vi.fn().mockResolvedValueOnce([{ id: "m-1" }]).mockResolvedValueOnce([]),
+          findMany: vi
+            .fn()
+            .mockResolvedValueOnce([{ id: "m-1" }])
+            .mockResolvedValueOnce([]),
           deleteMany: vi.fn().mockResolvedValueOnce({ count: 1 }),
         },
         healthScore: {

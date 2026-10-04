@@ -158,9 +158,12 @@ describe("Agency Platform API Routes", () => {
         clientResults: [],
       });
 
-      const res = await postBulkScanRoute(new Request("https://guardian.test", { method: "POST" }), {
-        params: Promise.resolve({ organizationId: ORG }),
-      });
+      const res = await postBulkScanRoute(
+        new Request("https://guardian.test", { method: "POST" }),
+        {
+          params: Promise.resolve({ organizationId: ORG }),
+        },
+      );
 
       expect(res.status).toBe(200);
       const json = await res.json();
@@ -206,4 +209,3 @@ describe("Agency Platform API Routes", () => {
     });
   });
 });
-

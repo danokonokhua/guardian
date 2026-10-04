@@ -39,9 +39,7 @@ const brandingSelect = {
   updatedAt: true,
 } as const;
 
-export async function listAgencyClients(
-  scope: TenantScope,
-): Promise<AgencyClientRecord[]> {
+export async function listAgencyClients(scope: TenantScope): Promise<AgencyClientRecord[]> {
   return withTenantTransaction(scope, async (tx) =>
     tx.agencyClient.findMany({
       where: { agencyOrganizationId: scope.organizationId },
@@ -144,10 +142,7 @@ export async function updateAgencyClientScore(
   );
 }
 
-export async function deleteAgencyClient(
-  scope: TenantScope,
-  id: string,
-): Promise<boolean> {
+export async function deleteAgencyClient(scope: TenantScope, id: string): Promise<boolean> {
   return withTenantTransaction(scope, async (tx) => {
     const deleted = await tx.agencyClient.deleteMany({
       where: { id, agencyOrganizationId: scope.organizationId },
@@ -156,9 +151,7 @@ export async function deleteAgencyClient(
   });
 }
 
-export async function getAgencyBranding(
-  scope: TenantScope,
-): Promise<AgencyBrandingRecord | null> {
+export async function getAgencyBranding(scope: TenantScope): Promise<AgencyBrandingRecord | null> {
   return withTenantTransaction(scope, async (tx) =>
     tx.agencyBranding.findUnique({
       where: { organizationId: scope.organizationId },
@@ -211,4 +204,3 @@ export async function upsertAgencyBranding(
     }),
   );
 }
-

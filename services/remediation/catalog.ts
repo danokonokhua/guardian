@@ -6,9 +6,11 @@ export const REMEDIATION_BLUEPRINTS: Record<string, RemediationBlueprint> = {
   DISABLE_WP_DEBUG: {
     actionType: "DISABLE_WP_DEBUG",
     title: "Disable Exposed WordPress Debug Mode",
-    description: "Updates wp-config.php to set WP_DEBUG_DISPLAY to false and suppress PHP stack traces on production pages.",
+    description:
+      "Updates wp-config.php to set WP_DEBUG_DISPLAY to false and suppress PHP stack traces on production pages.",
     riskLevel: "MEDIUM",
-    recommendation: "Suppress public PHP debug stack traces to eliminate critical information disclosure risks.",
+    recommendation:
+      "Suppress public PHP debug stack traces to eliminate critical information disclosure risks.",
     autoExecutable: false,
     rollbackPlan: {
       action: "RESTORE_WP_DEBUG",
@@ -20,9 +22,11 @@ export const REMEDIATION_BLUEPRINTS: Record<string, RemediationBlueprint> = {
   INJECT_SECURITY_HEADERS: {
     actionType: "INJECT_SECURITY_HEADERS",
     title: "Inject Essential HTTP Security Headers",
-    description: "Applies HSTS (Strict-Transport-Security), X-Frame-Options (DENY), and X-Content-Type-Options (nosniff) headers.",
+    description:
+      "Applies HSTS (Strict-Transport-Security), X-Frame-Options (DENY), and X-Content-Type-Options (nosniff) headers.",
     riskLevel: "LOW",
-    recommendation: "Enforce modern TLS transport and frame protection headers to prevent clickjacking and MIME attacks.",
+    recommendation:
+      "Enforce modern TLS transport and frame protection headers to prevent clickjacking and MIME attacks.",
     autoExecutable: true,
     rollbackPlan: {
       action: "REMOVE_SECURITY_HEADERS",
@@ -34,7 +38,8 @@ export const REMEDIATION_BLUEPRINTS: Record<string, RemediationBlueprint> = {
   PURGE_EDGE_CACHE: {
     actionType: "PURGE_EDGE_CACHE",
     title: "Purge Stale Edge CDN Cache",
-    description: "Flushes the edge proxy static cache to force origin asset re-validation and clear degraded latency.",
+    description:
+      "Flushes the edge proxy static cache to force origin asset re-validation and clear degraded latency.",
     riskLevel: "LOW",
     recommendation: "Flush stale CDN cache to restore sub-second Time to First Byte (TTFB).",
     autoExecutable: true,
@@ -48,9 +53,11 @@ export const REMEDIATION_BLUEPRINTS: Record<string, RemediationBlueprint> = {
   UPDATE_WORDPRESS_CORE: {
     actionType: "UPDATE_WORDPRESS_CORE",
     title: "Apply WordPress Security Core Maintenance",
-    description: "Updates WordPress to the latest minor security maintenance release after capturing a filesystem snapshot.",
+    description:
+      "Updates WordPress to the latest minor security maintenance release after capturing a filesystem snapshot.",
     riskLevel: "HIGH",
-    recommendation: "Upgrade to the latest security patch to remediate known remote code execution vulnerabilities.",
+    recommendation:
+      "Upgrade to the latest security patch to remediate known remote code execution vulnerabilities.",
     autoExecutable: false,
     rollbackPlan: {
       action: "RESTORE_FILESYSTEM_SNAPSHOT",
@@ -66,7 +73,8 @@ export const REMEDIATION_BLUEPRINTS: Record<string, RemediationBlueprint> = {
   RETEST_FORM_ENDPOINT: {
     actionType: "RETEST_FORM_ENDPOINT",
     title: "Dispatch Synthetic Lead-Form Verification Probe",
-    description: "Sends a safe sandbox submission probe through the lead capture endpoint to verify form handler availability.",
+    description:
+      "Sends a safe sandbox submission probe through the lead capture endpoint to verify form handler availability.",
     riskLevel: "LOW",
     recommendation: "Verify lead capture submission pipeline after endpoint reconfiguration.",
     autoExecutable: true,
@@ -80,9 +88,11 @@ export const REMEDIATION_BLUEPRINTS: Record<string, RemediationBlueprint> = {
   REMOVE_NOINDEX_HEADER: {
     actionType: "REMOVE_NOINDEX_HEADER",
     title: "Remove Accidental X-Robots-Tag Noindex Header",
-    description: "Removes noindex directive from production response headers to restore search engine indexation.",
+    description:
+      "Removes noindex directive from production response headers to restore search engine indexation.",
     riskLevel: "HIGH",
-    recommendation: "Remove noindex header immediately to prevent Google de-indexing of key organic landing pages.",
+    recommendation:
+      "Remove noindex header immediately to prevent Google de-indexing of key organic landing pages.",
     autoExecutable: false,
     rollbackPlan: {
       action: "RESTORE_ROBOTS_HEADER",
@@ -131,4 +141,3 @@ export function resolveBlueprint(ruleOrAction: string): RemediationBlueprint {
     },
   };
 }
-

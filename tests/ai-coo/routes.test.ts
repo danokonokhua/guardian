@@ -50,7 +50,7 @@ describe("AI COO Platform REST API Routes (PRD §16, §17, §23, §25)", () => {
 
       const response = await getOverviewRoute(
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/coo`),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -73,7 +73,7 @@ describe("AI COO Platform REST API Routes (PRD §16, §17, §23, §25)", () => {
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/coo`, {
           method: "POST",
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(201);
@@ -92,20 +92,17 @@ describe("AI COO Platform REST API Routes (PRD §16, §17, §23, §25)", () => {
       });
 
       const response = await postExecuteDirectiveRoute(
-        new Request(
-          `https://guardian.test/api/v1/organizations/${ORG}/coo/dir-1/execute`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "EXECUTE" }),
-          }
-        ),
+        new Request(`https://guardian.test/api/v1/organizations/${ORG}/coo/dir-1/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "EXECUTE" }),
+        }),
         {
           params: Promise.resolve({
             organizationId: ORG,
             directiveId: "dir-1",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(200);
@@ -115,26 +112,23 @@ describe("AI COO Platform REST API Routes (PRD §16, §17, §23, §25)", () => {
       expect(cooServiceMock.executeCooDirective).toHaveBeenCalledWith(
         expect.anything(),
         "dir-1",
-        "EXECUTE"
+        "EXECUTE",
       );
     });
 
     it("rejects invalid execution action payloads", async () => {
       const response = await postExecuteDirectiveRoute(
-        new Request(
-          `https://guardian.test/api/v1/organizations/${ORG}/coo/dir-1/execute`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "INVALID_ACTION" }),
-          }
-        ),
+        new Request(`https://guardian.test/api/v1/organizations/${ORG}/coo/dir-1/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "INVALID_ACTION" }),
+        }),
         {
           params: Promise.resolve({
             organizationId: ORG,
             directiveId: "dir-1",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(400);

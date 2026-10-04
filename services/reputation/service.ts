@@ -8,12 +8,8 @@ import {
   calculateReputationMetrics,
   type ReviewMetricsSummary,
 } from "./sentiment";
-import {
-  generateAiReviewResponse,
-} from "./ai-responder";
-import {
-  detectReputationAnomalies,
-} from "./collector";
+import { generateAiReviewResponse } from "./ai-responder";
+import { detectReputationAnomalies } from "./collector";
 import {
   findReviewById,
   listAllReviewsForMetrics,
@@ -54,7 +50,8 @@ const INITIAL_SEED_REVIEWS: Array<{
   {
     authorName: "Marcus Vance",
     rating: 5,
-    comment: "Outstanding client responsiveness and system reliability! Caught our issue immediately.",
+    comment:
+      "Outstanding client responsiveness and system reliability! Caught our issue immediately.",
     source: "GOOGLE_BUSINESS",
     hasReply: true,
     replyText: "Thank you Marcus! Providing fast and reliable support is always our top priority.",
@@ -63,16 +60,19 @@ const INITIAL_SEED_REVIEWS: Array<{
   {
     authorName: "Elena Rostova",
     rating: 4,
-    comment: "Very solid platform and helpful customer onboarding. Would love faster export features.",
+    comment:
+      "Very solid platform and helpful customer onboarding. Would love faster export features.",
     source: "GOOGLE_BUSINESS",
     hasReply: true,
-    replyText: "Thanks Elena! We're glad you had a positive experience. Export improvements are launching next month!",
+    replyText:
+      "Thanks Elena! We're glad you had a positive experience. Export improvements are launching next month!",
     daysAgo: 5,
   },
   {
     authorName: "David K.",
     rating: 5,
-    comment: "Caught our checkout form failure before we lost major weekend orders. Truly saved our business.",
+    comment:
+      "Caught our checkout form failure before we lost major weekend orders. Truly saved our business.",
     source: "GOOGLE_BUSINESS",
     hasReply: false,
     daysAgo: 8,
@@ -88,7 +88,8 @@ const INITIAL_SEED_REVIEWS: Array<{
   {
     authorName: "Tom Bradley",
     rating: 3,
-    comment: "Good service overall, but customer support took longer than expected to answer our question.",
+    comment:
+      "Good service overall, but customer support took longer than expected to answer our question.",
     source: "DIRECT",
     hasReply: false,
     daysAgo: 21,
@@ -262,11 +263,7 @@ async function seedStarterReviews(scope: TenantScope): Promise<void> {
       },
     });
     const metrics = calculateReputationMetrics(all as any);
-    await detectReputationAnomalies(
-      metrics,
-      { organizationId: scope.organizationId },
-      tx,
-    );
+    await detectReputationAnomalies(metrics, { organizationId: scope.organizationId }, tx);
   });
 
   await captureHealthScoreSnapshot(scope);

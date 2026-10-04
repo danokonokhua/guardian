@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  calculateClientRisk,
-  aggregateAgencyPortfolio,
-} from "@/services/agency/summary";
+import { calculateClientRisk, aggregateAgencyPortfolio } from "@/services/agency/summary";
 import { runBulkPortfolioScan } from "@/services/agency/bulk-scanner";
 
 describe("Agency Platform Summary & Bulk Scanner", () => {
@@ -84,4 +81,3 @@ describe("Agency Platform Summary & Bulk Scanner", () => {
     });
   });
 });
-

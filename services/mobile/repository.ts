@@ -31,7 +31,7 @@ const subscriptionSelect = {
 
 export async function upsertPushSubscriptionRecord(
   scope: TenantScope,
-  data: PushSubscriptionInput
+  data: PushSubscriptionInput,
 ): Promise<MobileSubscriptionRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.mobilePushSubscription.upsert({
@@ -52,13 +52,13 @@ export async function upsertPushSubscriptionRecord(
         userAgent: data.userAgent ?? null,
       },
       select: subscriptionSelect,
-    })
+    }),
   );
 }
 
 export async function deletePushSubscriptionRecord(
   scope: TenantScope,
-  endpoint: string
+  endpoint: string,
 ): Promise<boolean> {
   return withTenantTransaction(scope, async (tx) => {
     const existing = await tx.mobilePushSubscription.findFirst({
@@ -74,27 +74,27 @@ export async function deletePushSubscriptionRecord(
 }
 
 export async function listSubscriptionsForOrg(
-  scope: TenantScope
+  scope: TenantScope,
 ): Promise<MobileSubscriptionRecord[]> {
   return withTenantTransaction(scope, async (tx) =>
     tx.mobilePushSubscription.findMany({
       where: { organizationId: scope.organizationId },
       select: subscriptionSelect,
       orderBy: { createdAt: "desc" },
-    })
+    }),
   );
 }
 
 export async function listSubscriptionsForUser(
   scope: TenantScope,
-  userId: string
+  userId: string,
 ): Promise<MobileSubscriptionRecord[]> {
   return withTenantTransaction(scope, async (tx) =>
     tx.mobilePushSubscription.findMany({
       where: { organizationId: scope.organizationId, userId },
       select: subscriptionSelect,
       orderBy: { createdAt: "desc" },
-    })
+    }),
   );
 }
 
@@ -102,7 +102,7 @@ export async function listSubscriptionsForUser(
  * Background / cross-worker fetch of active mobile push devices for an organization.
  */
 export async function listSubscriptionsGlobalForOrg(
-  organizationId: string
+  organizationId: string,
 ): Promise<MobileSubscriptionRecord[]> {
   const prisma = getPrisma();
   return prisma.mobilePushSubscription.findMany({
@@ -110,4 +110,3 @@ export async function listSubscriptionsGlobalForOrg(
     select: subscriptionSelect,
   });
 }
-

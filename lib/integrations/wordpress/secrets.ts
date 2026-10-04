@@ -41,10 +41,7 @@ export function encryptWordpressToken(token: string, context: string): string {
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", getKey(), iv);
   cipher.setAAD(Buffer.from(context, "utf8"));
-  const ciphertext = Buffer.concat([
-    cipher.update(token, "utf8"),
-    cipher.final(),
-  ]);
+  const ciphertext = Buffer.concat([cipher.update(token, "utf8"), cipher.final()]);
 
   return [
     "v1",
@@ -64,11 +61,7 @@ export function decryptWordpressToken(envelope: string, context: string): string
       throw new Error("Invalid credential envelope");
     }
 
-    const decipher = createDecipheriv(
-      "aes-256-gcm",
-      getKey(),
-      Buffer.from(iv, "base64"),
-    );
+    const decipher = createDecipheriv("aes-256-gcm", getKey(), Buffer.from(iv, "base64"));
     decipher.setAAD(Buffer.from(context, "utf8"));
     decipher.setAuthTag(Buffer.from(tag, "base64"));
 

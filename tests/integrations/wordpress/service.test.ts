@@ -201,9 +201,7 @@ describe("WordPress Service", () => {
         return callback(mockTx as any);
       });
 
-      const resolveSpy = vi
-        .spyOn(issueEngine, "resolveFindingScoped")
-        .mockResolvedValue();
+      const resolveSpy = vi.spyOn(issueEngine, "resolveFindingScoped").mockResolvedValue();
 
       await disconnectWordpressSite(scope, "site-1");
 

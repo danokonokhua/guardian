@@ -109,7 +109,9 @@ export function DeveloperView({ organizationId }: { organizationId: string }) {
   };
 
   const handleRevokeKey = async (keyId: string, name: string) => {
-    if (!confirm(`Are you sure you want to revoke API key "${name}"? This action cannot be undone.`)) {
+    if (
+      !confirm(`Are you sure you want to revoke API key "${name}"? This action cannot be undone.`)
+    ) {
       return;
     }
 
@@ -146,7 +148,8 @@ export function DeveloperView({ organizationId }: { organizationId: string }) {
   const sampleToken = newlyCreatedToken || "gdn_live_xxxxxxxxxxxxxxxxxxxxxxxx";
 
   const getSnippets = () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://useguardian.io";
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "https://useguardian.io";
     const healthUrl = `${origin}/api/v1/organizations/${organizationId}/health`;
 
     const curl = `curl -X GET "${healthUrl}" \\
@@ -201,13 +204,16 @@ print("Health Score:", data["data"]["score"])`;
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-on-surface">Developer & API Platform</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-on-surface">
+              Developer & API Platform
+            </h1>
             <span className="rounded-full bg-cyan-500/10 px-2.5 py-0.5 text-xs font-semibold text-cyan-400 border border-cyan-500/30">
               PRD §19 / v1
             </span>
           </div>
           <p className="mt-1 text-sm text-on-surface-variant">
-            Programmatic REST API keys, SHA-256 tokens, OpenAPI specification, and rate-limited developer endpoints.
+            Programmatic REST API keys, SHA-256 tokens, OpenAPI specification, and rate-limited
+            developer endpoints.
           </p>
         </div>
 
@@ -239,10 +245,14 @@ print("Health Score:", data["data"]["score"])`;
             <div className="flex-1 space-y-2">
               <h3 className="text-sm font-bold text-amber-300">API Key Generated Successfully</h3>
               <p className="text-xs text-on-surface-variant">
-                This token will <strong className="text-amber-200">never be displayed again</strong>. Per PRD Section 20, Guardian stores only its cryptographic SHA-256 hash. Copy and save it immediately in your secrets manager.
+                This token will <strong className="text-amber-200">never be displayed again</strong>
+                . Per PRD Section 20, Guardian stores only its cryptographic SHA-256 hash. Copy and
+                save it immediately in your secrets manager.
               </p>
               <div className="flex items-center gap-2 rounded-xl bg-surface-container-lowest/90 p-2 border border-outline-variant font-mono text-xs">
-                <span className="flex-1 select-all break-all text-cyan-300">{newlyCreatedToken}</span>
+                <span className="flex-1 select-all break-all text-cyan-300">
+                  {newlyCreatedToken}
+                </span>
                 <button
                   onClick={handleCopyToken}
                   className="rounded-lg bg-amber-500/20 px-3 py-1.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/30 transition"
@@ -298,9 +308,7 @@ print("Health Score:", data["data"]["score"])`;
             <span className="font-mono text-emerald-400">RFC BEARER</span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold tracking-tight text-emerald-400">
-              SHA-256
-            </span>
+            <span className="text-3xl font-extrabold tracking-tight text-emerald-400">SHA-256</span>
           </div>
           <p className="mt-2 text-xs text-on-surface-variant">Zero plaintext storage</p>
         </GlassCard>
@@ -326,7 +334,8 @@ print("Health Score:", data["data"]["score"])`;
           <div>
             <h2 className="text-base font-semibold text-on-surface">Active API Keys</h2>
             <p className="text-xs text-on-surface-variant">
-              Manage cryptographic access tokens for your scripts, CI/CD pipelines, and internal tools.
+              Manage cryptographic access tokens for your scripts, CI/CD pipelines, and internal
+              tools.
             </p>
           </div>
         </div>
@@ -336,15 +345,14 @@ print("Health Score:", data["data"]["score"])`;
             Loading API keys and telemetry...
           </div>
         ) : error ? (
-          <div className="py-8 text-center text-xs text-rose-400">
-            {error}
-          </div>
+          <div className="py-8 text-center text-xs text-rose-400">{error}</div>
         ) : !overview || overview.keys.length === 0 ? (
           <div className="py-12 text-center space-y-3">
             <div className="text-3xl">🔑</div>
             <p className="text-sm font-medium text-on-surface">No API keys registered</p>
             <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-              Generate your first API key to connect external monitoring agents, automation webhooks, or custom portals.
+              Generate your first API key to connect external monitoring agents, automation
+              webhooks, or custom portals.
             </p>
             <button
               onClick={() => setIsCreateModalOpen(true)}
@@ -370,12 +378,8 @@ print("Health Score:", data["data"]["score"])`;
               <tbody className="divide-y divide-outline-variant/20">
                 {overview.keys.map((k) => (
                   <tr key={k.id} className="hover:bg-surface-container-high/30 transition">
-                    <td className="py-3 px-4 font-medium text-on-surface">
-                      {k.name}
-                    </td>
-                    <td className="py-3 px-4 font-mono text-cyan-300">
-                      {k.keyPrefix}...
-                    </td>
+                    <td className="py-3 px-4 font-medium text-on-surface">{k.name}</td>
+                    <td className="py-3 px-4 font-mono text-cyan-300">{k.keyPrefix}...</td>
                     <td className="py-3 px-4">
                       <div className="flex flex-wrap gap-1">
                         {k.scopes.map((s) => (
@@ -434,7 +438,9 @@ print("Health Score:", data["data"]["score"])`;
           <div>
             <h2 className="text-base font-semibold text-on-surface">Interactive API Quickstarts</h2>
             <p className="text-xs text-on-surface-variant">
-              Authenticate via standard HTTP headers using <code className="text-cyan-300">Authorization: Bearer &lt;TOKEN&gt;</code> or <code className="text-cyan-300">X-API-Key: &lt;TOKEN&gt;</code>.
+              Authenticate via standard HTTP headers using{" "}
+              <code className="text-cyan-300">Authorization: Bearer &lt;TOKEN&gt;</code> or{" "}
+              <code className="text-cyan-300">X-API-Key: &lt;TOKEN&gt;</code>.
             </p>
           </div>
 
@@ -578,4 +584,3 @@ print("Health Score:", data["data"]["score"])`;
     </div>
   );
 }
-

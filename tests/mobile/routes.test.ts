@@ -48,7 +48,7 @@ describe("Mobile Platform REST API Routes (PRD §21 & §24)", () => {
 
       const response = await getMobileOverviewRoute(
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/mobile`),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -62,7 +62,7 @@ describe("Mobile Platform REST API Routes (PRD §21 & §24)", () => {
     it("returns public VAPID key", async () => {
       const response = await getVapidKeyRoute(
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/mobile/push/public-key`),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -88,7 +88,7 @@ describe("Mobile Platform REST API Routes (PRD §21 & §24)", () => {
             userAgent: "iOS Safari",
           }),
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(201);
@@ -110,7 +110,7 @@ describe("Mobile Platform REST API Routes (PRD §21 & §24)", () => {
             endpoint: "https://fcm.googleapis.com/fcm/send/token",
           }),
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -130,7 +130,7 @@ describe("Mobile Platform REST API Routes (PRD §21 & §24)", () => {
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/mobile/push/test`, {
           method: "POST",
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -139,4 +139,3 @@ describe("Mobile Platform REST API Routes (PRD §21 & §24)", () => {
     });
   });
 });
-

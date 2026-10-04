@@ -11,18 +11,14 @@ import {
   listSubscriptionsGlobalForOrg,
   type MobileSubscriptionRecord,
 } from "./repository";
-import type {
-  MobileHubOverview,
-  MobileNotificationPayload,
-  PushSendResult,
-} from "./types";
+import type { MobileHubOverview, MobileNotificationPayload, PushSendResult } from "./types";
 
 /**
  * Sends a Web Push notification to a single registered device endpoint.
  */
 export async function sendPushNotification(
   subscription: MobileSubscriptionRecord,
-  payload: MobileNotificationPayload
+  payload: MobileNotificationPayload,
 ): Promise<PushSendResult> {
   // Test / simulated endpoint bypass
   if (
@@ -101,7 +97,7 @@ export async function sendPushNotification(
  */
 export async function broadcastPushToOrganization(
   organizationId: string,
-  payload: MobileNotificationPayload
+  payload: MobileNotificationPayload,
 ): Promise<PushSendResult[]> {
   const devices = await listSubscriptionsGlobalForOrg(organizationId);
   if (devices.length === 0) return [];
@@ -116,7 +112,7 @@ export async function broadcastPushToOrganization(
           endpoint: devices[i]?.endpoint ?? "unknown",
           success: false,
           error: (r.reason as Error)?.message ?? "Unknown dispatch failure",
-        }
+        },
   );
 }
 
@@ -125,7 +121,7 @@ export async function broadcastPushToOrganization(
  */
 export async function sendTestPushToUser(
   scope: TenantScope,
-  userId: string
+  userId: string,
 ): Promise<{ dispatchedCount: number; results: PushSendResult[] }> {
   const devices = await listSubscriptionsForUser(scope, userId);
   if (devices.length === 0) {
@@ -140,9 +136,7 @@ export async function sendTestPushToUser(
     severity: "INFO",
   };
 
-  const results = await Promise.all(
-    devices.map((device) => sendPushNotification(device, payload))
-  );
+  const results = await Promise.all(devices.map((device) => sendPushNotification(device, payload)));
 
   return {
     dispatchedCount: results.filter((r) => r.success).length,
@@ -153,9 +147,7 @@ export async function sendTestPushToUser(
 /**
  * Compiles overview telemetry for the Mobile Command Center.
  */
-export async function getMobileHubOverview(
-  scope: TenantScope
-): Promise<MobileHubOverview> {
+export async function getMobileHubOverview(scope: TenantScope): Promise<MobileHubOverview> {
   const devices = await listSubscriptionsForOrg(scope);
   return {
     deviceCount: devices.length,
@@ -169,4 +161,3 @@ export async function getMobileHubOverview(
     vapidPublicKey: getVapidPublicKey(),
   };
 }
-

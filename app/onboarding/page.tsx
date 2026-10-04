@@ -15,7 +15,10 @@ export default async function OnboardingPage() {
       <AmbientBackground variant="dashboard" />
       <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 backdrop-blur-xl border-b border-glass-specular-border bg-canvas/60">
         <Brand />
-        <Link href="/dashboard" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+        <Link
+          href="/dashboard"
+          className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+        >
           Back to dashboard
         </Link>
       </header>

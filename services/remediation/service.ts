@@ -13,11 +13,7 @@ import {
   listRemediationActions,
   updateRemediationAction,
 } from "./repository";
-import type {
-  AuditLogEntry,
-  RemediationActionRecord,
-  RemediationOverview,
-} from "./types";
+import type { AuditLogEntry, RemediationActionRecord, RemediationOverview } from "./types";
 
 export interface ProposeRemediationInput {
   actionType: string;
@@ -179,9 +175,7 @@ export async function rejectRemediation(
   });
 }
 
-export async function getRemediationOverview(
-  scope: TenantScope,
-): Promise<RemediationOverview> {
+export async function getRemediationOverview(scope: TenantScope): Promise<RemediationOverview> {
   const allActions = await listRemediationActions(scope);
 
   let pendingApprovalsCount = 0;
@@ -207,4 +201,3 @@ export async function getRemediationOverview(
     recentActions: allActions.slice(0, 25),
   };
 }
-

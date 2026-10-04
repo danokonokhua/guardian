@@ -113,7 +113,7 @@ export function CooView({ organizationId }: { organizationId: string }) {
       if (!res.ok) throw new Error(data.error?.message || "Synthesis failed");
 
       setActionNotice(
-        `AI COO Synthesis complete: ${data.data.websitesEvaluated} web properties synthesized across all 8 vectors, yielding ${data.data.directivesGenerated} prioritized directives.`
+        `AI COO Synthesis complete: ${data.data.websitesEvaluated} web properties synthesized across all 8 vectors, yielding ${data.data.directivesGenerated} prioritized directives.`,
       );
       await fetchOverview();
     } catch (err: any) {
@@ -125,7 +125,7 @@ export function CooView({ organizationId }: { organizationId: string }) {
 
   const handleExecuteAction = async (
     directiveId: string,
-    action: "APPROVE" | "EXECUTE" | "DISMISS"
+    action: "APPROVE" | "EXECUTE" | "DISMISS",
   ) => {
     try {
       setExecutingId(directiveId);
@@ -135,7 +135,7 @@ export function CooView({ organizationId }: { organizationId: string }) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action }),
-        }
+        },
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error?.message || "Action failed");
@@ -143,7 +143,7 @@ export function CooView({ organizationId }: { organizationId: string }) {
       setActionNotice(
         action === "EXECUTE"
           ? "Directive executed successfully via Guardian Autonomous Ops engine."
-          : `Directive status updated to ${action}.`
+          : `Directive status updated to ${action}.`,
       );
       await fetchOverview();
     } catch (err: any) {
@@ -173,7 +173,8 @@ export function CooView({ organizationId }: { organizationId: string }) {
             </span>
           </div>
           <p className="text-sm md:text-base text-on-surface-variant max-w-2xl">
-            Autonomous Chief Operating Officer synthesizing cross-domain telemetry into executive revenue roadmaps and 1-click strategic directives.
+            Autonomous Chief Operating Officer synthesizing cross-domain telemetry into executive
+            revenue roadmaps and 1-click strategic directives.
           </p>
         </div>
 
@@ -182,7 +183,9 @@ export function CooView({ organizationId }: { organizationId: string }) {
           disabled={generating}
           className="px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 self-start md:self-auto"
         >
-          <span>{generating ? "Synthesizing Operations..." : "⚡ Synthesize Executive Directives"}</span>
+          <span>
+            {generating ? "Synthesizing Operations..." : "⚡ Synthesize Executive Directives"}
+          </span>
         </button>
       </div>
 
@@ -217,19 +220,31 @@ export function CooView({ organizationId }: { organizationId: string }) {
       {/* KPI Overview Strip */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <GlassCard className="p-5 border-l-4 border-l-rose-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">P0 Immediate Directives</div>
-          <div className="text-3xl font-black text-rose-400 mt-2">{overview?.p0ImmediateCount ?? 0}</div>
-          <div className="text-xs text-on-surface-variant mt-1">Requires immediate authorization</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            P0 Immediate Directives
+          </div>
+          <div className="text-3xl font-black text-rose-400 mt-2">
+            {overview?.p0ImmediateCount ?? 0}
+          </div>
+          <div className="text-xs text-on-surface-variant mt-1">
+            Requires immediate authorization
+          </div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-amber-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">P1 Weekly Actions</div>
-          <div className="text-3xl font-black text-amber-400 mt-2">{overview?.p1ThisWeekCount ?? 0}</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            P1 Weekly Actions
+          </div>
+          <div className="text-3xl font-black text-amber-400 mt-2">
+            {overview?.p1ThisWeekCount ?? 0}
+          </div>
           <div className="text-xs text-on-surface-variant mt-1">Scheduled for this sprint</div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-emerald-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Opportunity Value</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Opportunity Value
+          </div>
           <div className="text-3xl font-black text-emerald-400 mt-2">
             ${(overview?.totalOpportunityValueUsd ?? 0).toLocaleString()}
           </div>
@@ -237,9 +252,15 @@ export function CooView({ organizationId }: { organizationId: string }) {
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-cyan-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Active Directives</div>
-          <div className="text-3xl font-black text-cyan-400 mt-2">{overview?.totalDirectives ?? 0}</div>
-          <div className="text-xs text-on-surface-variant mt-1">Multi-vector synthesized actions</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Active Directives
+          </div>
+          <div className="text-3xl font-black text-cyan-400 mt-2">
+            {overview?.totalDirectives ?? 0}
+          </div>
+          <div className="text-xs text-on-surface-variant mt-1">
+            Multi-vector synthesized actions
+          </div>
         </GlassCard>
       </div>
 
@@ -283,7 +304,8 @@ export function CooView({ organizationId }: { organizationId: string }) {
         <div className="py-16 text-center text-on-surface-variant border border-dashed border-glass-subtle-border rounded-2xl">
           <p className="text-base font-semibold">No active COO directives in this priority tier.</p>
           <p className="text-xs text-on-surface-variant mt-1">
-            Click &quot;⚡ Synthesize Executive Directives&quot; to formulate prioritized directives across your properties.
+            Click &quot;⚡ Synthesize Executive Directives&quot; to formulate prioritized directives
+            across your properties.
           </p>
         </div>
       ) : (
@@ -303,10 +325,10 @@ export function CooView({ organizationId }: { organizationId: string }) {
                   isExecuted
                     ? "border-emerald-500/30 bg-emerald-950/10 opacity-80"
                     : isP0
-                    ? "border-rose-500/40 bg-rose-950/10"
-                    : isP1
-                    ? "border-amber-500/40 bg-amber-950/10"
-                    : "border-neutral-700 bg-neutral-900/40"
+                      ? "border-rose-500/40 bg-rose-950/10"
+                      : isP1
+                        ? "border-amber-500/40 bg-amber-950/10"
+                        : "border-neutral-700 bg-neutral-900/40"
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -317,13 +339,14 @@ export function CooView({ organizationId }: { organizationId: string }) {
                           isExecuted
                             ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
                             : isP0
-                            ? "bg-rose-500/20 text-rose-400 border border-rose-500/40"
-                            : isP1
-                            ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                            : "bg-blue-500/20 text-blue-400 border border-blue-500/40"
+                              ? "bg-rose-500/20 text-rose-400 border border-rose-500/40"
+                              : isP1
+                                ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                                : "bg-blue-500/20 text-blue-400 border border-blue-500/40"
                         }`}
                       >
-                        {directive.priorityTier.replace(/_/g, " ")} (Urgency: {directive.urgencyScore}/100)
+                        {directive.priorityTier.replace(/_/g, " ")} (Urgency:{" "}
+                        {directive.urgencyScore}/100)
                       </span>
 
                       <span className="text-xs font-bold text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/30">
@@ -339,8 +362,8 @@ export function CooView({ organizationId }: { organizationId: string }) {
                           isExecuted
                             ? "bg-emerald-500 text-black"
                             : isApproved
-                            ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40"
-                            : "bg-neutral-800 text-neutral-400"
+                              ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40"
+                              : "bg-neutral-800 text-neutral-400"
                         }`}
                       >
                         {directive.status}
@@ -352,7 +375,8 @@ export function CooView({ organizationId }: { organizationId: string }) {
                     </h3>
 
                     <p className="text-xs text-on-surface-variant leading-relaxed">
-                      <strong className="text-neutral-300">Executive Justification:</strong> {directive.executiveSummary}
+                      <strong className="text-neutral-300">Executive Justification:</strong>{" "}
+                      {directive.executiveSummary}
                     </p>
 
                     <div className="p-3 rounded-xl bg-surface-container/60 border border-glass-subtle-border flex items-start gap-2.5 text-xs">
@@ -374,26 +398,37 @@ export function CooView({ organizationId }: { organizationId: string }) {
                             <div className="p-2.5 rounded bg-neutral-800/60 border border-neutral-700/60">
                               <span className="font-bold text-cyan-400">🌐 Website:</span>{" "}
                               {directive.crossDomainEvidence.websiteVector.uptimePercent}% Uptime,{" "}
-                              {directive.crossDomainEvidence.websiteVector.unresolvedIssuesCount} Open Issues
+                              {directive.crossDomainEvidence.websiteVector.unresolvedIssuesCount}{" "}
+                              Open Issues
                             </div>
                           )}
                           {directive.crossDomainEvidence.revenueVector && (
                             <div className="p-2.5 rounded bg-neutral-800/60 border border-neutral-700/60">
                               <span className="font-bold text-emerald-400">💰 Revenue:</span>{" "}
-                              {directive.crossDomainEvidence.revenueVector.formCaptureHealth} Form Health,{" "}
-                              ${directive.crossDomainEvidence.revenueVector.estimatedRevenueLossMonthly}/mo Risk
+                              {directive.crossDomainEvidence.revenueVector.formCaptureHealth} Form
+                              Health, $
+                              {
+                                directive.crossDomainEvidence.revenueVector
+                                  .estimatedRevenueLossMonthly
+                              }
+                              /mo Risk
                             </div>
                           )}
                           {directive.crossDomainEvidence.performanceVector && (
                             <div className="p-2.5 rounded bg-neutral-800/60 border border-neutral-700/60">
                               <span className="font-bold text-amber-400">⚡ Performance:</span>{" "}
-                              {directive.crossDomainEvidence.performanceVector.averageResponseTimeMs}ms TTFB
+                              {
+                                directive.crossDomainEvidence.performanceVector
+                                  .averageResponseTimeMs
+                              }
+                              ms TTFB
                             </div>
                           )}
                           {directive.crossDomainEvidence.seoVector && (
                             <div className="p-2.5 rounded bg-neutral-800/60 border border-neutral-700/60">
                               <span className="font-bold text-purple-400">🔍 SEO:</span>{" "}
-                              {directive.crossDomainEvidence.seoVector.metaCoveragePercent}% Meta Coverage
+                              {directive.crossDomainEvidence.seoVector.metaCoveragePercent}% Meta
+                              Coverage
                             </div>
                           )}
                         </div>

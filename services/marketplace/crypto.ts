@@ -4,16 +4,11 @@ import { ConflictError } from "@/lib/errors";
 
 function getMarketplaceKey(): Buffer {
   const raw =
-    process.env.MARKETPLACE_ENCRYPTION_KEY ||
-    process.env.NOTIFICATION_ENCRYPTION_KEY ||
-    "";
+    process.env.MARKETPLACE_ENCRYPTION_KEY || process.env.NOTIFICATION_ENCRYPTION_KEY || "";
 
   if (!raw || raw.length < 32) {
     // Return a deterministically derived key for testing/dev environments if unset
-    return Buffer.from(
-      "guardian_marketplace_enc_key_32_bytes_ok!",
-      "utf8"
-    ).subarray(0, 32);
+    return Buffer.from("guardian_marketplace_enc_key_32_bytes_ok!", "utf8").subarray(0, 32);
   }
 
   // If base64-encoded 32-byte key:
@@ -30,17 +25,14 @@ function getMarketplaceKey(): Buffer {
  */
 export function encryptPluginCredentials(
   credentials: Record<string, unknown>,
-  tenantContext: string
+  tenantContext: string,
 ): string {
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", getMarketplaceKey(), iv);
   cipher.setAAD(Buffer.from(tenantContext, "utf8"));
 
   const plaintext = JSON.stringify(credentials);
-  const ciphertext = Buffer.concat([
-    cipher.update(plaintext, "utf8"),
-    cipher.final(),
-  ]);
+  const ciphertext = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
 
   return [
     "v1",
@@ -55,7 +47,7 @@ export function encryptPluginCredentials(
  */
 export function decryptPluginCredentials(
   payload: string,
-  tenantContext: string
+  tenantContext: string,
 ): Record<string, unknown> {
   try {
     const [version, ivStr, tagStr, cipherStr] = payload.split(".");
@@ -66,7 +58,7 @@ export function decryptPluginCredentials(
     const decipher = createDecipheriv(
       "aes-256-gcm",
       getMarketplaceKey(),
-      Buffer.from(ivStr, "base64")
+      Buffer.from(ivStr, "base64"),
     );
     decipher.setAAD(Buffer.from(tenantContext, "utf8"));
     decipher.setAuthTag(Buffer.from(tagStr, "base64"));

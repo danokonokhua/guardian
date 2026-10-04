@@ -79,7 +79,7 @@ describe("Predictive Failure Modeling Engine (PRD §20, §23, §25)", () => {
       const forecast = modelUptimeAnomalyForecast(snapshot);
       expect(forecast).not.toBeNull();
       expect(forecast?.riskLevel).toBe("CRITICAL");
-      expect(forecast?.probabilityScore).toBeGreaterThanOrEqual(0.90);
+      expect(forecast?.probabilityScore).toBeGreaterThanOrEqual(0.9);
       expect(forecast?.predictedWindow).toBe("NEXT_24_HOURS");
     });
 

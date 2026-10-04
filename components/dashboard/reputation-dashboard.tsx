@@ -49,7 +49,6 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
 
     const query = new URLSearchParams();
     if (filterRating !== "all") query.set("rating", filterRating);
@@ -106,7 +105,8 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
   }
 
   async function handleApproveReply(reviewId: string) {
-    const textToSubmit = draftEdits[reviewId] || reviews.find((r) => r.id === reviewId)?.aiSuggestedReply;
+    const textToSubmit =
+      draftEdits[reviewId] || reviews.find((r) => r.id === reviewId)?.aiSuggestedReply;
     if (!textToSubmit || !textToSubmit.trim()) {
       alert("Please enter a response message.");
       return;
@@ -139,13 +139,15 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
         ? {
             authorName: "Liam Sterling",
             rating: 5,
-            comment: "Absolutely top tier service! The team went above and beyond to protect our website.",
+            comment:
+              "Absolutely top tier service! The team went above and beyond to protect our website.",
             source: "GOOGLE_BUSINESS",
           }
         : {
             authorName: "Kevin R.",
             rating: 1,
-            comment: "Terrible experience, checkout form failed and customer support was completely unresponsive.",
+            comment:
+              "Terrible experience, checkout form failed and customer support was completely unresponsive.",
             source: "GOOGLE_BUSINESS",
           };
 
@@ -205,7 +207,9 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
                 {metrics.responseRatePercent}%
               </span>
               <span className="text-xs text-emerald-400">
-                {metrics.unansweredReviews === 0 ? "All Answered" : `${metrics.unansweredReviews} Pending`}
+                {metrics.unansweredReviews === 0
+                  ? "All Answered"
+                  : `${metrics.unansweredReviews} Pending`}
               </span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-1.5 mt-2">
@@ -391,9 +395,7 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
                 </div>
 
                 {/* Review Text */}
-                <p className="mt-3 text-sm text-slate-200 leading-relaxed">
-                  "{review.comment}"
-                </p>
+                <p className="mt-3 text-sm text-slate-200 leading-relaxed">"{review.comment}"</p>
 
                 {/* Response Section */}
                 <div className="mt-4 pt-3 border-t border-white/5">
@@ -402,9 +404,7 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
                       <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 mb-1">
                         <span>✓ Response Published</span>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        {review.replyText}
-                      </p>
+                      <p className="text-xs text-slate-300 leading-relaxed">{review.replyText}</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -481,7 +481,8 @@ export function ReputationDashboard({ organizationId }: { organizationId: string
           <div className="max-w-md w-full rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-white">Simulate Customer Review</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Test how Guardian's reputation engine classifies sentiment, updates health scores, and drafts AI responses.
+              Test how Guardian's reputation engine classifies sentiment, updates health scores, and
+              drafts AI responses.
             </p>
 
             <div className="grid grid-cols-2 gap-3 pt-2">

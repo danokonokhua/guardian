@@ -34,7 +34,9 @@
   -webkit-backdrop-filter: blur(20px);
   min-width: 0;
   overflow-wrap: anywhere;
-  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 16px 36px -8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .status-panel h2,
 .status-panel h3 {
@@ -97,7 +99,7 @@
   padding: 22px 0 6px;
 }
 .status-update {
-  border-left: 2px solid #00F0FF;
+  border-left: 2px solid #00f0ff;
   padding: 6px 0 6px 18px;
   margin: 18px 0;
   box-shadow: inset 4px 0 8px -4px rgba(0, 240, 255, 0.3);
@@ -136,14 +138,16 @@
   border-radius: 0.75rem;
   padding: 12px 14px;
   font: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 .status-form input:focus,
 .status-form textarea:focus,
 .status-form select:focus,
 .status-manager > select:focus {
   outline: none;
-  border-color: #00F0FF;
+  border-color: #00f0ff;
   box-shadow: 0 0 12px -2px rgba(0, 240, 255, 0.3);
 }
 .status-form textarea {
@@ -189,7 +193,7 @@
 .status-manager input:focus-visible,
 .status-manager select:focus-visible,
 .status-manager textarea:focus-visible {
-  outline: 2px solid #00F0FF;
+  outline: 2px solid #00f0ff;
   outline-offset: 2px;
 }
 .public-status footer {

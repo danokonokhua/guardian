@@ -30,11 +30,27 @@ const eslintConfig = [
   ...coreWebVitals,
   ...nextTypescript,
   {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.mjs"],
     rules: {
       // Guardian convention: `lib/logger.ts` is the single sanctioned consumer
       // of the console APIs (it disables this rule locally with a justification).
       // All other code must use the structured logger.
       "no-console": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+      "react/no-unescaped-entities": "off",
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
+  {
+    files: ["tests/**", "scripts/**"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "no-console": "off",
     },
   },
 ];

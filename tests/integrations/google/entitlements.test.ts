@@ -16,4 +16,3 @@ describe("Google Integrations Entitlements", () => {
     expect(() => assertCanUseGoogleIntegrations("GROWTH")).toThrow(ForbiddenError);
   });
 });
-

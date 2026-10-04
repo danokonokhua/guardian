@@ -1,8 +1,4 @@
-import type {
-  GeneratedForecast,
-  ForecastSignal,
-  PredictiveTargetVector,
-} from "./types";
+import type { GeneratedForecast, ForecastSignal, PredictiveTargetVector } from "./types";
 
 export interface TelemetrySnapshot {
   websiteId: string;
@@ -35,8 +31,10 @@ export function modelSslRunwayForecast(snapshot: TelemetrySnapshot): GeneratedFo
       predictedWindow: "NEXT_7_DAYS",
       forecastRunwayDays: days,
       title: `Critical TLS Certificate Expiration in ${days} Day${days === 1 ? "" : "s"}`,
-      predictedImpact: "Immediate browser interstitial warning ('Your connection is not private'). Complete visitor dropoff and payment gateway blockage.",
-      preventiveAction: "Trigger auto-remediation certificate renewal or execute certbot/Let's Encrypt renew immediately.",
+      predictedImpact:
+        "Immediate browser interstitial warning ('Your connection is not private'). Complete visitor dropoff and payment gateway blockage.",
+      preventiveAction:
+        "Trigger auto-remediation certificate renewal or execute certbot/Let's Encrypt renew immediately.",
       underlyingSignals: [
         {
           metric: "sslDaysRemaining",
@@ -57,7 +55,8 @@ export function modelSslRunwayForecast(snapshot: TelemetrySnapshot): GeneratedFo
       forecastRunwayDays: days,
       title: `Elevated TLS Certificate Expiration Risk (${days} Days Remaining)`,
       predictedImpact: "High risk of unexpected weekend expiry or renewal automation lockouts.",
-      preventiveAction: "Verify automatic renewal hooks and DNS TXT verification token propagation.",
+      preventiveAction:
+        "Verify automatic renewal hooks and DNS TXT verification token propagation.",
       underlyingSignals: [
         {
           metric: "sslDaysRemaining",
@@ -73,11 +72,12 @@ export function modelSslRunwayForecast(snapshot: TelemetrySnapshot): GeneratedFo
     return {
       targetVector: "SSL_EXPIRY",
       riskLevel: "MODERATE",
-      probabilityScore: 0.50,
+      probabilityScore: 0.5,
       predictedWindow: "NEXT_30_DAYS",
       forecastRunwayDays: days,
       title: `SSL Certificate Renewal Horizon (${days} Days)`,
-      predictedImpact: "Routine renewal window opened. Failure to cycle will escalate to browser warnings.",
+      predictedImpact:
+        "Routine renewal window opened. Failure to cycle will escalate to browser warnings.",
       preventiveAction: "Schedule TLS maintenance check with server administrator.",
       underlyingSignals: [
         {
@@ -113,7 +113,8 @@ export function modelUptimeAnomalyForecast(snapshot: TelemetrySnapshot): Generat
 
   // Check 5xx error frequency
   const errorCodes = (snapshot.recentHttpCodes || []).filter((c) => c >= 500);
-  const errorRatio = snapshot.recentHttpCodes.length > 0 ? errorCodes.length / snapshot.recentHttpCodes.length : 0;
+  const errorRatio =
+    snapshot.recentHttpCodes.length > 0 ? errorCodes.length / snapshot.recentHttpCodes.length : 0;
 
   if (errorRatio >= 0.25 || (avgLate > 2500 && percentageIncrease >= 150)) {
     return {
@@ -123,8 +124,10 @@ export function modelUptimeAnomalyForecast(snapshot: TelemetrySnapshot): Generat
       predictedWindow: "NEXT_24_HOURS",
       forecastRunwayDays: 1,
       title: "Imminent Infrastructure Outage & Server Collapse",
-      predictedImpact: "Predicts complete HTTP 502/504 outage causing $1,200+ estimated lost visitor revenue.",
-      preventiveAction: "Scale web app tier dynos/containers and investigate database connection pool exhaustion.",
+      predictedImpact:
+        "Predicts complete HTTP 502/504 outage causing $1,200+ estimated lost visitor revenue.",
+      preventiveAction:
+        "Scale web app tier dynos/containers and investigate database connection pool exhaustion.",
       underlyingSignals: [
         {
           metric: "latencySlope",
@@ -146,7 +149,8 @@ export function modelUptimeAnomalyForecast(snapshot: TelemetrySnapshot): Generat
       predictedWindow: "NEXT_7_DAYS",
       forecastRunwayDays: 3,
       title: "Progressive Latency Degradation & Resource Exhaustion",
-      predictedImpact: "Degraded page load experience driving visitor bounce rates and cart abandonment.",
+      predictedImpact:
+        "Degraded page load experience driving visitor bounce rates and cart abandonment.",
       preventiveAction: "Review server memory footprint and slow SQL query logs.",
       underlyingSignals: [
         {
@@ -178,7 +182,7 @@ export function modelLeadCollapseForecast(snapshot: TelemetrySnapshot): Generate
 
   const failRate = snapshot.formSubmissionFailures / snapshot.formTotalSubmissions;
 
-  if (failRate >= 0.40) {
+  if (failRate >= 0.4) {
     return {
       targetVector: "LEAD_COLLAPSE",
       riskLevel: "CRITICAL",
@@ -186,8 +190,10 @@ export function modelLeadCollapseForecast(snapshot: TelemetrySnapshot): Generate
       predictedWindow: "NEXT_24_HOURS",
       forecastRunwayDays: 1,
       title: "Severe Lead Form Submission Failure Collapse",
-      predictedImpact: "Direct revenue collapse: over 40% of inbound buyer enquiries are silently failing to submit.",
-      preventiveAction: "Verify form action endpoint, anti-spam CAPTCHA keys, and webhook handler health.",
+      predictedImpact:
+        "Direct revenue collapse: over 40% of inbound buyer enquiries are silently failing to submit.",
+      preventiveAction:
+        "Verify form action endpoint, anti-spam CAPTCHA keys, and webhook handler health.",
       underlyingSignals: [
         {
           metric: "formFailureRate",
@@ -209,13 +215,15 @@ export function modelLeadCollapseForecast(snapshot: TelemetrySnapshot): Generate
       forecastRunwayDays: 4,
       title: "Intermittent Lead Capture Dropoff Anomaly",
       predictedImpact: "Prospect friction and lead leakage across high-intent product pages.",
-      preventiveAction: "Audit form JavaScript submission handlers and third-party CRM webhook tokens.",
+      preventiveAction:
+        "Audit form JavaScript submission handlers and third-party CRM webhook tokens.",
       underlyingSignals: [
         {
           metric: "formFailureRate",
           currentValue: `${Math.round(failRate * 100)}%`,
           observedAt: new Date().toISOString(),
-          interpretation: "Elevated form failure rate exceeds acceptable operational tolerance (>15%).",
+          interpretation:
+            "Elevated form failure rate exceeds acceptable operational tolerance (>15%).",
         },
       ],
     };
@@ -236,8 +244,10 @@ export function modelSeoVisibilityForecast(snapshot: TelemetrySnapshot): Generat
       predictedWindow: "NEXT_14_DAYS",
       forecastRunwayDays: 10,
       title: "Projected Search Visibility Drop (Meta Regression)",
-      predictedImpact: "Google search impressions forecast to decline due to unoptimized titles, descriptions, and OpenGraph tags.",
-      preventiveAction: "Run Guardian AutoFix to regenerate missing meta descriptions and canonical links.",
+      predictedImpact:
+        "Google search impressions forecast to decline due to unoptimized titles, descriptions, and OpenGraph tags.",
+      preventiveAction:
+        "Run Guardian AutoFix to regenerate missing meta descriptions and canonical links.",
       underlyingSignals: [
         {
           metric: "missingMetaCount",

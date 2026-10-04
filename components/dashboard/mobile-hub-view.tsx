@@ -84,7 +84,9 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
       setPermission(requestedPermission);
 
       if (requestedPermission !== "granted") {
-        setFeedback("Notification permission was denied. Please allow notifications in browser settings.");
+        setFeedback(
+          "Notification permission was denied. Please allow notifications in browser settings.",
+        );
         return;
       }
 
@@ -153,7 +155,9 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
       }
 
       const json = await res.json();
-      setFeedback(`Test push sent! Check your notification tray. (${json.data.dispatchedCount} device(s) pinged) ✓`);
+      setFeedback(
+        `Test push sent! Check your notification tray. (${json.data.dispatchedCount} device(s) pinged) ✓`,
+      );
     } catch (err: any) {
       setFeedback(`Test push error: ${err.message}`);
     } finally {
@@ -185,13 +189,16 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-on-surface">Mobile Command & Web Push</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-on-surface">
+              Mobile Command & Web Push
+            </h1>
             <span className="rounded-full bg-cyan-500/10 px-2.5 py-0.5 text-xs font-semibold text-cyan-400 border border-cyan-500/30">
               PRD §21 / PWA
             </span>
           </div>
           <p className="mt-1 text-sm text-on-surface-variant">
-            Instant RFC 8291 Web Push incident alerts, home-screen installation, and mobile telemetry command center.
+            Instant RFC 8291 Web Push incident alerts, home-screen installation, and mobile
+            telemetry command center.
           </p>
         </div>
 
@@ -251,9 +258,7 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
             <span className="font-mono text-purple-400">RFC 8292</span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-xl font-bold tracking-tight text-on-surface">
-              ECDSA P-256
-            </span>
+            <span className="text-xl font-bold tracking-tight text-on-surface">ECDSA P-256</span>
           </div>
           <p className="mt-2 text-xs text-on-surface-variant">Cryptographic request signing</p>
         </GlassCard>
@@ -264,9 +269,7 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
             <span className="font-mono text-on-surface-variant">STANDALONE</span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-xl font-bold tracking-tight text-cyan-400">
-              Ready
-            </span>
+            <span className="text-xl font-bold tracking-tight text-cyan-400">Ready</span>
           </div>
           <p className="mt-2 text-xs text-on-surface-variant">Home screen installable</p>
         </GlassCard>
@@ -276,9 +279,12 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
       <GlassCard className="p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h2 className="text-base font-semibold text-on-surface">Enable Push Alerts On This Device</h2>
+            <h2 className="text-base font-semibold text-on-surface">
+              Enable Push Alerts On This Device
+            </h2>
             <p className="text-xs text-on-surface-variant max-w-xl">
-              Receive real-time push notifications when critical uptime, SSL, lead form, or security issues occur, even when your browser is in the background or device is locked.
+              Receive real-time push notifications when critical uptime, SSL, lead form, or security
+              issues occur, even when your browser is in the background or device is locked.
             </p>
           </div>
 
@@ -294,7 +300,9 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
 
       {/* PWA Home Screen Installation Guide */}
       <GlassCard className="p-6">
-        <h2 className="text-base font-semibold text-on-surface mb-3">Install as Mobile App (PWA)</h2>
+        <h2 className="text-base font-semibold text-on-surface mb-3">
+          Install as Mobile App (PWA)
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div className="rounded-xl bg-surface-container-lowest/60 p-4 border border-outline-variant/40 space-y-2">
             <div className="flex items-center gap-2 font-semibold text-cyan-300">
@@ -303,8 +311,13 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
             </div>
             <ol className="list-decimal list-inside space-y-1 text-on-surface-variant pl-1">
               <li>Open Guardian in Safari.</li>
-              <li>Tap the <strong className="text-on-surface">Share</strong> icon (square with arrow).</li>
-              <li>Scroll down and select <strong className="text-on-surface">Add to Home Screen</strong>.</li>
+              <li>
+                Tap the <strong className="text-on-surface">Share</strong> icon (square with arrow).
+              </li>
+              <li>
+                Scroll down and select{" "}
+                <strong className="text-on-surface">Add to Home Screen</strong>.
+              </li>
               <li>Launch directly from your home screen as a standalone app.</li>
             </ol>
           </div>
@@ -316,8 +329,13 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
             </div>
             <ol className="list-decimal list-inside space-y-1 text-on-surface-variant pl-1">
               <li>Open Guardian in Chrome or browser of choice.</li>
-              <li>Tap the <strong className="text-on-surface">Menu (⋮)</strong> icon.</li>
-              <li>Select <strong className="text-on-surface">Install app</strong> or <strong className="text-on-surface">Add to Home screen</strong>.</li>
+              <li>
+                Tap the <strong className="text-on-surface">Menu (⋮)</strong> icon.
+              </li>
+              <li>
+                Select <strong className="text-on-surface">Install app</strong> or{" "}
+                <strong className="text-on-surface">Add to Home screen</strong>.
+              </li>
               <li>Launch from your app drawer with standalone immersive mode.</li>
             </ol>
           </div>
@@ -339,7 +357,8 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
           <div className="py-6 text-center text-xs text-rose-400">{error}</div>
         ) : !data || data.devices.length === 0 ? (
           <div className="py-8 text-center text-xs text-on-surface-variant">
-            No mobile devices registered yet. Click &quot;Enable Push Alerts&quot; above to connect this device.
+            No mobile devices registered yet. Click &quot;Enable Push Alerts&quot; above to connect
+            this device.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -378,4 +397,3 @@ export function MobileHubView({ organizationId }: { organizationId: string }) {
     </div>
   );
 }
-

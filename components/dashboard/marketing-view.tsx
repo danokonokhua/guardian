@@ -222,7 +222,8 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
             Marketing Intelligence & Ad Spend Protection
           </h2>
           <p className="text-sm text-on-surface-variant">
-            Track multi-channel ad spend, cost per lead, return on ad spend (ROAS), and prevent ad budget waste.
+            Track multi-channel ad spend, cost per lead, return on ad spend (ROAS), and prevent ad
+            budget waste.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -260,7 +261,8 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
             </span>
           </div>
           <p className="mt-2 text-xs text-on-surface-variant">
-            {overview?.totalClicks.toLocaleString() ?? 0} clicks across {overview?.totalImpressions.toLocaleString() ?? 0} impressions
+            {overview?.totalClicks.toLocaleString() ?? 0} clicks across{" "}
+            {overview?.totalImpressions.toLocaleString() ?? 0} impressions
           </p>
         </GlassCard>
 
@@ -312,7 +314,8 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
             <span className="text-xs text-emerald-400">Target: ≥ 3.0x</span>
           </div>
           <p className="mt-2 text-xs text-on-surface-variant">
-            Blended CTR: {overview?.blendedCtrPct ?? 0}% (Avg CPC: ${((overview?.blendedCpcCents ?? 0) / 100).toFixed(2)})
+            Blended CTR: {overview?.blendedCtrPct ?? 0}% (Avg CPC: $
+            {((overview?.blendedCpcCents ?? 0) / 100).toFixed(2)})
           </p>
         </GlassCard>
       </div>
@@ -323,7 +326,8 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
           <GlassCard className="col-span-full p-8 text-center">
             <p className="text-sm text-on-surface-variant">
               No marketing channels connected yet. Click{" "}
-              <strong className="text-on-surface">"Simulate Channels"</strong> to evaluate with demo data.
+              <strong className="text-on-surface">"Simulate Channels"</strong> to evaluate with demo
+              data.
             </p>
           </GlassCard>
         ) : (
@@ -417,7 +421,8 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
                   <td colSpan={9} className="py-12 text-center text-on-surface-variant">
                     <p className="text-sm">No campaigns recorded yet.</p>
                     <p className="text-xs mt-1">
-                      Click <strong className="text-on-surface">"Simulate Channels (Demo)"</strong> to view simulated performance.
+                      Click <strong className="text-on-surface">"Simulate Channels (Demo)"</strong>{" "}
+                      to view simulated performance.
                     </p>
                   </td>
                 </tr>
@@ -431,7 +436,9 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
                   };
                   const spend = snap ? (snap.spendCents / 100).toFixed(2) : "0.00";
                   const cpl = snap ? (snap.costPerLeadCents / 100).toFixed(2) : "0.00";
-                  const budget = c.budgetDailyCents ? `$${(c.budgetDailyCents / 100).toFixed(0)}/day` : "Uncapped";
+                  const budget = c.budgetDailyCents
+                    ? `$${(c.budgetDailyCents / 100).toFixed(0)}/day`
+                    : "Uncapped";
                   const isFlagged = !!c.flaggedReason;
 
                   return (
@@ -510,13 +517,17 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
           Ad Spend Protection & Budget Health
         </h3>
         <p className="text-xs text-on-surface-variant mb-5">
-          Autonomous anomaly detection safeguarding ad spend from zero-conversion drains and runaway acquisition costs
+          Autonomous anomaly detection safeguarding ad spend from zero-conversion drains and runaway
+          acquisition costs
         </p>
 
         {campaigns.filter((c) => c.flaggedReason).length === 0 ? (
           <div className="flex items-center gap-2 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
             <span>🛡️</span>
-            <span>All active marketing campaigns are operating within economic efficiency thresholds. Zero ad spend drain detected.</span>
+            <span>
+              All active marketing campaigns are operating within economic efficiency thresholds.
+              Zero ad spend drain detected.
+            </span>
           </div>
         ) : (
           <div className="space-y-3">
@@ -632,4 +643,3 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
     </div>
   );
 }
-

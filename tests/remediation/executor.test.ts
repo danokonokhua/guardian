@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  validatePipelinePrerequisites,
-  executePipeline,
-} from "@/services/remediation/executor";
+import { validatePipelinePrerequisites, executePipeline } from "@/services/remediation/executor";
 import { ForbiddenError } from "@/lib/errors";
 
 describe("Remediation 8-Step Pipeline Executor", () => {
@@ -78,4 +75,3 @@ describe("Remediation 8-Step Pipeline Executor", () => {
     });
   });
 });
-

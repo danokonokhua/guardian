@@ -107,7 +107,9 @@ export async function deliverExternal(
     issueId: delivery.issueId,
     title:
       statusMessage?.title ??
-      (isRecovery && issue?.title ? `Resolved: ${issue.title}` : (issue?.title ?? "Guardian test notification")),
+      (isRecovery && issue?.title
+        ? `Resolved: ${issue.title}`
+        : (issue?.title ?? "Guardian test notification")),
     body:
       statusMessage?.body ??
       (isRecovery

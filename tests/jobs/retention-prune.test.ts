@@ -10,10 +10,7 @@ vi.mock("@/services/retention/pruner", () => ({
   pruneSystemMaintenance: pruneSystemMock,
 }));
 
-import {
-  enqueueRetentionPruneJob,
-  registerRetentionPruneWorker,
-} from "@/lib/jobs/retention-prune";
+import { enqueueRetentionPruneJob, registerRetentionPruneWorker } from "@/lib/jobs/retention-prune";
 import { RETENTION_PRUNE_JOB, RETENTION_PRUNE_SINGLETON_KEY } from "@/lib/jobs/constants";
 
 describe("Retention Prune Job & Worker", () => {

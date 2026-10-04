@@ -37,28 +37,28 @@ export const BILLING_PLANS = [
     features: {
       // Monitoring
       continuousMonitoring: false,
-      uptimeChecks: true,           // one-time snapshot
-      sslChecks: true,              // snapshot
-      securityHeaders: true,        // snapshot
-      dnsMonitoring: true,          // snapshot
+      uptimeChecks: true, // one-time snapshot
+      sslChecks: true, // snapshot
+      securityHeaders: true, // snapshot
+      dnsMonitoring: true, // snapshot
       domainExpiryMonitoring: true, // snapshot
       spfDmarcChecks: false,
       // SEO
       basicSeo: true,
       advancedSeo: false,
       // Scanning
-      brokenLinkScanning: true,     // sample only
-      performanceMonitoring: true,  // snapshot
+      brokenLinkScanning: true, // sample only
+      performanceMonitoring: true, // snapshot
       accessibilityMonitoring: false,
       // Forms & Journeys
-      leadFormMonitoring: true,     // snapshot
+      leadFormMonitoring: true, // snapshot
       syntheticFormTests: false,
       bookingCheckoutMonitoring: false,
       // Scores & Issues
-      digitalHealthScore: true,     // snapshot
-      issueDetection: true,         // basic
+      digitalHealthScore: true, // snapshot
+      issueDetection: true, // basic
       businessImpactExplanation: true, // basic
-      fixRecommendations: true,     // basic
+      fixRecommendations: true, // basic
       automatedRemediation: false,
       // Alerts
       inAppAlerts: false,
@@ -108,7 +108,7 @@ export const BILLING_PLANS = [
     name: "Starter",
     tagline: "Protect my website.",
     monthlyPriceCents: 900,
-    annualPriceCents: 9_000,   // $90/yr
+    annualPriceCents: 9_000, // $90/yr
     hasTrial: true,
     trialCreditCardRequired: false,
     limits: {
@@ -124,15 +124,15 @@ export const BILLING_PLANS = [
     features: {
       continuousMonitoring: true,
       uptimeChecks: true,
-      sslChecks: true,              // daily
+      sslChecks: true, // daily
       securityHeaders: true,
       dnsMonitoring: true,
       domainExpiryMonitoring: true,
       spfDmarcChecks: false,
       basicSeo: true,
       advancedSeo: false,
-      brokenLinkScanning: true,     // limited
-      performanceMonitoring: true,  // daily
+      brokenLinkScanning: true, // limited
+      performanceMonitoring: true, // daily
       accessibilityMonitoring: false,
       leadFormMonitoring: true,
       syntheticFormTests: false,
@@ -144,8 +144,8 @@ export const BILLING_PLANS = [
       automatedRemediation: false,
       inAppAlerts: true,
       emailAlerts: true,
-      digests: true,                // monthly only
-      aiIssueExplanations: true,    // limited
+      digests: true, // monthly only
+      aiIssueExplanations: true, // limited
       aiPrioritization: false,
       aiBusinessSummaries: false,
       googleIntegrations: false,
@@ -162,7 +162,7 @@ export const BILLING_PLANS = [
       multiClientDashboard: false,
       bulkScans: false,
       clientAccounts: false,
-      roleBasedPermissions: true,   // basic
+      roleBasedPermissions: true, // basic
       apiAccess: false,
       agencyBranding: false,
       customLogo: false,
@@ -171,7 +171,7 @@ export const BILLING_PLANS = [
       customDomain: false,
       brandedEmails: false,
       brandedReports: false,
-      prioritySupport: false,       // standard
+      prioritySupport: false, // standard
       sla: false,
     },
   },
@@ -182,7 +182,7 @@ export const BILLING_PLANS = [
     name: "Growth",
     tagline: "Monitor my digital health.",
     monthlyPriceCents: 2_900,
-    annualPriceCents: 29_000,  // $290/yr
+    annualPriceCents: 29_000, // $290/yr
     hasTrial: true,
     trialCreditCardRequired: false,
     limits: {
@@ -198,15 +198,15 @@ export const BILLING_PLANS = [
     features: {
       continuousMonitoring: true,
       uptimeChecks: true,
-      sslChecks: true,              // daily
+      sslChecks: true, // daily
       securityHeaders: true,
       dnsMonitoring: true,
       domainExpiryMonitoring: true,
       spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinkScanning: true,     // weekly
-      performanceMonitoring: true,  // every 12 hrs
+      brokenLinkScanning: true, // weekly
+      performanceMonitoring: true, // every 12 hrs
       accessibilityMonitoring: true, // basic
       leadFormMonitoring: true,
       syntheticFormTests: false,
@@ -215,13 +215,13 @@ export const BILLING_PLANS = [
       issueDetection: true,
       businessImpactExplanation: true,
       fixRecommendations: true,
-      automatedRemediation: true,   // manual approval only
+      automatedRemediation: true, // manual approval only
       inAppAlerts: true,
       emailAlerts: true,
-      digests: true,                // daily + weekly + monthly
+      digests: true, // daily + weekly + monthly
       aiIssueExplanations: true,
-      aiPrioritization: true,       // limited
-      aiBusinessSummaries: true,    // limited
+      aiPrioritization: true, // limited
+      aiBusinessSummaries: true, // limited
       googleIntegrations: false,
       googleAnalytics: false,
       googleSearchConsole: false,
@@ -236,7 +236,7 @@ export const BILLING_PLANS = [
       multiClientDashboard: false,
       bulkScans: false,
       clientAccounts: false,
-      roleBasedPermissions: true,   // basic
+      roleBasedPermissions: true, // basic
       apiAccess: false,
       agencyBranding: false,
       customLogo: false,
@@ -245,7 +245,7 @@ export const BILLING_PLANS = [
       customDomain: false,
       brandedEmails: false,
       brandedReports: false,
-      prioritySupport: false,       // standard
+      prioritySupport: false, // standard
       sla: false,
     },
   },
@@ -256,7 +256,7 @@ export const BILLING_PLANS = [
     name: "Pro",
     tagline: "Protect my leads and growth.",
     monthlyPriceCents: 5_900,
-    annualPriceCents: 59_000,  // $590/yr
+    annualPriceCents: 59_000, // $590/yr
     hasTrial: true,
     trialCreditCardRequired: false,
     isPopular: true,
@@ -273,15 +273,15 @@ export const BILLING_PLANS = [
     features: {
       continuousMonitoring: true,
       uptimeChecks: true,
-      sslChecks: true,              // daily
+      sslChecks: true, // daily
       securityHeaders: true,
       dnsMonitoring: true,
       domainExpiryMonitoring: true,
       spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinkScanning: true,     // weekly
-      performanceMonitoring: true,  // every 6 hrs
+      brokenLinkScanning: true, // weekly
+      performanceMonitoring: true, // every 6 hrs
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
@@ -305,14 +305,14 @@ export const BILLING_PLANS = [
       marketplaceIntegrations: true,
       reputationMonitoring: true,
       competitorIntelligence: true, // limited
-      marketingIntelligence: true,  // limited
+      marketingIntelligence: true, // limited
       predictiveIntelligence: true,
       aiCooExecutiveDirectives: true,
       multiClientDashboard: false,
       bulkScans: false,
       clientAccounts: false,
       roleBasedPermissions: true,
-      apiAccess: true,              // limited
+      apiAccess: true, // limited
       agencyBranding: false,
       customLogo: false,
       removeGuardianBranding: false,
@@ -331,7 +331,7 @@ export const BILLING_PLANS = [
     name: "Agency",
     tagline: "Manage all my clients.",
     monthlyPriceCents: 9_900,
-    annualPriceCents: 99_000,  // $990/yr
+    annualPriceCents: 99_000, // $990/yr
     hasTrial: true,
     trialCreditCardRequired: false,
     limits: {
@@ -340,9 +340,9 @@ export const BILLING_PLANS = [
       maxTeamMembers: 15,
       minFrequencyMinutes: 5,
       historyDays: 365,
-      maxCriticalPages: null,       // per client
-      maxLeadForms: null,           // per client
-      aiInsightsPerMonth: 500,      // shared pool
+      maxCriticalPages: null, // per client
+      maxLeadForms: null, // per client
+      aiInsightsPerMonth: 500, // shared pool
     },
     features: {
       continuousMonitoring: true,
@@ -354,8 +354,8 @@ export const BILLING_PLANS = [
       spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinkScanning: true,     // weekly
-      performanceMonitoring: true,  // every 6 hrs
+      brokenLinkScanning: true, // weekly
+      performanceMonitoring: true, // every 6 hrs
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
@@ -393,7 +393,7 @@ export const BILLING_PLANS = [
       customDashboardBranding: false,
       customDomain: false,
       brandedEmails: false,
-      brandedReports: true,         // partial
+      brandedReports: true, // partial
       prioritySupport: true,
       sla: false,
     },
@@ -413,10 +413,10 @@ export const BILLING_PLANS = [
       maxBusinesses: 100,
       maxTeamMembers: 50,
       minFrequencyMinutes: 5,
-      historyDays: 730,             // 24 months
-      maxCriticalPages: null,       // per client
-      maxLeadForms: null,           // per client
-      aiInsightsPerMonth: 2_000,    // shared pool
+      historyDays: 730, // 24 months
+      maxCriticalPages: null, // per client
+      maxLeadForms: null, // per client
+      aiInsightsPerMonth: 2_000, // shared pool
     },
     features: {
       continuousMonitoring: true,
@@ -428,8 +428,8 @@ export const BILLING_PLANS = [
       spfDmarcChecks: true,
       basicSeo: true,
       advancedSeo: true,
-      brokenLinkScanning: true,     // weekly
-      performanceMonitoring: true,  // every 6 hrs
+      brokenLinkScanning: true, // weekly
+      performanceMonitoring: true, // every 6 hrs
       accessibilityMonitoring: true,
       leadFormMonitoring: true,
       syntheticFormTests: true,
@@ -481,17 +481,17 @@ export const BILLING_PLANS = [
     /** Price is negotiated ΓÇö 0 sentinel means "contact sales". */
     monthlyPriceCents: 0,
     annualPriceCents: 0,
-    hasTrial: false,             // negotiated
+    hasTrial: false, // negotiated
     trialCreditCardRequired: false,
     limits: {
       maxWebsites: Infinity,
       maxBusinesses: Infinity,
       maxTeamMembers: Infinity,
-      minFrequencyMinutes: 1,    // 1ΓÇô5 min custom
-      historyDays: Infinity,     // custom retention
-      maxCriticalPages: null,    // custom
-      maxLeadForms: null,        // custom
-      aiInsightsPerMonth: null,  // custom
+      minFrequencyMinutes: 1, // 1ΓÇô5 min custom
+      historyDays: Infinity, // custom retention
+      maxCriticalPages: null, // custom
+      maxLeadForms: null, // custom
+      aiInsightsPerMonth: null, // custom
     },
     features: {
       continuousMonitoring: true,
@@ -543,7 +543,7 @@ export const BILLING_PLANS = [
       customDomain: true,
       brandedEmails: true,
       brandedReports: true,
-      prioritySupport: true,     // dedicated
+      prioritySupport: true, // dedicated
       sla: true,
     },
   },

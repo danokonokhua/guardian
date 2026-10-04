@@ -122,7 +122,8 @@ export function upsertReview(
 ): Promise<BusinessReviewRecord> {
   return withTenantTransaction(scope, async (tx) => {
     const source = input.source ?? "DIRECT";
-    const externalId = input.externalId ?? `dir_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const externalId =
+      input.externalId ?? `dir_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
     return tx.businessReview.upsert({
       where: {
@@ -188,9 +189,14 @@ export function updateReviewResponse(
   );
 }
 
-export function listAllReviewsForMetrics(
-  scope: TenantScope,
-): Promise<Array<{ rating: number; hasReply: boolean; sentiment: string; sentimentKeywords: Prisma.JsonValue }>> {
+export function listAllReviewsForMetrics(scope: TenantScope): Promise<
+  Array<{
+    rating: number;
+    hasReply: boolean;
+    sentiment: string;
+    sentimentKeywords: Prisma.JsonValue;
+  }>
+> {
   return withTenantTransaction(scope, async (tx) =>
     tx.businessReview.findMany({
       where: { organizationId: scope.organizationId },

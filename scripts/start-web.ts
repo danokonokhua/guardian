@@ -22,7 +22,9 @@ async function main(): Promise<void> {
         process.stderr.write(`Failed to connect to database after ${maxRetries} attempts.\n`);
         throw error;
       }
-      process.stderr.write(`Waiting for database (attempt ${retries}/${maxRetries}): ${String(error)}\n`);
+      process.stderr.write(
+        `Waiting for database (attempt ${retries}/${maxRetries}): ${String(error)}\n`,
+      );
       await new Promise((r) => setTimeout(r, 2000));
     }
   }
@@ -90,4 +92,3 @@ main().catch((error: unknown) => {
   process.stderr.write(`guardian_web_boot_error: ${String(error)}\n`);
   process.exitCode = 1;
 });
-

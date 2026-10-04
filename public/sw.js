@@ -1,20 +1,20 @@
 // Guardian Mobile Service Worker (PWA & Web Push)
 // Handles background push events, offline caching hooks, and notification clicks.
 
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('push', (event) => {
+self.addEventListener("push", (event) => {
   let payload = {
-    title: 'Guardian Alert',
-    body: 'A digital revenue infrastructure event occurred.',
-    url: '/dashboard',
-    tag: 'guardian-notification',
+    title: "Guardian Alert",
+    body: "A digital revenue infrastructure event occurred.",
+    url: "/dashboard",
+    tag: "guardian-notification",
   };
 
   if (event.data) {
@@ -27,11 +27,11 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: payload.body,
-    icon: payload.icon || '/favicon.ico',
-    badge: payload.badge || '/favicon.ico',
-    tag: payload.tag || 'guardian-alert',
+    icon: payload.icon || "/favicon.ico",
+    badge: payload.badge || "/favicon.ico",
+    tag: payload.tag || "guardian-alert",
     data: {
-      url: payload.url || '/dashboard',
+      url: payload.url || "/dashboard",
     },
     vibrate: [200, 100, 200],
     requireInteraction: true,
@@ -40,24 +40,24 @@ self.addEventListener('push', (event) => {
   event.waitUntil(self.registration.showNotification(payload.title, options));
 });
 
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const targetUrl = event.notification.data && event.notification.data.url
-    ? event.notification.data.url
-    : '/dashboard';
+  const targetUrl =
+    event.notification.data && event.notification.data.url
+      ? event.notification.data.url
+      : "/dashboard";
 
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.includes(targetUrl) && 'focus' in client) {
+        if (client.url.includes(targetUrl) && "focus" in client) {
           return client.focus();
         }
       }
       if (clients.openWindow) {
         return clients.openWindow(targetUrl);
       }
-    })
+    }),
   );
 });
-

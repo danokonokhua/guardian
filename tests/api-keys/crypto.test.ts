@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  generateRawApiKey,
-  hashApiKey,
-  verifyApiKeyHash,
-} from "@/services/api-keys/crypto";
+import { generateRawApiKey, hashApiKey, verifyApiKeyHash } from "@/services/api-keys/crypto";
 
 describe("API Key Cryptography & SHA-256 Hashing (PRD §20)", () => {
   it("generates live tokens with gdn_live_ prefix and high entropy", () => {
@@ -39,4 +35,3 @@ describe("API Key Cryptography & SHA-256 Hashing (PRD §20)", () => {
     expect(verifyApiKeyHash("", storedHash)).toBe(false);
   });
 });
-

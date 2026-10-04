@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  assertCanUseApiAccess,
-  getPlanRateLimitPerMinute,
-} from "@/lib/billing/entitlements";
+import { assertCanUseApiAccess, getPlanRateLimitPerMinute } from "@/lib/billing/entitlements";
 import { ForbiddenError } from "@/lib/errors";
 import {
   authenticateApiKeyToken,
@@ -61,7 +58,7 @@ describe("API Key Service & Plan Gating (PRD §19 & §20)", () => {
     const result = await createApiKey(
       mockTenantScope,
       { name: "CI/CD Pipeline", scopes: ["*"] },
-      "AGENCY"
+      "AGENCY",
     );
 
     expect(result.rawToken.startsWith("gdn_live_")).toBe(true);
@@ -74,7 +71,7 @@ describe("API Key Service & Plan Gating (PRD §19 & §20)", () => {
         name: "CI/CD Pipeline",
         scopes: ["*"],
         rateLimitPerMinute: 120,
-      })
+      }),
     );
   });
 

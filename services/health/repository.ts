@@ -276,9 +276,15 @@ export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> 
       healthScoreHistory: scoreHistory,
       summary: {
         monitors: monitors.length + gbpObservations.length,
-        up: latestStatuses.filter((status) => status === "UP").length + gbpObservations.filter((o) => o.status === "UP").length,
-        down: latestStatuses.filter((status) => status === "DOWN").length + gbpObservations.filter((o) => o.status === "DOWN").length,
-        error: latestStatuses.filter((status) => status === "ERROR").length + gbpObservations.filter((o) => o.status === "ERROR").length,
+        up:
+          latestStatuses.filter((status) => status === "UP").length +
+          gbpObservations.filter((o) => o.status === "UP").length,
+        down:
+          latestStatuses.filter((status) => status === "DOWN").length +
+          gbpObservations.filter((o) => o.status === "DOWN").length,
+        error:
+          latestStatuses.filter((status) => status === "ERROR").length +
+          gbpObservations.filter((o) => o.status === "ERROR").length,
         pending: latestStatuses.filter((status) => status === undefined).length,
         activeIssues: issues.filter((issue) => activeStatuses.has(issue.status)).length,
         recoveredIssues: issues.filter((issue) => issue.status === "RESOLVED").length,

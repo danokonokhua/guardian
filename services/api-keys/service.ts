@@ -49,7 +49,7 @@ function formatSummary(record: ApiKeyPublicRecord): ApiKeySummary {
 export async function createApiKey(
   scope: TenantScope,
   input: CreateApiKeyInput,
-  planId?: string
+  planId?: string,
 ): Promise<GeneratedApiKey> {
   let effectivePlan = planId;
   if (!effectivePlan) {
@@ -58,7 +58,7 @@ export async function createApiKey(
       tx.organization.findUnique({
         where: { id: scope.organizationId },
         select: { plan: true },
-      })
+      }),
     );
     effectivePlan = org?.plan ?? "PRO";
   }
@@ -109,10 +109,7 @@ export async function listApiKeys(scope: TenantScope): Promise<ApiKeySummary[]> 
 /**
  * Revokes an existing API key.
  */
-export async function revokeApiKey(
-  scope: TenantScope,
-  id: string
-): Promise<ApiKeySummary | null> {
+export async function revokeApiKey(scope: TenantScope, id: string): Promise<ApiKeySummary | null> {
   const record = await revokeApiKeyRecord(scope, id);
   return record ? formatSummary(record) : null;
 }
@@ -123,7 +120,7 @@ export async function revokeApiKey(
  */
 export async function authenticateApiKeyToken(
   rawToken: string,
-  requiredScope?: string
+  requiredScope?: string,
 ): Promise<ApiKeyAuthResult> {
   const token = rawToken.trim();
   if (!token.startsWith("gdn_")) {
@@ -184,7 +181,7 @@ export async function authenticateApiKeyToken(
  */
 export async function getApiKeyOverview(
   scope: TenantScope,
-  planId: string = "PRO"
+  planId: string = "PRO",
 ): Promise<ApiKeyOverview> {
   const keys = await listApiKeys(scope);
   const activeCount = keys.filter((k) => k.isActive).length;

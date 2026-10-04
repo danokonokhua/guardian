@@ -10,4 +10,3 @@ export const GET = withApiRoute(async (_request, { params, requestId }) => {
 
   return apiSuccess({ vapidPublicKey: getVapidPublicKey() }, requestId);
 });
-

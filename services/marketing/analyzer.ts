@@ -141,7 +141,8 @@ export function aggregateCrossChannelMetrics(
         data.impressions > 0 ? Number(((data.clicks / data.impressions) * 100).toFixed(2)) : 0;
       const costPerLeadCents =
         data.conversions > 0 ? Math.round(data.spendCents / data.conversions) : data.spendCents;
-      const roas = data.spendCents > 0 ? Number((data.revenueCents / data.spendCents).toFixed(2)) : 0;
+      const roas =
+        data.spendCents > 0 ? Number((data.revenueCents / data.spendCents).toFixed(2)) : 0;
       const spendSharePct =
         totalSpendCents > 0 ? Number(((data.spendCents / totalSpendCents) * 100).toFixed(1)) : 0;
       const leadSharePct =
@@ -338,4 +339,3 @@ export async function detectMarketingAnomalies(
 
   return { detectedCount, resolvedCount, issueIds };
 }
-

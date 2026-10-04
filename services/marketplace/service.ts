@@ -3,15 +3,8 @@ import "server-only";
 import type { TenantScope } from "@/db/tenant";
 import { assertCanUseMarketplace } from "@/lib/billing/entitlements";
 import { ConflictError, NotFoundError, ValidationError } from "@/lib/errors";
-import {
-  MARKETPLACE_CATALOG,
-  getPluginById,
-  type MarketplacePlugin,
-} from "./catalog";
-import {
-  encryptPluginCredentials,
-  decryptPluginCredentials,
-} from "./crypto";
+import { MARKETPLACE_CATALOG, getPluginById, type MarketplacePlugin } from "./catalog";
+import { encryptPluginCredentials, decryptPluginCredentials } from "./crypto";
 import {
   listMarketplaceInstallsByOrg,
   findMarketplaceInstallByPluginId,
@@ -40,7 +33,7 @@ export interface MarketplaceOverview {
  */
 export async function getMarketplaceCatalog(
   scope: TenantScope,
-  planId?: string
+  planId?: string,
 ): Promise<MarketplaceOverview> {
   const installs = await listMarketplaceInstallsByOrg(scope);
   const installMap = new Map(installs.map((inst) => [inst.pluginId, inst]));
@@ -76,7 +69,7 @@ export async function installMarketplacePlugin(
     config: Record<string, unknown>;
     credentials?: Record<string, unknown>;
   },
-  planId?: string
+  planId?: string,
 ): Promise<MarketplaceInstallRecord> {
   let effectivePlan = planId;
   if (!effectivePlan) {
@@ -85,7 +78,7 @@ export async function installMarketplacePlugin(
       tx.organization.findUnique({
         where: { id: scope.organizationId },
         select: { plan: true },
-      })
+      }),
     );
     effectivePlan = org?.plan ?? "PRO";
   }
@@ -113,7 +106,7 @@ export async function installMarketplacePlugin(
     const requiredRank = tierRanks[plugin.requiredPlan] ?? 0;
     if (currentRank < requiredRank) {
       throw new ConflictError(
-        `The plugin '${plugin.name}' requires a ${plugin.requiredPlan} plan or higher.`
+        `The plugin '${plugin.name}' requires a ${plugin.requiredPlan} plan or higher.`,
       );
     }
   }
@@ -121,9 +114,7 @@ export async function installMarketplacePlugin(
   // Validate required configuration fields
   for (const field of plugin.fields) {
     if (field.required) {
-      const val = field.isSecret
-        ? data.credentials?.[field.name]
-        : data.config?.[field.name];
+      const val = field.isSecret ? data.credentials?.[field.name] : data.config?.[field.name];
       if (val === undefined || val === null || val === "") {
         throw new ValidationError(`Field '${field.label}' is required.`);
       }
@@ -135,7 +126,7 @@ export async function installMarketplacePlugin(
   if (data.credentials && Object.keys(data.credentials).length > 0) {
     encryptedCredentials = encryptPluginCredentials(
       data.credentials,
-      `${scope.organizationId}:${plugin.id}`
+      `${scope.organizationId}:${plugin.id}`,
     );
   }
 
@@ -156,7 +147,7 @@ export async function installMarketplacePlugin(
 export async function setPluginStatus(
   scope: TenantScope,
   pluginId: string,
-  status: "ACTIVE" | "PAUSED" | "DISABLED"
+  status: "ACTIVE" | "PAUSED" | "DISABLED",
 ): Promise<MarketplaceInstallRecord> {
   const existing = await findMarketplaceInstallByPluginId(scope, pluginId);
   if (!existing) {
@@ -171,7 +162,7 @@ export async function setPluginStatus(
  */
 export async function uninstallMarketplacePlugin(
   scope: TenantScope,
-  pluginId: string
+  pluginId: string,
 ): Promise<void> {
   const existing = await findMarketplaceInstallByPluginId(scope, pluginId);
   if (!existing) {
@@ -186,7 +177,7 @@ export async function uninstallMarketplacePlugin(
  */
 export async function testMarketplacePlugin(
   scope: TenantScope,
-  pluginId: string
+  pluginId: string,
 ): Promise<{
   success: boolean;
   message: string;
@@ -207,7 +198,7 @@ export async function testMarketplacePlugin(
   if (existing.encryptedCredentials) {
     decryptedCreds = decryptPluginCredentials(
       existing.encryptedCredentials,
-      `${scope.organizationId}:${pluginId}`
+      `${scope.organizationId}:${pluginId}`,
     );
   }
 

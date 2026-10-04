@@ -26,11 +26,7 @@ export function GlassInput({
         } ${rightElement ? "pr-12" : ""} ${className}`}
         {...props}
       />
-      {rightElement && (
-        <div className="absolute right-3 flex items-center">
-          {rightElement}
-        </div>
-      )}
+      {rightElement && <div className="absolute right-3 flex items-center">{rightElement}</div>}
     </div>
   );
 }

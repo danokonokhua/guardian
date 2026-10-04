@@ -22,14 +22,22 @@ async function main() {
 
   const channelArg = (process.argv[2] ?? "").toUpperCase();
   const rawUrl = process.argv[3];
-  const signingSecret = process.argv[4] ?? (channelArg === "WEBHOOK" ? "01234567890123456789012345678901" : undefined);
+  const signingSecret =
+    process.argv[4] ?? (channelArg === "WEBHOOK" ? "01234567890123456789012345678901" : undefined);
 
   if (!["SLACK", "TEAMS", "DISCORD", "WEBHOOK"].includes(channelArg) || !rawUrl) {
-    console.log(JSON.stringify({
-      status: "usage",
-      message: "Usage: npx tsx scripts/notification-destination-smoke.ts <SLACK|DISCORD|TEAMS|WEBHOOK> <URL> [signingSecret] [orgId]",
-      channels: ["SLACK", "DISCORD", "TEAMS", "WEBHOOK"],
-    }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          status: "usage",
+          message:
+            "Usage: npx tsx scripts/notification-destination-smoke.ts <SLACK|DISCORD|TEAMS|WEBHOOK> <URL> [signingSecret] [orgId]",
+          channels: ["SLACK", "DISCORD", "TEAMS", "WEBHOOK"],
+        },
+        null,
+        2,
+      ),
+    );
     process.exit(1);
   }
 
@@ -72,7 +80,9 @@ async function main() {
 
   console.log(`      Direct delivery result:`, directResult);
   if (!directResult.ok) {
-    console.error(`[ERROR] Direct delivery failed: ${directResult.error} (status: ${directResult.status})`);
+    console.error(
+      `[ERROR] Direct delivery failed: ${directResult.error} (status: ${directResult.status})`,
+    );
     process.exit(1);
   }
 
@@ -125,13 +135,21 @@ async function main() {
     const record = await withGucContext({ organizationId }, (tx) =>
       tx.externalDelivery.findUnique({
         where: { id: deliveryId },
-        select: { status: true, httpStatus: true, lastError: true, attempts: true, deliveredAt: true },
+        select: {
+          status: true,
+          httpStatus: true,
+          lastError: true,
+          attempts: true,
+          deliveredAt: true,
+        },
       }),
     );
     if (record) {
       if (record.status === "DELIVERED" || record.status === "FAILED") {
         finalStatus = record.status;
-        console.log(`      Final status: ${record.status} (HTTP ${record.httpStatus}, attempts: ${record.attempts})`);
+        console.log(
+          `      Final status: ${record.status} (HTTP ${record.httpStatus}, attempts: ${record.attempts})`,
+        );
         if (record.lastError) console.log(`      Error: ${record.lastError}`);
         break;
       } else {

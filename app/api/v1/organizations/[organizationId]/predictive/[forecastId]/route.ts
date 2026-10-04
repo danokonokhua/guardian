@@ -21,11 +21,7 @@ export const PATCH = withApiRoute(async (request, { params, requestId }) => {
   const body = await request.json().catch(() => ({}));
   const validated = parseWith(updateForecastStatusSchema, body, "body");
 
-  const updated = await acknowledgeForecast(
-    tenantScope,
-    forecastId,
-    validated.status
-  );
+  const updated = await acknowledgeForecast(tenantScope, forecastId, validated.status);
 
   return apiSuccess(updated, requestId);
 });

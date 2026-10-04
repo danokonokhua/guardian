@@ -71,4 +71,3 @@ describe("API Key Token-Bucket Sliding Window Rate Limiter (PRD §19)", () => {
     expect(headers["X-RateLimit-Reset"]).toBe("1727960000");
   });
 });
-

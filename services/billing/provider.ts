@@ -127,13 +127,15 @@ export function parseWebhookPayload(payload: string): WebhookEventResult | null 
 
     const eventType = String(raw.type || raw.eventType || "mock.event");
     const dataObj =
-      raw.data && typeof raw.data === "object" && (raw.data as { object?: Record<string, unknown> }).object
+      raw.data &&
+      typeof raw.data === "object" &&
+      (raw.data as { object?: Record<string, unknown> }).object
         ? (raw.data as { object: Record<string, unknown> }).object
         : raw;
 
-    const metadata = (dataObj.metadata && typeof dataObj.metadata === "object"
-      ? dataObj.metadata
-      : {}) as Record<string, unknown>;
+    const metadata = (
+      dataObj.metadata && typeof dataObj.metadata === "object" ? dataObj.metadata : {}
+    ) as Record<string, unknown>;
 
     const organizationId =
       (metadata.organizationId as string) ||
@@ -154,10 +156,7 @@ export function parseWebhookPayload(payload: string): WebhookEventResult | null 
 
     let interval: BillingInterval | undefined = undefined;
     const intervalCandidate = (dataObj.interval || raw.interval) as string | undefined;
-    if (
-      intervalCandidate &&
-      ["MONTHLY", "ANNUAL"].includes(intervalCandidate.toUpperCase())
-    ) {
+    if (intervalCandidate && ["MONTHLY", "ANNUAL"].includes(intervalCandidate.toUpperCase())) {
       interval = intervalCandidate.toUpperCase() as BillingInterval;
     }
 
@@ -378,4 +377,3 @@ export function isLiveBillingConfigured(): boolean {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   return Boolean(stripeKey && stripeKey.startsWith("sk_"));
 }
-

@@ -13,16 +13,15 @@ export interface GoogleEncryptedCredentials {
 
 function getKey(): Buffer {
   const raw =
-    process.env.GOOGLE_INTEGRATION_ENCRYPTION_KEY ||
-    process.env.NOTIFICATION_ENCRYPTION_KEY ||
-    "";
+    process.env.GOOGLE_INTEGRATION_ENCRYPTION_KEY || process.env.NOTIFICATION_ENCRYPTION_KEY || "";
 
   if (/^[A-Za-z0-9+/]{43}=$/.test(raw) && Buffer.from(raw, "base64").length === 32) {
     return Buffer.from(raw, "base64");
   }
 
   // Derive a fallback 32-byte key from app secret/session secret if specific base64 key is not set
-  const salt = process.env.APP_SECRET || process.env.SESSION_SECRET || "guardian-google-integrations-secret";
+  const salt =
+    process.env.APP_SECRET || process.env.SESSION_SECRET || "guardian-google-integrations-secret";
   return createHash("sha256").update(salt).digest();
 }
 
@@ -33,10 +32,7 @@ export function encryptGoogleCredentials(
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", getKey(), iv);
   cipher.setAAD(Buffer.from(context, "utf8"));
-  const ciphertext = Buffer.concat([
-    cipher.update(JSON.stringify(value), "utf8"),
-    cipher.final(),
-  ]);
+  const ciphertext = Buffer.concat([cipher.update(JSON.stringify(value), "utf8"), cipher.final()]);
 
   return [
     "v1",
@@ -70,4 +66,3 @@ export function decryptGoogleCredentials(
     throw new Error("Google integration credentials could not be decrypted.");
   }
 }
-

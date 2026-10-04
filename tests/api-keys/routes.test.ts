@@ -75,7 +75,7 @@ describe("API Platform Routes (PRD §19 & §23)", () => {
 
       const response = await getApiKeysRoute(
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/api-keys`),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -107,7 +107,7 @@ describe("API Platform Routes (PRD §19 & §23)", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "Staging Token", scopes: ["*"] }),
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(201);
@@ -124,7 +124,7 @@ describe("API Platform Routes (PRD §19 & §23)", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: "" }),
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(400);
@@ -144,7 +144,7 @@ describe("API Platform Routes (PRD §19 & §23)", () => {
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/api-keys/${KEY_ID}`, {
           method: "DELETE",
         }),
-        { params: Promise.resolve({ organizationId: ORG, keyId: KEY_ID }) }
+        { params: Promise.resolve({ organizationId: ORG, keyId: KEY_ID }) },
       );
 
       expect(response.status).toBe(200);
@@ -160,11 +160,10 @@ describe("API Platform Routes (PRD §19 & §23)", () => {
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/api-keys/${KEY_ID}`, {
           method: "DELETE",
         }),
-        { params: Promise.resolve({ organizationId: ORG, keyId: KEY_ID }) }
+        { params: Promise.resolve({ organizationId: ORG, keyId: KEY_ID }) },
       );
 
       expect(response.status).toBe(404);
     });
   });
 });
-

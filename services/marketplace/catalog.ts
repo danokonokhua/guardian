@@ -1,9 +1,4 @@
-export type PluginCategory =
-  | "alerting"
-  | "telemetry"
-  | "remediation"
-  | "analytics"
-  | "developer";
+export type PluginCategory = "alerting" | "telemetry" | "remediation" | "analytics" | "developer";
 
 export interface PluginField {
   name: string;
@@ -40,7 +35,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "slack-notifications",
     name: "Slack Smart Incident Bot",
-    description: "Broadcast instant incident alerts, SLA warnings, and health score recoveries directly into configured Slack channels.",
+    description:
+      "Broadcast instant incident alerts, SLA warnings, and health score recoveries directly into configured Slack channels.",
     category: "alerting",
     author: "Guardian Core",
     version: "2.1.0",
@@ -97,7 +93,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "discord-webhook",
     name: "Discord Ops Dispatcher",
-    description: "Rich Discord webhook embed dispatcher with color-coded severity tiers and actionable triage links.",
+    description:
+      "Rich Discord webhook embed dispatcher with color-coded severity tiers and actionable triage links.",
     category: "alerting",
     author: "Guardian Core",
     version: "1.4.0",
@@ -142,7 +139,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "pagerduty-sync",
     name: "PagerDuty Critical Escalation",
-    description: "Trigger, acknowledge, and resolve high-urgency PagerDuty incidents automatically on Guardian uptime/SSL collapse.",
+    description:
+      "Trigger, acknowledge, and resolve high-urgency PagerDuty incidents automatically on Guardian uptime/SSL collapse.",
     category: "alerting",
     author: "Guardian Core",
     version: "2.0.1",
@@ -174,7 +172,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "ms-teams-connector",
     name: "Microsoft Teams Adaptive Cards",
-    description: "Post structured Microsoft Teams Adaptive Cards with interactive drill-down buttons into your incident channel.",
+    description:
+      "Post structured Microsoft Teams Adaptive Cards with interactive drill-down buttons into your incident channel.",
     category: "alerting",
     author: "Guardian Core",
     version: "1.2.0",
@@ -194,7 +193,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "datadog-metrics",
     name: "Datadog Telemetry Bridge",
-    description: "Stream website uptime, SSL days remaining, response latency, and SEO health metrics as Datadog custom metrics.",
+    description:
+      "Stream website uptime, SSL days remaining, response latency, and SEO health metrics as Datadog custom metrics.",
     category: "telemetry",
     author: "Datadog Partner Network",
     version: "1.5.0",
@@ -228,7 +228,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "cloudflare-cache-purge",
     name: "Cloudflare Edge Purge Remediation",
-    description: "Auto-purge Cloudflare edge cache upon successful Guardian auto-remediation to instantly deploy headers and robots.txt.",
+    description:
+      "Auto-purge Cloudflare edge cache upon successful Guardian auto-remediation to instantly deploy headers and robots.txt.",
     category: "remediation",
     author: "Guardian Engineering",
     version: "1.1.0",
@@ -256,7 +257,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "github-issues-bridge",
     name: "GitHub Issues Auto-Sync",
-    description: "Automatically file GitHub issues in your repository when critical SEO regressions or broken links are detected.",
+    description:
+      "Automatically file GitHub issues in your repository when critical SEO regressions or broken links are detected.",
     category: "developer",
     author: "Guardian Community",
     version: "1.0.4",
@@ -290,7 +292,8 @@ export const MARKETPLACE_CATALOG: MarketplacePlugin[] = [
   {
     id: "generic-signed-webhook",
     name: "Generic Signed Webhook Stream",
-    description: "Real-time JSON webhook stream signed with HMAC-SHA256 for custom microservices, Zapier, or n8n automation pipelines.",
+    description:
+      "Real-time JSON webhook stream signed with HMAC-SHA256 for custom microservices, Zapier, or n8n automation pipelines.",
     category: "developer",
     author: "Guardian Core",
     version: "3.0.0",

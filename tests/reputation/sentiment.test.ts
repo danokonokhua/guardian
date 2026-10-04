@@ -29,10 +29,7 @@ describe("Reputation Sentiment Engine", () => {
     });
 
     it("classifies mixed 3-star review as NEUTRAL", () => {
-      const result = analyzeReviewSentiment(
-        "Service was average, not great but not terrible.",
-        3,
-      );
+      const result = analyzeReviewSentiment("Service was average, not great but not terrible.", 3);
 
       expect(result.sentiment).toBe("NEUTRAL");
     });
@@ -52,9 +49,24 @@ describe("Reputation Sentiment Engine", () => {
   describe("calculateReputationMetrics", () => {
     it("computes accurate aggregates, response rate, and keyword counts", () => {
       const sampleReviews = [
-        { rating: 5, hasReply: true, sentiment: "POSITIVE", sentimentKeywords: ["Customer Service", "Speed & Performance"] },
-        { rating: 5, hasReply: true, sentiment: "POSITIVE", sentimentKeywords: ["Customer Service"] },
-        { rating: 4, hasReply: false, sentiment: "POSITIVE", sentimentKeywords: ["Product Quality"] },
+        {
+          rating: 5,
+          hasReply: true,
+          sentiment: "POSITIVE",
+          sentimentKeywords: ["Customer Service", "Speed & Performance"],
+        },
+        {
+          rating: 5,
+          hasReply: true,
+          sentiment: "POSITIVE",
+          sentimentKeywords: ["Customer Service"],
+        },
+        {
+          rating: 4,
+          hasReply: false,
+          sentiment: "POSITIVE",
+          sentimentKeywords: ["Product Quality"],
+        },
         { rating: 1, hasReply: false, sentiment: "NEGATIVE", sentimentKeywords: ["Reliability"] },
       ];
 

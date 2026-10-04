@@ -12,13 +12,7 @@ const addCampaignSchema = z
   .object({
     name: z.string().trim().min(1).optional(),
     channel: z
-      .enum([
-        "GOOGLE_ADS",
-        "META_ADS",
-        "LINKEDIN_ADS",
-        "EMAIL_MARKETING",
-        "DIRECT_CRM",
-      ])
+      .enum(["GOOGLE_ADS", "META_ADS", "LINKEDIN_ADS", "EMAIL_MARKETING", "DIRECT_CRM"])
       .optional(),
     externalCampaignId: z.string().trim().optional().nullable(),
     budgetDailyCents: z.number().int().nonnegative().optional().nullable(),

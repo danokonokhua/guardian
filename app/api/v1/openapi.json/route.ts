@@ -8,4 +8,3 @@ export async function GET(): Promise<Response> {
     "cache-control": "public, max-age=3600",
   });
 }
-

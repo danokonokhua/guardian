@@ -17,13 +17,7 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
 
   const body = rollbackSchema.parse(await request.json().catch(() => ({})));
 
-  const action = await rollbackRemediation(
-    tenantScope,
-    actionId,
-    body.reason,
-    context.user.userId,
-  );
+  const action = await rollbackRemediation(tenantScope, actionId, body.reason, context.user.userId);
 
   return apiSuccess(action, requestId);
 });
-

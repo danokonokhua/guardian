@@ -133,12 +133,18 @@ export function DashboardShell({
           </Link>
           <a href="/audit">Run a free website audit ↗</a>
           <Link href="/">Back to homepage ↗</Link>
-          <form action="/api/auth/logout" method="POST" className="pt-2 border-t border-glass-subtle-border/40 mt-2">
+          <form
+            action="/api/auth/logout"
+            method="POST"
+            className="pt-2 border-t border-glass-subtle-border/40 mt-2"
+          >
             <button
               type="submit"
               className="w-full text-left text-xs font-medium text-neutral-400 hover:text-rose-400 py-1 transition-colors flex items-center gap-2"
             >
-              <span aria-hidden="true" className="text-sm">⎋</span>
+              <span aria-hidden="true" className="text-sm">
+                ⎋
+              </span>
               <span>Sign out</span>
             </button>
           </form>
@@ -163,7 +169,9 @@ export function DashboardShell({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-neutral-400 hover:text-white bg-surface-container/60 hover:bg-surface-container border border-glass-subtle-border hover:border-glass-specular-border transition-all active:scale-95 shadow-sm"
               >
                 <span>Sign out</span>
-                <span aria-hidden="true" className="text-neutral-500 text-[10px]">↳</span>
+                <span aria-hidden="true" className="text-neutral-500 text-[10px]">
+                  ↳
+                </span>
               </button>
             </form>
           </div>

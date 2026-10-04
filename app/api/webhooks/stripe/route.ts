@@ -104,7 +104,8 @@ export const POST = withRoute(async (request, { requestId }) => {
           amountCents: event.amountCents,
           status: "PAID",
           invoiceNumber: event.invoiceNumber ?? `INV-${Date.now().toString().slice(-6)}`,
-          hostedInvoiceUrl: event.hostedInvoiceUrl ?? "https://billing.stripe.com/p/session/test_invoice",
+          hostedInvoiceUrl:
+            event.hostedInvoiceUrl ?? "https://billing.stripe.com/p/session/test_invoice",
           pdfUrl: event.pdfUrl ?? "https://pay.stripe.com/invoice/test.pdf",
           paidAt: new Date(),
         },

@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  encryptPluginCredentials,
-  decryptPluginCredentials,
-} from "@/services/marketplace/crypto";
+import { encryptPluginCredentials, decryptPluginCredentials } from "@/services/marketplace/crypto";
 
 describe("Marketplace AES-256-GCM Credential Encryption (PRD §20 & §21)", () => {
   const tenantContext = "org-1234:slack-notifications";
@@ -34,9 +31,7 @@ describe("Marketplace AES-256-GCM Credential Encryption (PRD §20 & §21)", () =
     const encrypted = encryptPluginCredentials(credentials, tenantContext);
     const attackerContext = "org-attacker:slack-notifications";
 
-    expect(() =>
-      decryptPluginCredentials(encrypted, attackerContext)
-    ).toThrow();
+    expect(() => decryptPluginCredentials(encrypted, attackerContext)).toThrow();
   });
 
   it("fails to decrypt if ciphertext is corrupted or tampered", () => {
@@ -46,8 +41,6 @@ describe("Marketplace AES-256-GCM Credential Encryption (PRD §20 & §21)", () =
     const tamperedCipher = cipher!.slice(0, -4) + "AAAA";
     const corrupted = [v, iv, tag, tamperedCipher].join(".");
 
-    expect(() =>
-      decryptPluginCredentials(corrupted, tenantContext)
-    ).toThrow();
+    expect(() => decryptPluginCredentials(corrupted, tenantContext)).toThrow();
   });
 });

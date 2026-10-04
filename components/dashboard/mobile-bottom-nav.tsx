@@ -21,8 +21,7 @@ export function MobileBottomNav() {
     >
       {NAV_ITEMS.map((item) => {
         const isActive =
-          pathname === item.href ||
-          (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
         return (
           <Link
@@ -42,4 +41,3 @@ export function MobileBottomNav() {
     </nav>
   );
 }
-

@@ -97,7 +97,8 @@ export const GET = withRoute(async () => {
       method: "POST",
       body: {
         organizationId: "UUID",
-        eventType: "customer.subscription.updated | invoice.payment_succeeded | customer.subscription.deleted",
+        eventType:
+          "customer.subscription.updated | invoice.payment_succeeded | customer.subscription.deleted",
         plan: "GROWTH | PRO | AGENCY",
         amountCents: 5900,
         interval: "MONTHLY | ANNUAL",

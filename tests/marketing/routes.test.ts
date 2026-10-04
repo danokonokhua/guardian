@@ -188,4 +188,3 @@ describe("Marketing Intelligence API Routes", () => {
     });
   });
 });
-

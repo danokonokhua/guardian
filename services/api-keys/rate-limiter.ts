@@ -13,7 +13,7 @@ const WINDOW_DURATION_MS = 60_000; // 1 minute sliding window
 export function checkApiKeyRateLimit(
   keyId: string,
   limitPerMinute: number,
-  now: number = Date.now()
+  now: number = Date.now(),
 ): RateLimitResult {
   const windowStart = now - WINDOW_DURATION_MS;
 

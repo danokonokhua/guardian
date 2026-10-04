@@ -2,10 +2,7 @@ import { z } from "zod";
 import { createTenantScope } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { requirePermission } from "@/lib/auth/context";
-import {
-  proposeRemediation,
-  getRemediationOverview,
-} from "@/services/remediation/service";
+import { proposeRemediation, getRemediationOverview } from "@/services/remediation/service";
 
 const proposeSchema = z.object({
   actionType: z.string().trim().min(1, "actionType is required"),

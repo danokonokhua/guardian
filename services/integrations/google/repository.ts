@@ -174,10 +174,7 @@ export function updateGoogleIntegrationSummary(
   );
 }
 
-export function disconnectGoogleIntegration(
-  scope: TenantScope,
-  id: string,
-): Promise<void> {
+export function disconnectGoogleIntegration(scope: TenantScope, id: string): Promise<void> {
   return withTenantTransaction(scope, async (tx) => {
     await tx.googleIntegration.deleteMany({
       where: { id, organizationId: scope.organizationId },

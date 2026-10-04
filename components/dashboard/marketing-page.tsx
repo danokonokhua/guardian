@@ -39,12 +39,8 @@ export async function MarketingDashboardPage() {
         title="Marketing Intelligence & Spend Protection"
         description="Monitor multi-channel advertising spend, customer acquisition cost per lead (CPL), ROAS, and protect budgets from zero-conversion drains."
       >
-        <MarketingView
-          key={membership.organizationId}
-          organizationId={membership.organizationId}
-        />
+        <MarketingView key={membership.organizationId} organizationId={membership.organizationId} />
       </DashboardShell>
     </DashboardOrganizationProvider>
   );
 }
-

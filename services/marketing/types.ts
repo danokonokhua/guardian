@@ -1,11 +1,7 @@
 import type { Prisma } from "@prisma/client";
 
 export type MarketingChannel =
-  | "GOOGLE_ADS"
-  | "META_ADS"
-  | "LINKEDIN_ADS"
-  | "EMAIL_MARKETING"
-  | "DIRECT_CRM";
+  "GOOGLE_ADS" | "META_ADS" | "LINKEDIN_ADS" | "EMAIL_MARKETING" | "DIRECT_CRM";
 
 export interface MarketingCampaignRecord {
   id: string;
@@ -78,4 +74,3 @@ export interface CrossChannelOverview {
   channels: ChannelPerformanceItem[];
   campaigns: CampaignWithLatestSnapshot[];
 }
-

@@ -19,9 +19,7 @@ export interface GeneratedAiResponse {
  * Strict adherence to PRD §14: draft responses are always marked PENDING_REVIEW,
  * requiring explicit operator authorization before publishing.
  */
-export function generateAiReviewResponse(
-  input: GenerateReviewResponseInput,
-): GeneratedAiResponse {
+export function generateAiReviewResponse(input: GenerateReviewResponseInput): GeneratedAiResponse {
   const { authorName, rating, comment, businessName = "our team", keywords = [] } = input;
   const firstName = authorName.split(" ")[0] || "there";
 
@@ -41,7 +39,11 @@ export function generateAiReviewResponse(
     draftReply = `Hello ${firstName}, thank you for sharing your feedback with us. We appreciate your honest review. We aim to deliver exceptional results for every client, and we'd love the opportunity to understand how we can improve. Please reach out to us directly so we can make things right.`;
   } else {
     // 1 - 2 Stars (Negative / Critical)
-    if (keywords.includes("Reliability") || comment.toLowerCase().includes("down") || comment.toLowerCase().includes("broken")) {
+    if (
+      keywords.includes("Reliability") ||
+      comment.toLowerCase().includes("down") ||
+      comment.toLowerCase().includes("broken")
+    ) {
       draftReply = `Hi ${firstName}, we sincerely apologize for the frustration and disruption you experienced. System reliability is critical, and we regret falling short of your expectations. We would appreciate the chance to look into this for you immediately. Please contact our leadership directly at support@ourcompany.com so we can investigate and resolve this.`;
     } else if (keywords.includes("Pricing & Billing")) {
       draftReply = `Hi ${firstName}, thank you for bringing this to our attention. We are very sorry to hear about your experience with our billing or pricing. We want to review your account details right away and resolve any discrepancies. Please connect with us directly so our billing team can assist you immediately.`;

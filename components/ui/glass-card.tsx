@@ -14,8 +14,7 @@ export function GlassCard({
   children,
   ...props
 }: GlassCardProps) {
-  const baseClasses =
-    "relative overflow-hidden rounded-2xl border transition-all duration-200";
+  const baseClasses = "relative overflow-hidden rounded-2xl border transition-all duration-200";
 
   const variantClasses = {
     default:
@@ -28,17 +27,16 @@ export function GlassCard({
 
   const glowOverlays = {
     cyan: "before:absolute before:-top-20 before:-right-20 before:w-48 before:h-48 before:bg-primary-container/10 before:rounded-full before:blur-3xl before:pointer-events-none",
-    violet: "before:absolute before:-top-20 before:-right-20 before:w-48 before:h-48 before:bg-secondary-container/20 before:rounded-full before:blur-3xl before:pointer-events-none",
-    emerald: "before:absolute before:-top-20 before:-right-20 before:w-48 before:h-48 before:bg-status-operational/15 before:rounded-full before:blur-3xl before:pointer-events-none",
+    violet:
+      "before:absolute before:-top-20 before:-right-20 before:w-48 before:h-48 before:bg-secondary-container/20 before:rounded-full before:blur-3xl before:pointer-events-none",
+    emerald:
+      "before:absolute before:-top-20 before:-right-20 before:w-48 before:h-48 before:bg-status-operational/15 before:rounded-full before:blur-3xl before:pointer-events-none",
     rose: "before:absolute before:-top-20 before:-right-20 before:w-48 before:h-48 before:bg-status-outage/15 before:rounded-full before:blur-3xl before:pointer-events-none",
     none: "",
   }[glow];
 
   return (
-    <div
-      className={`${baseClasses} ${variantClasses} ${glowOverlays} ${className}`}
-      {...props}
-    >
+    <div className={`${baseClasses} ${variantClasses} ${glowOverlays} ${className}`} {...props}>
       {children}
     </div>
   );

@@ -5,19 +5,11 @@ export type CooCategory =
   | "SEO_DOMINANCE"
   | "REPUTATION_SAFEGUARD";
 
-export type CooPriorityTier =
-  | "P0_IMMEDIATE"
-  | "P1_THIS_WEEK"
-  | "P2_THIS_MONTH"
-  | "P3_STRATEGIC";
+export type CooPriorityTier = "P0_IMMEDIATE" | "P1_THIS_WEEK" | "P2_THIS_MONTH" | "P3_STRATEGIC";
 
 export type CooEffort = "LOW_EFFORT" | "MODERATE_EFFORT" | "HIGH_EFFORT";
 
-export type CooDirectiveStatus =
-  | "PENDING"
-  | "APPROVED"
-  | "EXECUTED"
-  | "DISMISSED";
+export type CooDirectiveStatus = "PENDING" | "APPROVED" | "EXECUTED" | "DISMISSED";
 
 export interface CrossDomainEvidenceSynthesis {
   websiteVector?: {

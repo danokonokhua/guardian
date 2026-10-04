@@ -4,10 +4,7 @@ import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
 import { assertCanUsePredictiveIntelligence } from "@/lib/billing/entitlements";
 import { NotFoundError } from "@/lib/errors";
-import {
-  evaluatePredictiveRunway,
-  type TelemetrySnapshot,
-} from "./engine";
+import { evaluatePredictiveRunway, type TelemetrySnapshot } from "./engine";
 import {
   listPredictiveForecastsByOrg,
   findPredictiveForecastById,
@@ -16,10 +13,7 @@ import {
   purgeStaleForecasts,
   type PredictiveForecastRecord,
 } from "./repository";
-import type {
-  PredictiveTargetVector,
-  PredictiveRiskLevel,
-} from "./types";
+import type { PredictiveTargetVector, PredictiveRiskLevel } from "./types";
 
 export interface PredictiveOverview {
   totalForecasts: number;
@@ -35,7 +29,7 @@ export interface PredictiveOverview {
  */
 export async function getPredictiveOverview(
   scope: TenantScope,
-  planId?: string
+  planId?: string,
 ): Promise<PredictiveOverview> {
   const forecasts = await listPredictiveForecastsByOrg(scope, {
     status: "ACTIVE",
@@ -46,8 +40,7 @@ export async function getPredictiveOverview(
   const moderateCount = forecasts.filter((f) => f.riskLevel === "MODERATE").length;
 
   // Approximate modeled risk exposure based on probability weights
-  const projectedRevenueRiskUsd =
-    criticalCount * 1250 + highCount * 450 + moderateCount * 150;
+  const projectedRevenueRiskUsd = criticalCount * 1250 + highCount * 450 + moderateCount * 150;
 
   return {
     totalForecasts: forecasts.length,
@@ -64,7 +57,7 @@ export async function getPredictiveOverview(
  */
 export async function generatePredictiveForecastsForOrg(
   scope: TenantScope,
-  planId?: string
+  planId?: string,
 ): Promise<{
   websitesAnalyzed: number;
   newForecastsGenerated: number;
@@ -75,7 +68,7 @@ export async function generatePredictiveForecastsForOrg(
       tx.organization.findUnique({
         where: { id: scope.organizationId },
         select: { plan: true },
-      })
+      }),
     );
     effectivePlan = org?.plan ?? "PRO";
   }
@@ -96,7 +89,7 @@ export async function generatePredictiveForecastsForOrg(
           },
         },
       },
-    })
+    }),
   );
 
   let newForecastsCount = 0;
@@ -178,7 +171,7 @@ export async function generatePredictiveForecastsForOrg(
 export async function acknowledgeForecast(
   scope: TenantScope,
   id: string,
-  status: "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED" = "ACKNOWLEDGED"
+  status: "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED" = "ACKNOWLEDGED",
 ): Promise<PredictiveForecastRecord> {
   const existing = await findPredictiveForecastById(scope, id);
   if (!existing) {

@@ -73,8 +73,7 @@ export async function dispatchIssueRecoveryNotifications(
           : Promise.resolve([]),
       ]);
 
-      const enqueue =
-        options?.enqueue ?? ((event) => enqueueNotification(event, options?.boss));
+      const enqueue = options?.enqueue ?? ((event) => enqueueNotification(event, options?.boss));
 
       for (const member of members) {
         const userPrefs = preferences.filter((p) => p.userId === member.userId);

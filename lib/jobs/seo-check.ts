@@ -388,7 +388,8 @@ export function extractStructuredData(html: string): {
   invalidCount: number;
   types: string[];
 } {
-  const scriptRegex = /<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  const scriptRegex =
+    /<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let match;
   let validCount = 0;
   let invalidCount = 0;
@@ -437,9 +438,7 @@ export function extractHeadingHierarchy(html: string): {
   hasMissingH1: boolean;
 } {
   const h1Matches = html.match(/<h1\b[^>]*>[\s\S]*?<\/h1>/gi) ?? [];
-  const h1Text = h1Matches
-    .map((h) => plainText(h))
-    .filter((t) => t.length > 0);
+  const h1Text = h1Matches.map((h) => plainText(h)).filter((t) => t.length > 0);
   const h2Matches = html.match(/<h2\b[^>]*>[\s\S]*?<\/h2>/gi) ?? [];
   const h2Count = h2Matches.filter((h) => plainText(h).length > 0).length;
   const h3Matches = html.match(/<h3\b[^>]*>[\s\S]*?<\/h3>/gi) ?? [];
@@ -485,7 +484,10 @@ export function extractImageAltAudit(html: string): {
   };
 }
 
-export function extractLinkCounts(html: string, pageOrigin: string): {
+export function extractLinkCounts(
+  html: string,
+  pageOrigin: string,
+): {
   internalCount: number;
   externalCount: number;
   totalCount: number;
@@ -496,7 +498,13 @@ export function extractLinkCounts(html: string, pageOrigin: string): {
 
   for (const tag of linkTags) {
     const href = attributeValue(tag, "href");
-    if (!href || href.startsWith("#") || href.startsWith("javascript:") || href.startsWith("mailto:") || href.startsWith("tel:")) {
+    if (
+      !href ||
+      href.startsWith("#") ||
+      href.startsWith("javascript:") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:")
+    ) {
       continue;
     }
     try {
@@ -612,7 +620,8 @@ export async function runAdvancedSeoCheck(
       severity: "LOW",
       title: "Page title is excessively long",
       summary: `The page title is ${title.length} characters (recommended 30–65 characters) and may be truncated in search results.`,
-      recommendation: "Shorten the title to under 65 characters while keeping target keywords near the front.",
+      recommendation:
+        "Shorten the title to under 65 characters while keeping target keywords near the front.",
     });
   }
 
@@ -622,7 +631,8 @@ export async function runAdvancedSeoCheck(
       severity: "MEDIUM",
       title: "Missing meta description",
       summary: "The page has no meta description tag.",
-      recommendation: "Add a compelling meta description between 50 and 160 characters to optimize click-through rate.",
+      recommendation:
+        "Add a compelling meta description between 50 and 160 characters to optimize click-through rate.",
     });
   } else if (descriptionStatus === "too_short") {
     issues.push({
@@ -630,7 +640,8 @@ export async function runAdvancedSeoCheck(
       severity: "LOW",
       title: "Meta description is too short",
       summary: `The meta description is ${description.length} characters (recommended 50–160 characters).`,
-      recommendation: "Expand the description to give searchers a clearer preview of the page content.",
+      recommendation:
+        "Expand the description to give searchers a clearer preview of the page content.",
     });
   } else if (descriptionStatus === "too_long") {
     issues.push({
@@ -666,7 +677,8 @@ export async function runAdvancedSeoCheck(
       severity: "HIGH",
       title: "Canonical points to external domain",
       summary: `The canonical URL (${canonical}) points to a different domain than the monitored website.`,
-      recommendation: "Verify whether this external canonical URL is intentional, or correct it to prevent indexing loss.",
+      recommendation:
+        "Verify whether this external canonical URL is intentional, or correct it to prevent indexing loss.",
     });
   }
 
@@ -675,8 +687,10 @@ export async function runAdvancedSeoCheck(
       ruleId: "RULE_SEO_MISSING_OG",
       severity: "MEDIUM",
       title: "Missing or incomplete Open Graph tags",
-      summary: "Open Graph metadata is incomplete. Social shares will lack optimized titles or preview images.",
-      recommendation: "Configure og:title, og:description, and og:image tags for rich social snippets.",
+      summary:
+        "Open Graph metadata is incomplete. Social shares will lack optimized titles or preview images.",
+      recommendation:
+        "Configure og:title, og:description, and og:image tags for rich social snippets.",
     });
   }
 
@@ -686,7 +700,8 @@ export async function runAdvancedSeoCheck(
       severity: "MEDIUM",
       title: "No Schema.org structured data",
       summary: "No JSON-LD structured data was found on the page.",
-      recommendation: "Add Schema.org JSON-LD (such as Organization, WebSite, or LocalBusiness) for rich snippets.",
+      recommendation:
+        "Add Schema.org JSON-LD (such as Organization, WebSite, or LocalBusiness) for rich snippets.",
     });
   } else if (structuredData.invalidCount > 0) {
     issues.push({
@@ -704,7 +719,8 @@ export async function runAdvancedSeoCheck(
       severity: "LOW",
       title: "Images missing alt text",
       summary: `${images.missingAlt} image(s) on the page lack an alt attribute.`,
-      recommendation: "Add descriptive alt attributes to all informational images for accessibility and image search.",
+      recommendation:
+        "Add descriptive alt attributes to all informational images for accessibility and image search.",
     });
   }
 
@@ -763,4 +779,3 @@ export async function runAdvancedSeoCheck(
     issues,
   };
 }
-

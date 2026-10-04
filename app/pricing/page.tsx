@@ -18,13 +18,22 @@ export default function PricingPage() {
       <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 backdrop-blur-xl border-b border-glass-specular-border bg-canvas/60">
         <Brand />
         <nav aria-label="Main navigation" className="flex items-center gap-6">
-          <Link href="/" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+          <Link
+            href="/"
+            className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+          >
             Platform
           </Link>
-          <Link href="/audit" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+          <Link
+            href="/audit"
+            className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+          >
             Free audit
           </Link>
-          <Link href="/login" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+          <Link
+            href="/login"
+            className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+          >
             Sign in
           </Link>
           <Link
@@ -45,7 +54,8 @@ export default function PricingPage() {
             Protect your digital revenue at every scale.
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 mb-10 leading-relaxed">
-            Start with a 14-day card-free trial on all standard plans. No hidden fees. Cancel anytime.
+            Start with a 14-day card-free trial on all standard plans. No hidden fees. Cancel
+            anytime.
           </p>
 
           {/* Billing Interval Dynamic Capsule Toggle */}
@@ -71,11 +81,13 @@ export default function PricingPage() {
               }`}
             >
               <span>Annual billing</span>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold transition-colors ${
-                annual
-                  ? "bg-neutral-950/20 text-neutral-950"
-                  : "bg-primary/10 border border-primary/30 text-primary"
-              }`}>
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full font-bold transition-colors ${
+                  annual
+                    ? "bg-neutral-950/20 text-neutral-950"
+                    : "bg-primary/10 border border-primary/30 text-primary"
+                }`}
+              >
                 2 months free
               </span>
             </button>
@@ -123,9 +135,7 @@ export default function PricingPage() {
                   <p className="text-sm text-neutral-400 mb-8 leading-relaxed">{plan.tagline}</p>
 
                   <div className="flex items-baseline gap-1.5 mb-8">
-                    <span className="text-5xl font-black text-white tracking-tight">
-                      {price}
-                    </span>
+                    <span className="text-5xl font-black text-white tracking-tight">{price}</span>
                     <span className="text-sm text-neutral-400 font-medium">{intervalLabel}</span>
                   </div>
 
@@ -166,13 +176,17 @@ export default function PricingPage() {
                     <div className="flex items-center gap-3 text-neutral-300">
                       <span className="text-primary font-bold">✓</span>
                       <span>
-                        Check cadence: <strong className="text-white">every {plan.limits.minFrequencyMinutes}m</strong>
+                        Check cadence:{" "}
+                        <strong className="text-white">
+                          every {plan.limits.minFrequencyMinutes}m
+                        </strong>
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-neutral-300">
                       <span className="text-primary font-bold">✓</span>
                       <span>
-                        <strong className="text-white">{plan.limits.historyDays} days</strong> audit history
+                        <strong className="text-white">{plan.limits.historyDays} days</strong> audit
+                        history
                       </span>
                     </div>
                     {plan.features.syntheticFormTests && (

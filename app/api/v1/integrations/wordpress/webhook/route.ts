@@ -20,11 +20,9 @@ export const POST = withRoute(async (request, { requestId }) => {
   const rawPayload = await request.json().catch(() => null);
 
   if (!rawPayload) {
-    return jsonResponse(
-      { error: "Invalid JSON payload in request body." },
-      400,
-      { "x-request-id": requestId },
-    );
+    return jsonResponse({ error: "Invalid JSON payload in request body." }, 400, {
+      "x-request-id": requestId,
+    });
   }
 
   try {

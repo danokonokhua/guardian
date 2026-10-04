@@ -77,13 +77,7 @@ export async function registerCampaign(
     throw new ValidationError("Campaign name is required");
   }
 
-  const validChannels = [
-    "GOOGLE_ADS",
-    "META_ADS",
-    "LINKEDIN_ADS",
-    "EMAIL_MARKETING",
-    "DIRECT_CRM",
-  ];
+  const validChannels = ["GOOGLE_ADS", "META_ADS", "LINKEDIN_ADS", "EMAIL_MARKETING", "DIRECT_CRM"];
   if (!validChannels.includes(input.channel)) {
     throw new ValidationError(
       `Invalid channel "${input.channel}". Must be one of: ${validChannels.join(", ")}`,
@@ -92,11 +86,7 @@ export async function registerCampaign(
 
   // 2. Prevent duplicate channel + external ID
   if (input.externalCampaignId) {
-    const existing = await findCampaignByExternalId(
-      scope,
-      input.channel,
-      input.externalCampaignId,
-    );
+    const existing = await findCampaignByExternalId(scope, input.channel, input.externalCampaignId);
     if (existing) {
       throw new ConflictError(
         `Campaign "${input.externalCampaignId}" on ${input.channel} already exists in your workspace`,
@@ -264,10 +254,7 @@ export async function updateCampaignDetails(
 /**
  * Deletes a campaign.
  */
-export async function removeCampaign(
-  scope: TenantScope,
-  campaignId: string,
-): Promise<boolean> {
+export async function removeCampaign(scope: TenantScope, campaignId: string): Promise<boolean> {
   const campaign = await findCampaignById(scope, campaignId);
   if (!campaign) {
     throw new NotFoundError(`Campaign ${campaignId} not found`);
@@ -275,4 +262,3 @@ export async function removeCampaign(
 
   return repoDeleteCampaign(scope, campaignId);
 }
-

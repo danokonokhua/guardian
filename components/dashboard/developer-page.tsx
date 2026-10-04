@@ -39,12 +39,8 @@ export async function DeveloperDashboardPage() {
         title="Developer & API Platform"
         description="Programmatic REST API keys, SHA-256 tokens, OpenAPI specification, and rate-limited developer endpoints."
       >
-        <DeveloperView
-          key={membership.organizationId}
-          organizationId={membership.organizationId}
-        />
+        <DeveloperView key={membership.organizationId} organizationId={membership.organizationId} />
       </DashboardShell>
     </DashboardOrganizationProvider>
   );
 }
-

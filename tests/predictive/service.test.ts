@@ -130,16 +130,16 @@ describe("Predictive Intelligence Service & Threat Aggregator (PRD §20, §23, �
       expect(repository.updatePredictiveForecastStatus).toHaveBeenCalledWith(
         mockTenantScope,
         "f-1",
-        "ACKNOWLEDGED"
+        "ACKNOWLEDGED",
       );
     });
 
     it("throws NotFoundError when forecast is missing", async () => {
       vi.spyOn(repository, "findPredictiveForecastById").mockResolvedValue(null);
 
-      await expect(
-        acknowledgeForecast(mockTenantScope, "f-missing", "RESOLVED")
-      ).rejects.toThrow(NotFoundError);
+      await expect(acknowledgeForecast(mockTenantScope, "f-missing", "RESOLVED")).rejects.toThrow(
+        NotFoundError,
+      );
     });
   });
 });

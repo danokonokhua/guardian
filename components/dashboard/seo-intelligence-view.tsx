@@ -81,18 +81,18 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-container/20 border border-primary-container/40 text-[#00F0FF] mb-4 text-2xl font-bold">
             ⌘
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Unlock Advanced SEO Intelligence
-          </h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Unlock Advanced SEO Intelligence</h2>
           <p className="text-neutral-300 text-sm max-w-xl mx-auto mb-6">
-            Your current <strong>{data.plan}</strong> plan includes basic crawl hygiene.
-            Upgrade to <strong>Growth</strong> or higher to unlock Open Graph previews, Schema.org
-            structured data verification, heading hierarchy audits, and search snippet optimization.
+            Your current <strong>{data.plan}</strong> plan includes basic crawl hygiene. Upgrade to{" "}
+            <strong>Growth</strong> or higher to unlock Open Graph previews, Schema.org structured
+            data verification, heading hierarchy audits, and search snippet optimization.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-xl mx-auto mb-8">
             <div className="p-4 rounded-xl bg-surface-container/60 border border-glass-subtle-border">
-              <span className="text-xs uppercase font-bold text-neutral-400">Included in Starter</span>
+              <span className="text-xs uppercase font-bold text-neutral-400">
+                Included in Starter
+              </span>
               <ul className="mt-2 space-y-1.5 text-xs text-neutral-300">
                 <li className="flex items-center gap-2">
                   <span className="text-emerald-400">✓</span> Basic indexability & robots.txt
@@ -106,10 +106,13 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
               </ul>
             </div>
             <div className="p-4 rounded-xl bg-primary-container/10 border border-primary-container/30">
-              <span className="text-xs uppercase font-bold text-[#00F0FF]">Unlocked in Growth+</span>
+              <span className="text-xs uppercase font-bold text-[#00F0FF]">
+                Unlocked in Growth+
+              </span>
               <ul className="mt-2 space-y-1.5 text-xs text-neutral-200">
                 <li className="flex items-center gap-2">
-                  <span className="text-[#00F0FF]">✦</span> Open Graph & Twitter social card previews
+                  <span className="text-[#00F0FF]">✦</span> Open Graph & Twitter social card
+                  previews
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-[#00F0FF]">✦</span> Schema.org JSON-LD validator
@@ -152,7 +155,11 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
       )}
 
       {/* Hero Overview */}
-      <GlassCard variant="elevated" glow={analysis && analysis.score >= 80 ? "emerald" : "cyan"} className="p-6">
+      <GlassCard
+        variant="elevated"
+        glow={analysis && analysis.score >= 80 ? "emerald" : "cyan"}
+        className="p-6"
+      >
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
@@ -169,7 +176,11 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                         : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                   }`}
                 >
-                  {analysis.score >= 85 ? "Optimal" : analysis.score >= 60 ? "Needs Review" : "Critical Fixes Needed"}
+                  {analysis.score >= 85
+                    ? "Optimal"
+                    : analysis.score >= 60
+                      ? "Needs Review"
+                      : "Critical Fixes Needed"}
                 </span>
               )}
             </div>
@@ -177,7 +188,9 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
               Search & Social Intelligence
             </h1>
             <p className="text-xs text-neutral-400 mt-1">
-              {analysis ? `Target: ${analysis.url} · Last inspected: ${new Date(analysis.scannedAt).toLocaleTimeString()}` : "Ready to scan"}
+              {analysis
+                ? `Target: ${analysis.url} · Last inspected: ${new Date(analysis.scannedAt).toLocaleTimeString()}`
+                : "Ready to scan"}
             </p>
           </div>
 
@@ -242,7 +255,10 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                   {analysis.descriptionStatus.replace("_", " ")}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400 mt-2 line-clamp-1" title={analysis.description}>
+              <p
+                className="text-xs text-neutral-400 mt-2 line-clamp-1"
+                title={analysis.description}
+              >
                 {analysis.description || "No description configured"}
               </p>
             </GlassCard>
@@ -266,7 +282,9 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
             </GlassCard>
 
             <GlassCard variant="default" className="p-4">
-              <span className="text-xs uppercase font-bold text-neutral-400">Image Alt Coverage</span>
+              <span className="text-xs uppercase font-bold text-neutral-400">
+                Image Alt Coverage
+              </span>
               <div className="mt-2 text-lg font-bold text-white flex items-center justify-between">
                 <span>
                   {analysis.images.total > 0
@@ -328,7 +346,9 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                     {analysis.openGraph.title || analysis.title || "No social title"}
                   </h4>
                   <p className="text-xs text-neutral-400 line-clamp-2">
-                    {analysis.openGraph.description || analysis.description || "No social description"}
+                    {analysis.openGraph.description ||
+                      analysis.description ||
+                      "No social description"}
                   </p>
                 </div>
               </div>
@@ -337,17 +357,23 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                 <div className="flex items-center gap-2 text-neutral-300">
                   <span>{analysis.openGraph.title ? "✓" : "✗"}</span>
                   <span className="text-neutral-400">og:title:</span>
-                  <span className="truncate">{analysis.openGraph.title ? "Configured" : "Missing"}</span>
+                  <span className="truncate">
+                    {analysis.openGraph.title ? "Configured" : "Missing"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-neutral-300">
                   <span>{analysis.openGraph.image ? "✓" : "✗"}</span>
                   <span className="text-neutral-400">og:image:</span>
-                  <span className="truncate">{analysis.openGraph.image ? "Configured" : "Missing"}</span>
+                  <span className="truncate">
+                    {analysis.openGraph.image ? "Configured" : "Missing"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-neutral-300">
                   <span>{analysis.openGraph.description ? "✓" : "✗"}</span>
                   <span className="text-neutral-400">og:desc:</span>
-                  <span className="truncate">{analysis.openGraph.description ? "Configured" : "Missing"}</span>
+                  <span className="truncate">
+                    {analysis.openGraph.description ? "Configured" : "Missing"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-neutral-300">
                   <span>{analysis.twitterCard.present ? "✓" : "✗"}</span>
@@ -368,7 +394,9 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                       : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                   }`}
                 >
-                  {analysis.structuredData.found ? `${analysis.structuredData.validCount} Block(s)` : "None Found"}
+                  {analysis.structuredData.found
+                    ? `${analysis.structuredData.validCount} Block(s)`
+                    : "None Found"}
                 </span>
               </div>
 
@@ -379,7 +407,9 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-neutral-400">Syntax Parse Errors:</span>
-                  <span className={`font-bold ${analysis.structuredData.invalidCount > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                  <span
+                    className={`font-bold ${analysis.structuredData.invalidCount > 0 ? "text-rose-400" : "text-emerald-400"}`}
+                  >
                     {analysis.structuredData.invalidCount}
                   </span>
                 </div>
@@ -407,7 +437,8 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
               <div className="mt-4 p-4 rounded-xl bg-surface-container/40 border border-glass-subtle-border text-xs text-neutral-400 space-y-1.5">
                 <span className="font-bold text-neutral-300 block">Search snippet advantage</span>
                 <p>
-                  JSON-LD structured data helps Google understand your business identity, logo, products, and contact points, unlocking rich snippets in search results.
+                  JSON-LD structured data helps Google understand your business identity, logo,
+                  products, and contact points, unlocking rich snippets in search results.
                 </p>
               </div>
             </GlassCard>
@@ -420,7 +451,8 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
             </h3>
             {analysis.issues.length === 0 ? (
               <div className="p-6 text-center text-sm text-emerald-400 bg-emerald-950/20 rounded-xl border border-emerald-900/40">
-                ✓ No high-priority SEO hygiene issues detected. Your on-page markup is in excellent shape!
+                ✓ No high-priority SEO hygiene issues detected. Your on-page markup is in excellent
+                shape!
               </div>
             ) : (
               <div className="space-y-3">

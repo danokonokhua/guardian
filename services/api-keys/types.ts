@@ -63,4 +63,3 @@ export interface ApiKeyOverview {
   lastUsedAt: Date | null;
   keys: ApiKeySummary[];
 }
-

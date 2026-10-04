@@ -76,4 +76,3 @@ export interface BulkScanSummary {
   durationMs: number;
   clientResults: BulkScanClientResult[];
 }
-

@@ -110,10 +110,7 @@ describe("Reputation API Routes", () => {
       expect(response.status).toBe(200);
       const json = await response.json();
       expect(json.data.aiSuggestionStatus).toBe("PENDING_REVIEW");
-      expect(repServiceMock.generateAiDraft).toHaveBeenCalledWith(
-        expect.anything(),
-        REVIEW_ID,
-      );
+      expect(repServiceMock.generateAiDraft).toHaveBeenCalledWith(expect.anything(), REVIEW_ID);
     });
   });
 

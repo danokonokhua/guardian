@@ -152,4 +152,3 @@ export async function fetchGA4Metrics(
     keyConversions: conversions,
   });
 }
-

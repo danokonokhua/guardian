@@ -34,20 +34,20 @@ export type MarketplaceInstallWithCredentials = MarketplaceInstallRecord & {
 };
 
 export async function listMarketplaceInstallsByOrg(
-  scope: TenantScope
+  scope: TenantScope,
 ): Promise<MarketplaceInstallRecord[]> {
   return withTenantTransaction(scope, async (tx) =>
     tx.marketplaceInstall.findMany({
       where: { organizationId: scope.organizationId },
       select: marketplaceInstallSelect,
       orderBy: { createdAt: "desc" },
-    })
+    }),
   );
 }
 
 export async function findMarketplaceInstallByPluginId(
   scope: TenantScope,
-  pluginId: string
+  pluginId: string,
 ): Promise<MarketplaceInstallWithCredentials | null> {
   return withTenantTransaction(scope, async (tx) =>
     tx.marketplaceInstall.findUnique({
@@ -57,7 +57,7 @@ export async function findMarketplaceInstallByPluginId(
           pluginId,
         },
       },
-    })
+    }),
   );
 }
 
@@ -71,7 +71,7 @@ export async function upsertMarketplaceInstallRecord(
     installedById?: string | null;
     lastSyncAt?: Date | null;
     lastError?: string | null;
-  }
+  },
 ): Promise<MarketplaceInstallRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.marketplaceInstall.upsert({
@@ -101,7 +101,7 @@ export async function upsertMarketplaceInstallRecord(
         lastError: data.lastError,
       },
       select: marketplaceInstallSelect,
-    })
+    }),
   );
 }
 
@@ -109,7 +109,7 @@ export async function updateMarketplaceInstallStatusRecord(
   scope: TenantScope,
   pluginId: string,
   status: string,
-  lastError?: string | null
+  lastError?: string | null,
 ): Promise<MarketplaceInstallRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.marketplaceInstall.update({
@@ -124,13 +124,13 @@ export async function updateMarketplaceInstallStatusRecord(
         ...(lastError !== undefined ? { lastError } : {}),
       },
       select: marketplaceInstallSelect,
-    })
+    }),
   );
 }
 
 export async function deleteMarketplaceInstallRecord(
   scope: TenantScope,
-  pluginId: string
+  pluginId: string,
 ): Promise<void> {
   await withTenantTransaction(scope, async (tx) =>
     tx.marketplaceInstall.deleteMany({
@@ -138,6 +138,6 @@ export async function deleteMarketplaceInstallRecord(
         organizationId: scope.organizationId,
         pluginId,
       },
-    })
+    }),
   );
 }

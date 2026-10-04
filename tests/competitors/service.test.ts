@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  normalizeCompetitorUrl,
-  registerCompetitor,
-} from "@/services/competitors/service";
+import { normalizeCompetitorUrl, registerCompetitor } from "@/services/competitors/service";
 import * as repo from "@/services/competitors/repository";
 import { ValidationError, ConflictError, ForbiddenError } from "@/lib/errors";
 
@@ -52,10 +49,13 @@ describe("Competitor Intelligence Service", () => {
         .spyOn(repo, "findCompetitorByDomain")
         .mockResolvedValue({ id: "comp-1", domain: "rival.com" } as any);
       await expect(
-        registerCompetitor(scope, { name: "Rival", urlOrDomain: "https://rival.com", planId: "PRO" }),
+        registerCompetitor(scope, {
+          name: "Rival",
+          urlOrDomain: "https://rival.com",
+          planId: "PRO",
+        }),
       ).rejects.toThrow(ConflictError);
       findSpy.mockRestore();
     });
   });
 });
-

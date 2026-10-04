@@ -38,27 +38,25 @@ export type ApiKeyFullRecord = ApiKeyPublicRecord & {
   keyHash: string;
 };
 
-export async function listApiKeysByOrg(
-  scope: TenantScope
-): Promise<ApiKeyPublicRecord[]> {
+export async function listApiKeysByOrg(scope: TenantScope): Promise<ApiKeyPublicRecord[]> {
   return withTenantTransaction(scope, async (tx) =>
     tx.apiKey.findMany({
       where: { organizationId: scope.organizationId },
       select: apiKeyPublicSelect,
       orderBy: { createdAt: "desc" },
-    })
+    }),
   );
 }
 
 export async function findApiKeyById(
   scope: TenantScope,
-  id: string
+  id: string,
 ): Promise<ApiKeyPublicRecord | null> {
   return withTenantTransaction(scope, async (tx) =>
     tx.apiKey.findFirst({
       where: { id, organizationId: scope.organizationId },
       select: apiKeyPublicSelect,
-    })
+    }),
   );
 }
 
@@ -72,7 +70,7 @@ export async function createApiKeyRecord(
     rateLimitPerMinute: number;
     expiresAt?: Date | null;
     createdById?: string | null;
-  }
+  },
 ): Promise<ApiKeyPublicRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.apiKey.create({
@@ -87,13 +85,13 @@ export async function createApiKeyRecord(
         createdById: data.createdById ?? null,
       },
       select: apiKeyPublicSelect,
-    })
+    }),
   );
 }
 
 export async function revokeApiKeyRecord(
   scope: TenantScope,
-  id: string
+  id: string,
 ): Promise<ApiKeyPublicRecord | null> {
   return withTenantTransaction(scope, async (tx) => {
     const existing = await tx.apiKey.findFirst({
@@ -113,9 +111,7 @@ export async function revokeApiKeyRecord(
  * Global token lookup by SHA-256 hash across tenants.
  * Used exclusively for authenticating inbound Bearer / X-API-Key requests before tenant context is set.
  */
-export async function findApiKeyByHashGlobal(
-  keyHash: string
-): Promise<ApiKeyFullRecord | null> {
+export async function findApiKeyByHashGlobal(keyHash: string): Promise<ApiKeyFullRecord | null> {
   const prisma = getPrisma();
   return prisma.apiKey.findFirst({
     where: { keyHash },

@@ -151,4 +151,3 @@ export function getPlanRateLimitPerMinute(planId: string): number {
       return 60;
   }
 }
-

@@ -41,4 +41,3 @@ describe("POST /api/auth/logout", () => {
     );
   });
 });
-

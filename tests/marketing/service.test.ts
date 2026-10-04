@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  registerCampaign,
-  recordCampaignMetrics,
-} from "@/services/marketing/service";
+import { registerCampaign, recordCampaignMetrics } from "@/services/marketing/service";
 import * as repo from "@/services/marketing/repository";
 import { ValidationError, ConflictError, ForbiddenError } from "@/lib/errors";
 
@@ -64,4 +61,3 @@ describe("Marketing Intelligence Service", () => {
     });
   });
 });
-

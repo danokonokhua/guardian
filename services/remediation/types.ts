@@ -75,4 +75,3 @@ export interface RemediationOverview {
   verificationPassRatePct: number;
   recentActions: RemediationActionRecord[];
 }
-

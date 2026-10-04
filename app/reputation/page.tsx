@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { getCurrentUser, listCurrentUserMemberships } from "@/lib/auth/context";
-import { DashboardOrganizationProvider, DashboardShell } from "@/components/dashboard/dashboard-shell";
+import {
+  DashboardOrganizationProvider,
+  DashboardShell,
+} from "@/components/dashboard/dashboard-shell";
 import { ReputationDashboard } from "@/components/dashboard/reputation-dashboard";
 
 export const dynamic = "force-dynamic";

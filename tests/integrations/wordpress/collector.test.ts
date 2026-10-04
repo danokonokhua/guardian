@@ -45,9 +45,7 @@ describe("WordPress Collector & Anomaly Engine", () => {
       const recordSpy = vi
         .spyOn(issueEngine, "recordFindingWithClient")
         .mockResolvedValue({ id: "issue-123", created: true });
-      const resolveSpy = vi
-        .spyOn(issueEngine, "resolveFindingScoped")
-        .mockResolvedValue();
+      const resolveSpy = vi.spyOn(issueEngine, "resolveFindingScoped").mockResolvedValue();
 
       const fakePrisma = {} as any;
 
@@ -132,9 +130,7 @@ describe("WordPress Collector & Anomaly Engine", () => {
 
     it("resolves findings when site is updated and healthy", async () => {
       const recordSpy = vi.spyOn(issueEngine, "recordFindingWithClient");
-      const resolveSpy = vi
-        .spyOn(issueEngine, "resolveFindingScoped")
-        .mockResolvedValue();
+      const resolveSpy = vi.spyOn(issueEngine, "resolveFindingScoped").mockResolvedValue();
 
       const fakePrisma = {} as any;
 

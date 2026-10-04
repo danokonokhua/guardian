@@ -38,7 +38,9 @@ describe("Stripe Webhook and Simulation Route Handlers", () => {
   });
 
   it("GET /api/webhooks/stripe/simulate returns simulator capability metadata", async () => {
-    const res = await simulateGET(new Request("https://guardian.test/api/webhooks/stripe/simulate"));
+    const res = await simulateGET(
+      new Request("https://guardian.test/api/webhooks/stripe/simulate"),
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.status).toBe("ready");

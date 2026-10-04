@@ -66,7 +66,11 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
 
   // Test action feedback
   const [testingPluginId, setTestingPluginId] = useState<string | null>(null);
-  const [testResult, setTestResult] = useState<{ id: string; success: boolean; message: string } | null>(null);
+  const [testResult, setTestResult] = useState<{
+    id: string;
+    success: boolean;
+    message: string;
+  } | null>(null);
 
   const fetchCatalog = async () => {
     try {
@@ -159,7 +163,12 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
   };
 
   const handleUninstall = async (pluginId: string) => {
-    if (!confirm("Are you sure you want to disconnect this plugin? Stored configuration will be purged.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to disconnect this plugin? Stored configuration will be purged.",
+      )
+    )
+      return;
     try {
       const res = await fetch(`/api/v1/organizations/${organizationId}/marketplace/${pluginId}`, {
         method: "DELETE",
@@ -175,9 +184,12 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
     try {
       setTestingPluginId(pluginId);
       setTestResult(null);
-      const res = await fetch(`/api/v1/organizations/${organizationId}/marketplace/${pluginId}/test`, {
-        method: "POST",
-      });
+      const res = await fetch(
+        `/api/v1/organizations/${organizationId}/marketplace/${pluginId}/test`,
+        {
+          method: "POST",
+        },
+      );
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error?.message || "Test signal failed");
@@ -212,7 +224,8 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
             </span>
           </div>
           <p className="text-sm md:text-base text-on-surface-variant max-w-2xl">
-            Extend Guardian with turnkey alerting webhooks, telemetry exporters, AutoFix connectors, and developer bridges.
+            Extend Guardian with turnkey alerting webhooks, telemetry exporters, AutoFix connectors,
+            and developer bridges.
           </p>
         </div>
       </div>
@@ -220,21 +233,39 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
       {/* KPI Overview Strip */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <GlassCard className="p-5 border-l-4 border-l-cyan-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Available Plugins</div>
-          <div className="text-3xl font-black text-on-surface mt-2">{overview?.catalogCount ?? 8}</div>
-          <div className="text-xs text-on-surface-variant mt-1">Official & partner integrations</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Available Plugins
+          </div>
+          <div className="text-3xl font-black text-on-surface mt-2">
+            {overview?.catalogCount ?? 8}
+          </div>
+          <div className="text-xs text-on-surface-variant mt-1">
+            Official & partner integrations
+          </div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-emerald-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Active Integrations</div>
-          <div className="text-3xl font-black text-emerald-400 mt-2">{overview?.activeCount ?? 0}</div>
-          <div className="text-xs text-on-surface-variant mt-1">Currently synchronizing & routing</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Active Integrations
+          </div>
+          <div className="text-3xl font-black text-emerald-400 mt-2">
+            {overview?.activeCount ?? 0}
+          </div>
+          <div className="text-xs text-on-surface-variant mt-1">
+            Currently synchronizing & routing
+          </div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-purple-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Installed Extensions</div>
-          <div className="text-3xl font-black text-purple-400 mt-2">{overview?.installedCount ?? 0}</div>
-          <div className="text-xs text-on-surface-variant mt-1">Configured for your organization</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Installed Extensions
+          </div>
+          <div className="text-3xl font-black text-purple-400 mt-2">
+            {overview?.installedCount ?? 0}
+          </div>
+          <div className="text-xs text-on-surface-variant mt-1">
+            Configured for your organization
+          </div>
         </GlassCard>
       </div>
 
@@ -300,7 +331,9 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
       ) : filteredPlugins.length === 0 ? (
         <div className="py-16 text-center text-on-surface-variant border border-dashed border-glass-subtle-border rounded-2xl">
           <p className="text-base font-semibold">No plugins found in this category.</p>
-          <p className="text-xs text-on-surface-variant mt-1">Try selecting another filter above.</p>
+          <p className="text-xs text-on-surface-variant mt-1">
+            Try selecting another filter above.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -366,7 +399,9 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
 
                   {isInstalled && install?.lastSyncAt && (
                     <div className="text-[11px] text-neutral-400 mb-4 bg-neutral-900/60 p-2 rounded-lg border border-neutral-800">
-                      <span>Last verified: {new Date(install.lastSyncAt).toLocaleTimeString()}</span>
+                      <span>
+                        Last verified: {new Date(install.lastSyncAt).toLocaleTimeString()}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -428,9 +463,7 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
             <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
               <div className="flex items-center gap-2">
                 <span className="text-xl">⚙️</span>
-                <h3 className="text-lg font-bold text-white">
-                  Configure {activeModalPlugin.name}
-                </h3>
+                <h3 className="text-lg font-bold text-white">Configure {activeModalPlugin.name}</h3>
               </div>
               <button
                 onClick={() => setActiveModalPlugin(null)}
@@ -454,7 +487,9 @@ export function MarketplaceView({ organizationId }: { organizationId: string }) 
               {activeModalPlugin.fields.map((field) => (
                 <div key={field.name} className="space-y-1">
                   <label className="text-xs font-semibold text-neutral-200 flex items-center justify-between">
-                    <span>{field.label} {field.required && <span className="text-rose-400">*</span>}</span>
+                    <span>
+                      {field.label} {field.required && <span className="text-rose-400">*</span>}
+                    </span>
                     {field.isSecret && (
                       <span className="text-[10px] text-cyan-400">🔒 AES-256 Encrypted</span>
                     )}

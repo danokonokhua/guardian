@@ -39,12 +39,8 @@ export async function AgencyDashboardPage() {
         title="Agency Command Center"
         description="Multi-client website monitoring, portfolio health matrix, retainer revenue management, and white-label branding."
       >
-        <AgencyView
-          key={membership.organizationId}
-          organizationId={membership.organizationId}
-        />
+        <AgencyView key={membership.organizationId} organizationId={membership.organizationId} />
       </DashboardShell>
     </DashboardOrganizationProvider>
   );
 }
-

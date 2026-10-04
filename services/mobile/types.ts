@@ -39,4 +39,3 @@ export interface PushSendResult {
   statusCode?: number;
   error?: string;
 }
-

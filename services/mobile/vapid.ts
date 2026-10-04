@@ -21,11 +21,7 @@ export function getVapidSubject(): string {
 
 function base64UrlEncode(data: Buffer | string): string {
   const buf = Buffer.isBuffer(data) ? data : Buffer.from(data);
-  return buf
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 /**
@@ -65,4 +61,3 @@ export function generateVapidToken(endpoint: string): { authorization: string } 
     };
   }
 }
-

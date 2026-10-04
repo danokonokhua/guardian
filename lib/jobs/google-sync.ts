@@ -34,4 +34,3 @@ export async function runGoogleIntegrationsSync(): Promise<{
 
   return { synced, errors };
 }
-

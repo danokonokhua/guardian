@@ -21,10 +21,7 @@ export function getOpenApiSpecification(): Record<string, unknown> {
         description: "Guardian Core API v1",
       },
     ],
-    security: [
-      { BearerAuth: [] },
-      { ApiKeyAuth: [] },
-    ],
+    security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
     components: {
       securitySchemes: {
         BearerAuth: {
@@ -313,4 +310,3 @@ export function getOpenApiSpecification(): Record<string, unknown> {
     },
   };
 }
-

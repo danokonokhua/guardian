@@ -75,7 +75,10 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main id="main-content" className="max-w-6xl mx-auto px-6 pt-16 sm:pt-24 pb-20 space-y-24 sm:space-y-32">
+      <main
+        id="main-content"
+        className="max-w-6xl mx-auto px-6 pt-16 sm:pt-24 pb-20 space-y-24 sm:space-y-32"
+      >
         {/* Hero Section */}
         <section className="text-center max-w-3xl mx-auto pt-8">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8">
@@ -131,7 +134,11 @@ export default function HomePage() {
 
         {/* Free Audit Preview Card */}
         <section className="scroll-mt-24" id="free-audit">
-          <GlassCard variant="elevated" glow="cyan" className="p-8 sm:p-12 relative overflow-hidden">
+          <GlassCard
+            variant="elevated"
+            glow="cyan"
+            className="p-8 sm:p-12 relative overflow-hidden"
+          >
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
               <span className="text-xs font-mono uppercase tracking-widest text-[#00F0FF] font-bold">
                 YOUR FIRST HEALTH CHECK
@@ -250,9 +257,21 @@ export default function HomePage() {
 
           <div className="space-y-4">
             {[
-              { n: "01", step: "Monitor your website", sub: "Continuous uptime, SSL, and form telemetry" },
-              { n: "02", step: "Understand the findings", sub: "Plain-English impact analysis grounded in evidence" },
-              { n: "03", step: "Prioritize your next action", sub: "Step-by-step remediation guide for your developers" },
+              {
+                n: "01",
+                step: "Monitor your website",
+                sub: "Continuous uptime, SSL, and form telemetry",
+              },
+              {
+                n: "02",
+                step: "Understand the findings",
+                sub: "Plain-English impact analysis grounded in evidence",
+              },
+              {
+                n: "03",
+                step: "Prioritize your next action",
+                sub: "Step-by-step remediation guide for your developers",
+              },
             ].map((item) => (
               <GlassCard
                 key={item.n}
@@ -269,7 +288,10 @@ export default function HomePage() {
                     <p className="text-xs text-neutral-400">{item.sub}</p>
                   </div>
                 </div>
-                <span className="text-neutral-400 group-hover:text-[#00F0FF] group-hover:translate-x-1 transition-all" aria-hidden="true">
+                <span
+                  className="text-neutral-400 group-hover:text-[#00F0FF] group-hover:translate-x-1 transition-all"
+                  aria-hidden="true"
+                >
                   ↗
                 </span>
               </GlassCard>

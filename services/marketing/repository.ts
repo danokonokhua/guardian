@@ -140,10 +140,7 @@ export async function updateCampaign(
   );
 }
 
-export async function deleteCampaign(
-  scope: TenantScope,
-  id: string,
-): Promise<boolean> {
+export async function deleteCampaign(scope: TenantScope, id: string): Promise<boolean> {
   return withTenantTransaction(scope, async (tx) => {
     const deleted = await tx.marketingCampaign.deleteMany({
       where: { id, organizationId: scope.organizationId },
@@ -250,4 +247,3 @@ export async function getCampaignsWithLatestSnapshots(
     );
   });
 }
-

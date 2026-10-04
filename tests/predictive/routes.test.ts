@@ -50,7 +50,7 @@ describe("Predictive Intelligence REST API Routes (PRD §20, §23, §25)", () =>
 
       const response = await getPredictiveOverviewRoute(
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/predictive`),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(200);
@@ -73,7 +73,7 @@ describe("Predictive Intelligence REST API Routes (PRD §20, §23, §25)", () =>
         new Request(`https://guardian.test/api/v1/organizations/${ORG}/predictive`, {
           method: "POST",
         }),
-        { params: Promise.resolve({ organizationId: ORG }) }
+        { params: Promise.resolve({ organizationId: ORG }) },
       );
 
       expect(response.status).toBe(201);
@@ -92,20 +92,17 @@ describe("Predictive Intelligence REST API Routes (PRD §20, §23, §25)", () =>
       });
 
       const response = await patchForecastStatusRoute(
-        new Request(
-          `https://guardian.test/api/v1/organizations/${ORG}/predictive/fc-123`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "ACKNOWLEDGED" }),
-          }
-        ),
+        new Request(`https://guardian.test/api/v1/organizations/${ORG}/predictive/fc-123`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "ACKNOWLEDGED" }),
+        }),
         {
           params: Promise.resolve({
             organizationId: ORG,
             forecastId: "fc-123",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(200);
@@ -115,26 +112,23 @@ describe("Predictive Intelligence REST API Routes (PRD §20, §23, §25)", () =>
       expect(predictiveServiceMock.acknowledgeForecast).toHaveBeenCalledWith(
         expect.anything(),
         "fc-123",
-        "ACKNOWLEDGED"
+        "ACKNOWLEDGED",
       );
     });
 
     it("rejects invalid status values", async () => {
       const response = await patchForecastStatusRoute(
-        new Request(
-          `https://guardian.test/api/v1/organizations/${ORG}/predictive/fc-123`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "INVALID_STATUS" }),
-          }
-        ),
+        new Request(`https://guardian.test/api/v1/organizations/${ORG}/predictive/fc-123`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "INVALID_STATUS" }),
+        }),
         {
           params: Promise.resolve({
             organizationId: ORG,
             forecastId: "fc-123",
           }),
-        }
+        },
       );
 
       expect(response.status).toBe(400);

@@ -127,10 +127,7 @@ export async function updateCompetitor(
   );
 }
 
-export async function deleteCompetitor(
-  scope: TenantScope,
-  id: string,
-): Promise<boolean> {
+export async function deleteCompetitor(scope: TenantScope, id: string): Promise<boolean> {
   return withTenantTransaction(scope, async (tx) => {
     const deleted = await tx.competitor.deleteMany({
       where: { id, organizationId: scope.organizationId },
@@ -287,4 +284,3 @@ export async function getCompetitorHeadToHead(
     };
   });
 }
-

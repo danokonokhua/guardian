@@ -59,11 +59,7 @@ export const POST = withApiRoute(async (request, { params, requestId }) => {
   }
 
   // Connect via Sandbox / Mock mode
-  const integration = await connectMockGoogleService(
-    tenantScope,
-    body.provider,
-    body.propertyName,
-  );
+  const integration = await connectMockGoogleService(tenantScope, body.provider, body.propertyName);
 
   return apiSuccess({ integration, connected: true }, requestId, 201);
 });

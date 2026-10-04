@@ -35,4 +35,3 @@ describe("Mobile VAPID & RFC 8292 Web Push Auth (PRD §21)", () => {
     expect(authorization.startsWith("vapid t=")).toBe(true);
   });
 });
-

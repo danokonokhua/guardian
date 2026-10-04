@@ -1,6 +1,7 @@
 import React from "react";
 
-export type StatusType = "operational" | "degraded" | "outage" | "maintenance" | "healthy" | "warning" | "critical";
+export type StatusType =
+  "operational" | "degraded" | "outage" | "maintenance" | "healthy" | "warning" | "critical";
 
 export interface StatusCapsuleProps extends React.HTMLAttributes<HTMLSpanElement> {
   status: StatusType;
@@ -60,9 +61,7 @@ export function StatusCapsule({
       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high/70 backdrop-blur-md border border-glass-subtle-border shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.08)] font-label-code text-xs ${textColors} ${className}`}
       {...props}
     >
-      <span
-        className={`w-2 h-2 rounded-full ${beadColors} ${pulse ? "animate-pulse" : ""}`}
-      />
+      <span className={`w-2 h-2 rounded-full ${beadColors} ${pulse ? "animate-pulse" : ""}`} />
       <span>{label ?? defaultLabels}</span>
     </span>
   );

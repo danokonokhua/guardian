@@ -6,7 +6,9 @@ import { GlassCard } from "./glass-card";
 
 export function AuthShell({ children, signup = false }: { children: ReactNode; signup?: boolean }) {
   return (
-    <main className={`min-h-screen relative flex flex-col justify-between overflow-hidden bg-surface ${signup ? "auth-signup" : ""}`}>
+    <main
+      className={`min-h-screen relative flex flex-col justify-between overflow-hidden bg-surface ${signup ? "auth-signup" : ""}`}
+    >
       <AmbientBackground variant="audit" />
 
       <header className="relative z-10 flex items-center justify-between px-6 py-6 sm:px-12 border-b border-glass-subtle-border">
@@ -21,7 +23,9 @@ export function AuthShell({ children, signup = false }: { children: ReactNode; s
       </header>
 
       <div className="relative z-10 flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className={`w-full flex items-center justify-center gap-16 max-w-6xl ${signup ? "lg:justify-between" : ""}`}>
+        <div
+          className={`w-full flex items-center justify-center gap-16 max-w-6xl ${signup ? "lg:justify-between" : ""}`}
+        >
           {signup && (
             <aside className="hidden lg:flex flex-col max-w-lg space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/10 border border-primary-container/20 text-primary-container font-mono text-xs w-fit">
@@ -35,7 +39,8 @@ export function AuthShell({ children, signup = false }: { children: ReactNode; s
                 </span>
               </h1>
               <p className="text-base text-on-surface-variant leading-relaxed">
-                Connect your website, lead forms, and digital vitals into an intelligent operations cockpit with real-time incident resolution.
+                Connect your website, lead forms, and digital vitals into an intelligent operations
+                cockpit with real-time incident resolution.
               </p>
 
               <GlassCard variant="default" className="p-6 space-y-4">
@@ -47,14 +52,19 @@ export function AuthShell({ children, signup = false }: { children: ReactNode; s
                   "Mystery Shopper Lead-Form Verification",
                   "Automated Business Risk & SLA Scoring",
                 ].map((s, i) => (
-                  <div className="flex items-center justify-between text-sm text-on-surface p-2.5 rounded-xl bg-surface-container/40" key={s}>
+                  <div
+                    className="flex items-center justify-between text-sm text-on-surface p-2.5 rounded-xl bg-surface-container/40"
+                    key={s}
+                  >
                     <div className="flex items-center gap-3">
                       <span className="font-mono text-xs font-bold text-primary-container w-5 h-5 rounded-full bg-primary-container/10 flex items-center justify-center">
                         0{i + 1}
                       </span>
                       <span>{s}</span>
                     </div>
-                    <span className="text-primary-container text-xs" aria-hidden="true">✓</span>
+                    <span className="text-primary-container text-xs" aria-hidden="true">
+                      ✓
+                    </span>
                   </div>
                 ))}
               </GlassCard>

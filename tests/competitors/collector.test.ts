@@ -32,7 +32,9 @@ describe("Competitor Intelligence Collector", () => {
     });
 
     it("returns null if no promotional offer is present", () => {
-      expect(extractPromotionalOffer("Our company provides mission critical infrastructure.")).toBeNull();
+      expect(
+        extractPromotionalOffer("Our company provides mission critical infrastructure."),
+      ).toBeNull();
     });
   });
 
@@ -121,7 +123,7 @@ describe("Competitor Intelligence Collector", () => {
       expect(diff.titleChanged).toBe(true);
       expect(diff.h1Changed).toBe(true);
       expect(diff.offerChanged).toBe(true);
-      expect(diff.changeSummary).toContain("New offer detected: \"30% off\"");
+      expect(diff.changeSummary).toContain('New offer detected: "30% off"');
       expect(diff.changeSummary).toContain("Page title updated");
     });
   });
@@ -199,4 +201,3 @@ describe("Competitor Intelligence Collector", () => {
     });
   });
 });
-

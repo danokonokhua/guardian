@@ -131,9 +131,7 @@ export async function bulkScanPortfolio(
   return summary;
 }
 
-export async function getPortfolioOverview(
-  scope: TenantScope,
-): Promise<AgencyPortfolioOverview> {
+export async function getPortfolioOverview(scope: TenantScope): Promise<AgencyPortfolioOverview> {
   const [clients, branding] = await Promise.all([
     listAgencyClients(scope),
     getAgencyBranding(scope),
@@ -169,10 +167,7 @@ export async function updateAgencyClientDetails(
   });
 }
 
-export async function removeAgencyClient(
-  scope: TenantScope,
-  clientId: string,
-): Promise<boolean> {
+export async function removeAgencyClient(scope: TenantScope, clientId: string): Promise<boolean> {
   const client = await findAgencyClientById(scope, clientId);
   if (!client) {
     throw new NotFoundError(`Client ${clientId} not found`);
@@ -229,4 +224,3 @@ export async function saveAgencyBranding(
     isWhiteLabelActive: input.isWhiteLabelActive ?? true,
   });
 }
-

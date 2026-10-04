@@ -43,4 +43,3 @@ describe("Google Credentials Encryption (AES-256-GCM)", () => {
     );
   });
 });
-

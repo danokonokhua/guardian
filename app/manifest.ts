@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Guardian Digital Revenue & Security",
     short_name: "Guardian",
-    description: "Enterprise Digital Revenue Infrastructure, Uptime, Security, and Incident Guardian",
+    description:
+      "Enterprise Digital Revenue Infrastructure, Uptime, Security, and Incident Guardian",
     start_url: "/dashboard",
     display: "standalone",
     background_color: "#0d1117",
@@ -48,4 +49,3 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   };
 }
-

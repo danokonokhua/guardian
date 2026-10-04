@@ -39,10 +39,7 @@ export async function CooDashboardPage() {
         title="AI COO Executive Operations Hub"
         description="Autonomous Chief Operating Officer synthesizing cross-domain telemetry into executive revenue roadmaps and 1-click strategic directives."
       >
-        <CooView
-          key={membership.organizationId}
-          organizationId={membership.organizationId}
-        />
+        <CooView key={membership.organizationId} organizationId={membership.organizationId} />
       </DashboardShell>
     </DashboardOrganizationProvider>
   );

@@ -20,7 +20,9 @@ describe("Advanced SEO Intelligence (Phase 16)", () => {
       findUnique: vi.fn().mockResolvedValue(null),
       create: vi.fn().mockResolvedValue({ id: "issue-1" }),
       update: vi.fn().mockResolvedValue({ id: "issue-1" }),
-      upsert: vi.fn().mockResolvedValue({ id: "issue-1", createdAt: new Date(), updatedAt: new Date() }),
+      upsert: vi
+        .fn()
+        .mockResolvedValue({ id: "issue-1", createdAt: new Date(), updatedAt: new Date() }),
     },
     issueActivity: {
       create: vi.fn().mockResolvedValue({ id: "act-1" }),

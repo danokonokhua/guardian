@@ -209,7 +209,8 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
             Competitor Intelligence & Positioning
           </h2>
           <p className="text-sm text-on-surface-variant">
-            Monitor competitive digital posture, headline copy changes, speed advantages, and promotional campaigns.
+            Monitor competitive digital posture, headline copy changes, speed advantages, and
+            promotional campaigns.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -277,9 +278,7 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
             <span className="text-3xl font-extrabold tracking-tight text-on-surface">
               {avgCompetitorSpeed ? `${avgCompetitorSpeed}ms` : "—"}
             </span>
-            <span className="text-xs text-on-surface-variant">
-              vs {yourSpeed}ms your site
-            </span>
+            <span className="text-xs text-on-surface-variant">vs {yourSpeed}ms your site</span>
           </div>
           <p className="mt-2 text-xs text-on-surface-variant">
             {avgCompetitorSpeed && avgCompetitorSpeed < yourSpeed ? (
@@ -312,7 +311,9 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
       <GlassCard className="p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h3 className="text-base font-semibold text-on-surface">Head-to-Head Digital Posture</h3>
+            <h3 className="text-base font-semibold text-on-surface">
+              Head-to-Head Digital Posture
+            </h3>
             <p className="text-xs text-on-surface-variant">
               Direct positioning comparison against monitored competitors
             </p>
@@ -329,8 +330,12 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                 <th className="pb-3 font-semibold uppercase tracking-wider">Business / Domain</th>
                 <th className="pb-3 font-semibold uppercase tracking-wider">Response Speed</th>
                 <th className="pb-3 font-semibold uppercase tracking-wider">SEO Score</th>
-                <th className="pb-3 font-semibold uppercase tracking-wider">Landing Page Headline (H1)</th>
-                <th className="pb-3 font-semibold uppercase tracking-wider">Active Promotional Offer</th>
+                <th className="pb-3 font-semibold uppercase tracking-wider">
+                  Landing Page Headline (H1)
+                </th>
+                <th className="pb-3 font-semibold uppercase tracking-wider">
+                  Active Promotional Offer
+                </th>
                 <th className="pb-3 font-semibold uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
@@ -373,7 +378,8 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                   <td colSpan={6} className="py-12 text-center text-on-surface-variant">
                     <p className="text-sm">No competitors monitored yet.</p>
                     <p className="text-xs mt-1">
-                      Click <strong className="text-on-surface">"+ Add Competitor"</strong> to start tracking competitive signals.
+                      Click <strong className="text-on-surface">"+ Add Competitor"</strong> to start
+                      tracking competitive signals.
                     </p>
                   </td>
                 </tr>
@@ -389,7 +395,9 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                       <td className="py-4">
                         <div>
                           <strong className="text-sm text-on-surface">{c.name}</strong>
-                          <p className="text-[11px] text-on-surface-variant font-mono">{c.domain}</p>
+                          <p className="text-[11px] text-on-surface-variant font-mono">
+                            {c.domain}
+                          </p>
                         </div>
                       </td>
                       <td className="py-4 font-mono">
@@ -415,8 +423,13 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                           {s?.seoScore ?? 70} / 100
                         </span>
                       </td>
-                      <td className="py-4 max-w-xs truncate text-on-surface" title={s?.h1 || undefined}>
-                        {s?.h1 || <span className="text-on-surface-variant italic">No H1 detected</span>}
+                      <td
+                        className="py-4 max-w-xs truncate text-on-surface"
+                        title={s?.h1 || undefined}
+                      >
+                        {s?.h1 || (
+                          <span className="text-on-surface-variant italic">No H1 detected</span>
+                        )}
                       </td>
                       <td className="py-4">
                         {s?.detectedOffer ? (
@@ -457,7 +470,9 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
 
       {/* Competitive Movements & Shifts Timeline */}
       <GlassCard className="p-6">
-        <h3 className="text-base font-semibold text-on-surface mb-2">Competitive Shifts & Alert Feed</h3>
+        <h3 className="text-base font-semibold text-on-surface mb-2">
+          Competitive Shifts & Alert Feed
+        </h3>
         <p className="text-xs text-on-surface-variant mb-6">
           Recent modifications to competitor landing pages, promotional campaigns, and SEO headlines
         </p>
@@ -480,7 +495,9 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <strong className="text-sm text-on-surface">{c.name}</strong>
-                        <span className="text-xs text-on-surface-variant font-mono">({c.domain})</span>
+                        <span className="text-xs text-on-surface-variant font-mono">
+                          ({c.domain})
+                        </span>
                         {s.hasChanges && (
                           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25">
                             SHIFT DETECTED
@@ -512,7 +529,8 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
           <GlassCard className="w-full max-w-md p-6" glow="cyan">
             <h3 className="text-lg font-bold text-on-surface">Add Monitored Competitor</h3>
             <p className="mt-1 text-xs text-on-surface-variant">
-              Guardian safely inspects public landing page headers, SEO structure, speed, and promotional offers.
+              Guardian safely inspects public landing page headers, SEO structure, speed, and
+              promotional offers.
             </p>
 
             {addError && (
@@ -558,7 +576,10 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                   onChange={(e) => setAddSandbox(e.target.checked)}
                   className="rounded border-glass-specular-border text-cyan-400 focus:ring-cyan-400"
                 />
-                <label htmlFor="sandboxToggle" className="text-xs text-on-surface-variant cursor-pointer">
+                <label
+                  htmlFor="sandboxToggle"
+                  className="text-xs text-on-surface-variant cursor-pointer"
+                >
                   Simulation / Sandbox probe (instant evaluation)
                 </label>
               </div>
@@ -586,4 +607,3 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
     </div>
   );
 }
-

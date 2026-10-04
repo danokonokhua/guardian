@@ -3,21 +3,21 @@
 @source not "../design";
 
 @theme {
-  --color-primary: #00F0FF;
-  --color-primary-container: #00F0FF;
-  --color-canvas: #0A0D14;
-  --color-surface: #0E131F;
-  --color-surface-lowest: #07090E;
-  --color-surface-elevated: #161D2E;
+  --color-primary: #00f0ff;
+  --color-primary-container: #00f0ff;
+  --color-canvas: #0a0d14;
+  --color-surface: #0e131f;
+  --color-surface-lowest: #07090e;
+  --color-surface-elevated: #161d2e;
   --color-surface-container: #121826;
-  --color-surface-container-low: #0F1420;
+  --color-surface-container-low: #0f1420;
   --color-glass-specular-border: rgba(255, 255, 255, 0.16);
   --color-glass-subtle-border: rgba(255, 255, 255, 0.08);
   --color-accent-violet: #6807ba;
-  --color-status-operational: #10B981;
-  --color-status-degraded: #F59E0B;
-  --color-status-outage: #F43F5E;
-  --color-status-maintenance: #8B5CF6;
+  --color-status-operational: #10b981;
+  --color-status-degraded: #f59e0b;
+  --color-status-outage: #f43f5e;
+  --color-status-maintenance: #8b5cf6;
   --color-surface-base: #0b0f19;
   --color-surface-raised: #111827;
   --color-surface-overlay: #1e293b;
@@ -1034,7 +1034,9 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 1.5rem;
-    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 16px 36px -8px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   .setup-card h2 {
     font-size: 21px;
@@ -1146,7 +1148,7 @@
   }
   .view-tabs [aria-current] {
     background: rgba(0, 240, 255, 0.12);
-    color: #00F0FF;
+    color: #00f0ff;
     border-color: rgba(0, 240, 255, 0.35);
     box-shadow: 0 0 16px -2px rgba(0, 240, 255, 0.25);
     font-weight: 600;
@@ -1158,7 +1160,7 @@
   }
   .view-score {
     font: 700 36px var(--font-headline);
-    background: linear-gradient(135deg, #ffffff 40%, #00F0FF);
+    background: linear-gradient(135deg, #ffffff 40%, #00f0ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 18px 0;
@@ -1421,7 +1423,10 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-top: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 1.5rem;
-    background: radial-gradient(ellipse at top left, rgba(0, 240, 255, 0.08), transparent 60%), radial-gradient(ellipse at bottom right, rgba(104, 7, 186, 0.12), transparent 60%), rgba(18, 24, 38, 0.75);
+    background:
+      radial-gradient(ellipse at top left, rgba(0, 240, 255, 0.08), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(104, 7, 186, 0.12), transparent 60%),
+      rgba(18, 24, 38, 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
@@ -1485,7 +1490,7 @@
     color: #ffffff;
   }
   .billing-plan .billing-price {
-    color: #00F0FF;
+    color: #00f0ff;
     font-weight: 600;
     margin: 24px 0;
   }
@@ -1503,7 +1508,9 @@
   }
   .billing-plan.billing-selected {
     border-color: rgba(0, 240, 255, 0.5);
-    box-shadow: 0 0 30px -4px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(0, 240, 255, 0.3);
+    box-shadow:
+      0 0 30px -4px rgba(0, 240, 255, 0.2),
+      inset 0 1px 0 rgba(0, 240, 255, 0.3);
     transform: translateY(-2px);
   }
   .billing-details-grid {

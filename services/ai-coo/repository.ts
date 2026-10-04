@@ -2,12 +2,7 @@ import "server-only";
 
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
-import type {
-  CooCategory,
-  CooPriorityTier,
-  CooDirectiveStatus,
-  GeneratedDirective,
-} from "./types";
+import type { CooCategory, CooPriorityTier, CooDirectiveStatus, GeneratedDirective } from "./types";
 
 export const cooDirectiveSelect = {
   id: true,
@@ -61,7 +56,7 @@ export async function listCooDirectivesByOrg(
     category?: CooCategory;
     priorityTier?: CooPriorityTier;
     status?: CooDirectiveStatus;
-  }
+  },
 ): Promise<CooDirectiveRecord[]> {
   return withTenantTransaction(scope, async (tx) => {
     const where: any = { organizationId: scope.organizationId };
@@ -72,30 +67,27 @@ export async function listCooDirectivesByOrg(
     return tx.cooDirective.findMany({
       where,
       select: cooDirectiveSelect,
-      orderBy: [
-        { urgencyScore: "desc" },
-        { businessImpactUsd: "desc" },
-      ],
+      orderBy: [{ urgencyScore: "desc" }, { businessImpactUsd: "desc" }],
     });
   });
 }
 
 export async function findCooDirectiveById(
   scope: TenantScope,
-  id: string
+  id: string,
 ): Promise<CooDirectiveRecord | null> {
   return withTenantTransaction(scope, async (tx) =>
     tx.cooDirective.findFirst({
       where: { id, organizationId: scope.organizationId },
       select: cooDirectiveSelect,
-    })
+    }),
   );
 }
 
 export async function createCooDirectiveRecord(
   scope: TenantScope,
   websiteId: string | null,
-  data: GeneratedDirective
+  data: GeneratedDirective,
 ): Promise<CooDirectiveRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.cooDirective.create({
@@ -115,7 +107,7 @@ export async function createCooDirectiveRecord(
         status: "PENDING",
       },
       select: cooDirectiveSelect,
-    })
+    }),
   );
 }
 
@@ -128,7 +120,7 @@ export async function updateCooDirectiveStatusRecord(
     approvedAt?: Date | null;
     executedAt?: Date | null;
     executionResult?: Record<string, unknown>;
-  }
+  },
 ): Promise<CooDirectiveRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.cooDirective.update({
@@ -138,9 +130,11 @@ export async function updateCooDirectiveStatusRecord(
         ...(update.approvedById !== undefined ? { approvedById: update.approvedById } : {}),
         ...(update.approvedAt !== undefined ? { approvedAt: update.approvedAt } : {}),
         ...(update.executedAt !== undefined ? { executedAt: update.executedAt } : {}),
-        ...(update.executionResult !== undefined ? { executionResult: update.executionResult as any } : {}),
+        ...(update.executionResult !== undefined
+          ? { executionResult: update.executionResult as any }
+          : {}),
       },
       select: cooDirectiveSelect,
-    })
+    }),
   );
 }

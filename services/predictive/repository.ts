@@ -2,11 +2,7 @@ import "server-only";
 
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
-import type {
-  PredictiveTargetVector,
-  PredictiveRiskLevel,
-  ForecastSignal,
-} from "./types";
+import type { PredictiveTargetVector, PredictiveRiskLevel, ForecastSignal } from "./types";
 
 export const predictiveForecastSelect = {
   id: true,
@@ -51,7 +47,7 @@ export async function listPredictiveForecastsByOrg(
     targetVector?: PredictiveTargetVector;
     riskLevel?: PredictiveRiskLevel;
     status?: string;
-  }
+  },
 ): Promise<PredictiveForecastRecord[]> {
   return withTenantTransaction(scope, async (tx) => {
     const where: any = { organizationId: scope.organizationId };
@@ -63,23 +59,20 @@ export async function listPredictiveForecastsByOrg(
     return tx.predictiveForecast.findMany({
       where,
       select: predictiveForecastSelect,
-      orderBy: [
-        { probabilityScore: "desc" },
-        { generatedAt: "desc" },
-      ],
+      orderBy: [{ probabilityScore: "desc" }, { generatedAt: "desc" }],
     });
   });
 }
 
 export async function findPredictiveForecastById(
   scope: TenantScope,
-  id: string
+  id: string,
 ): Promise<PredictiveForecastRecord | null> {
   return withTenantTransaction(scope, async (tx) =>
     tx.predictiveForecast.findFirst({
       where: { id, organizationId: scope.organizationId },
       select: predictiveForecastSelect,
-    })
+    }),
   );
 }
 
@@ -96,7 +89,7 @@ export async function createPredictiveForecastRecord(
     predictedImpact: string;
     underlyingSignals: ForecastSignal[];
     preventiveAction: string;
-  }
+  },
 ): Promise<PredictiveForecastRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.predictiveForecast.create({
@@ -115,27 +108,27 @@ export async function createPredictiveForecastRecord(
         status: "ACTIVE",
       },
       select: predictiveForecastSelect,
-    })
+    }),
   );
 }
 
 export async function updatePredictiveForecastStatus(
   scope: TenantScope,
   id: string,
-  status: "ACTIVE" | "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED"
+  status: "ACTIVE" | "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED",
 ): Promise<PredictiveForecastRecord> {
   return withTenantTransaction(scope, async (tx) =>
     tx.predictiveForecast.update({
       where: { id },
       data: { status },
       select: predictiveForecastSelect,
-    })
+    }),
   );
 }
 
 export async function purgeStaleForecasts(
   scope: TenantScope,
-  olderThanDays: number = 30
+  olderThanDays: number = 30,
 ): Promise<number> {
   const cutoff = new Date(Date.now() - olderThanDays * 86_400_000);
   return withTenantTransaction(scope, async (tx) => {

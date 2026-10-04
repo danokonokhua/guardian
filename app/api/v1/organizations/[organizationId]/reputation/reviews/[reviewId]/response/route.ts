@@ -2,10 +2,7 @@ import { z } from "zod";
 import { createTenantScope } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { requirePermission } from "@/lib/auth/context";
-import {
-  generateAiDraft,
-  submitReviewReply,
-} from "@/services/reputation/service";
+import { generateAiDraft, submitReviewReply } from "@/services/reputation/service";
 
 const replySchema = z.object({
   replyText: z.string().trim().min(1),
@@ -36,11 +33,7 @@ export const PATCH = withApiRoute(async (request, { params, requestId }) => {
 
   const body = replySchema.parse(await request.json().catch(() => ({})));
 
-  const updatedReview = await submitReviewReply(
-    tenantScope,
-    reviewId,
-    body.replyText,
-  );
+  const updatedReview = await submitReviewReply(tenantScope, reviewId, body.replyText);
 
   return apiSuccess(updatedReview, requestId);
 });

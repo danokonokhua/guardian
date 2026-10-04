@@ -391,9 +391,7 @@ export async function pruneSystemMaintenance(
   const startTime = Date.now();
   const prisma = client ?? getPrisma();
   const now = options.now ?? new Date();
-  const throttleCutoff = new Date(
-    now.getTime() - (options.throttleHours ?? 24) * 60 * 60 * 1000,
-  );
+  const throttleCutoff = new Date(now.getTime() - (options.throttleHours ?? 24) * 60 * 60 * 1000);
 
   const [sessionsRes, tokensRes, throttlesRes] = await Promise.all([
     prisma.authSession.deleteMany({

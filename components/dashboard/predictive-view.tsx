@@ -85,7 +85,7 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
       if (!res.ok) throw new Error(data.error?.message || "Analysis failed");
 
       setActionMessage(
-        `Analysis complete: ${data.data.websitesAnalyzed} websites evaluated, ${data.data.newForecastsGenerated} potential risks forecasted.`
+        `Analysis complete: ${data.data.websitesAnalyzed} websites evaluated, ${data.data.newForecastsGenerated} potential risks forecasted.`,
       );
       await fetchOverview();
     } catch (err: any) {
@@ -97,17 +97,14 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
 
   const handleUpdateStatus = async (
     forecastId: string,
-    status: "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED"
+    status: "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED",
   ) => {
     try {
-      const res = await fetch(
-        `/api/v1/organizations/${organizationId}/predictive/${forecastId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        }
-      );
+      const res = await fetch(`/api/v1/organizations/${organizationId}/predictive/${forecastId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
       if (!res.ok) throw new Error("Failed to update forecast status");
       await fetchOverview();
     } catch (err: any) {
@@ -135,7 +132,8 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
             </span>
           </div>
           <p className="text-sm md:text-base text-on-surface-variant max-w-2xl">
-            Forecast outages, TLS certificate cliffs, lead funnel drops, and performance regressions before downtime impacts revenue.
+            Forecast outages, TLS certificate cliffs, lead funnel drops, and performance regressions
+            before downtime impacts revenue.
           </p>
         </div>
 
@@ -164,25 +162,39 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
       {/* KPI Overview Strip */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <GlassCard className="p-5 border-l-4 border-l-rose-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Critical Threats</div>
-          <div className="text-3xl font-black text-rose-400 mt-2">{overview?.criticalCount ?? 0}</div>
-          <div className="text-xs text-on-surface-variant mt-1">Imminent &lt;24h failure runways</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Critical Threats
+          </div>
+          <div className="text-3xl font-black text-rose-400 mt-2">
+            {overview?.criticalCount ?? 0}
+          </div>
+          <div className="text-xs text-on-surface-variant mt-1">
+            Imminent &lt;24h failure runways
+          </div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-amber-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Elevated Risks</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Elevated Risks
+          </div>
           <div className="text-3xl font-black text-amber-400 mt-2">{overview?.highCount ?? 0}</div>
           <div className="text-xs text-on-surface-variant mt-1">7-day projected regressions</div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-cyan-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Moderate Forecasts</div>
-          <div className="text-3xl font-black text-cyan-400 mt-2">{overview?.moderateCount ?? 0}</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Moderate Forecasts
+          </div>
+          <div className="text-3xl font-black text-cyan-400 mt-2">
+            {overview?.moderateCount ?? 0}
+          </div>
           <div className="text-xs text-on-surface-variant mt-1">14–30 day trend indicators</div>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-purple-500 bg-surface-container/60">
-          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Protected Exposure</div>
+          <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+            Protected Exposure
+          </div>
           <div className="text-3xl font-black text-purple-400 mt-2">
             ${(overview?.projectedRevenueRiskUsd ?? 0).toLocaleString()}
           </div>
@@ -227,9 +239,12 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
         </div>
       ) : filteredForecasts.length === 0 ? (
         <div className="py-16 text-center text-on-surface-variant border border-dashed border-glass-subtle-border rounded-2xl">
-          <p className="text-base font-semibold">No active failure forecasts in this risk category.</p>
+          <p className="text-base font-semibold">
+            No active failure forecasts in this risk category.
+          </p>
           <p className="text-xs text-on-surface-variant mt-1">
-            Click &quot;⚡ Run Risk Forecasting&quot; to evaluate current telemetry slopes across your websites.
+            Click &quot;⚡ Run Risk Forecasting&quot; to evaluate current telemetry slopes across
+            your websites.
           </p>
         </div>
       ) : (
@@ -247,8 +262,8 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
                   isCritical
                     ? "border-rose-500/40 bg-rose-950/10"
                     : isHigh
-                    ? "border-amber-500/40 bg-amber-950/10"
-                    : "border-purple-500/30 bg-purple-950/10"
+                      ? "border-amber-500/40 bg-amber-950/10"
+                      : "border-purple-500/30 bg-purple-950/10"
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -259,8 +274,8 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
                           isCritical
                             ? "bg-rose-500/20 text-rose-400 border border-rose-500/40"
                             : isHigh
-                            ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                            : "bg-purple-500/20 text-purple-400 border border-purple-500/40"
+                              ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                              : "bg-purple-500/20 text-purple-400 border border-purple-500/40"
                         }`}
                       >
                         {forecast.riskLevel} RISK ({probabilityPercent}%)
@@ -286,7 +301,8 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
                     </h3>
 
                     <p className="text-xs text-on-surface-variant leading-relaxed">
-                      <strong className="text-neutral-300">Projected Impact:</strong> {forecast.predictedImpact}
+                      <strong className="text-neutral-300">Projected Impact:</strong>{" "}
+                      {forecast.predictedImpact}
                     </p>
 
                     <div className="p-3 rounded-xl bg-surface-container/60 border border-glass-subtle-border flex items-start gap-2.5 text-xs">
@@ -304,7 +320,10 @@ export function PredictiveView({ organizationId }: { organizationId: string }) {
                           Telemetry & Anomaly Signals
                         </div>
                         {forecast.underlyingSignals.map((sig, i) => (
-                          <div key={i} className="flex items-start gap-2 border-b border-neutral-800/80 pb-2">
+                          <div
+                            key={i}
+                            className="flex items-start gap-2 border-b border-neutral-800/80 pb-2"
+                          >
                             <span className="text-cyan-400">📊</span>
                             <div>
                               <span className="font-semibold text-neutral-200">{sig.metric}:</span>{" "}

@@ -56,10 +56,9 @@ describe("WordPress Connect API Routes", () => {
         wpVersion: "6.7.1",
       });
 
-      const response = await getWpRoute(
-        new Request("https://guardian.test"),
-        { params: Promise.resolve({ organizationId: ORG, websiteId: WEBSITE }) },
-      );
+      const response = await getWpRoute(new Request("https://guardian.test"), {
+        params: Promise.resolve({ organizationId: ORG, websiteId: WEBSITE }),
+      });
 
       expect(response.status).toBe(200);
       const json = await response.json();
@@ -113,11 +112,9 @@ describe("WordPress Connect API Routes", () => {
       expect(response.status).toBe(200);
       const json = await response.json();
       expect(json.data.connection.wpVersion).toBe("6.7.1");
-      expect(wpServiceMock.syncWordpressSite).toHaveBeenCalledWith(
-        expect.anything(),
-        WEBSITE,
-        { simulateFix: true },
-      );
+      expect(wpServiceMock.syncWordpressSite).toHaveBeenCalledWith(expect.anything(), WEBSITE, {
+        simulateFix: true,
+      });
     });
   });
 

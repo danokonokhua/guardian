@@ -58,11 +58,7 @@ export async function GET(request: Request): Promise<Response> {
     redirectBase.searchParams.set("connected", "google");
     return NextResponse.redirect(redirectBase, 303);
   } catch (err) {
-    redirectBase.searchParams.set(
-      "error",
-      err instanceof Error ? err.message : "oauth_failed",
-    );
+    redirectBase.searchParams.set("error", err instanceof Error ? err.message : "oauth_failed");
     return NextResponse.redirect(redirectBase, 303);
   }
 }
-

@@ -52,4 +52,3 @@ export const PUT = withApiRoute(async (request, { params, requestId }) => {
 
   return apiSuccess(branding, requestId);
 });
-

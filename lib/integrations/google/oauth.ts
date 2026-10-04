@@ -113,4 +113,3 @@ export async function refreshAccessToken(refreshToken: string): Promise<{
 
   return (await response.json()) as { access_token: string; expires_in: number };
 }
-
