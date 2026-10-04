@@ -6,6 +6,8 @@ import { parseWith } from "@/lib/validation";
 import type { MonitorType } from "@prisma/client";
 import type { TenantScope } from "@/db/tenant";
 import { withTenantTransaction } from "@/db/tenant";
+import { getPrisma } from "@/db/client";
+import { logger } from "@/lib/logger";
 import { deleteMonitorDispatch, upsertMonitorDispatch } from "@/lib/jobs/dispatch";
 
 export interface MonitorRecord {
@@ -52,7 +54,7 @@ export function findMonitor(scope: TenantScope, monitorId: string): Promise<Moni
   );
 }
 
-export function createMonitor(
+export async function createMonitor(
   scope: TenantScope,
   input: {
     websiteId: string;
@@ -62,17 +64,20 @@ export function createMonitor(
     config: object;
   },
 ): Promise<MonitorRecord> {
-  return withTenantTransaction(scope, async (tx) => {
+  const monitor = await withTenantTransaction(scope, async (tx) => {
     const website = await tx.website.findFirst({
       where: { id: input.websiteId, organizationId: scope.organizationId },
       select: { id: true },
     });
     if (!website) throw new NotFoundError("Website");
-    const monitor = await tx.monitor.create({
+    return tx.monitor.create({
       data: { organizationId: scope.organizationId, ...input },
       select,
     });
-    await upsertMonitorDispatch(tx, {
+  });
+
+  try {
+    await upsertMonitorDispatch(getPrisma(), {
       monitorId: monitor.id,
       organizationId: scope.organizationId,
       websiteId: monitor.websiteId,
@@ -81,16 +86,22 @@ export function createMonitor(
       frequencyMinutes: monitor.frequencyMinutes,
       nextRunAt: new Date(),
     });
-    return monitor;
-  });
+  } catch (dispatchError) {
+    logger.warn("monitor_dispatch_upsert_failed", {
+      monitorId: monitor.id,
+      error: dispatchError instanceof Error ? dispatchError.message : String(dispatchError),
+    });
+  }
+
+  return monitor;
 }
 
-export function updateMonitor(
+export async function updateMonitor(
   scope: TenantScope,
   monitorId: string,
   input: { enabled?: boolean; frequencyMinutes?: number; config?: object },
 ): Promise<MonitorRecord | null> {
-  return withTenantTransaction(scope, async (tx) => {
+  const result = await withTenantTransaction(scope, async (tx) => {
     await tx.$executeRaw`SELECT id FROM monitoring_checks WHERE id = ${monitorId} FOR UPDATE`;
     const existing = await tx.monitor.findFirst({
       where: { id: monitorId, organizationId: scope.organizationId },
@@ -134,32 +145,55 @@ export function updateMonitor(
     }
     if (existing.type === "DNS" && input.config !== undefined)
       throw new ConflictError("Use DNS baseline acceptance to change DNS state.");
-    const monitor = await tx.monitor.update({ where: { id: monitorId }, data: input, select });
-    await upsertMonitorDispatch(tx, {
-      monitorId: monitor.id,
-      organizationId: scope.organizationId,
-      websiteId: monitor.websiteId,
-      type: monitor.type,
-      enabled: monitor.enabled,
-      frequencyMinutes: monitor.frequencyMinutes,
-      nextRunAt:
-        input.enabled !== undefined || input.frequencyMinutes !== undefined
-          ? new Date()
-          : undefined,
-    });
-    return monitor;
+    return tx.monitor.update({ where: { id: monitorId }, data: input, select });
   });
+
+  if (result) {
+    try {
+      await upsertMonitorDispatch(getPrisma(), {
+        monitorId: result.id,
+        organizationId: scope.organizationId,
+        websiteId: result.websiteId,
+        type: result.type,
+        enabled: result.enabled,
+        frequencyMinutes: result.frequencyMinutes,
+        nextRunAt:
+          input.enabled !== undefined || input.frequencyMinutes !== undefined
+            ? new Date()
+            : undefined,
+      });
+    } catch (dispatchError) {
+      logger.warn("monitor_dispatch_upsert_failed", {
+        monitorId: result.id,
+        error: dispatchError instanceof Error ? dispatchError.message : String(dispatchError),
+      });
+    }
+  }
+
+  return result;
 }
 
-export function deleteMonitor(scope: TenantScope, monitorId: string): Promise<boolean> {
-  return withTenantTransaction(scope, async (tx) => {
+export async function deleteMonitor(scope: TenantScope, monitorId: string): Promise<boolean> {
+  const deleted = await withTenantTransaction(scope, async (tx) => {
     const existing = await tx.monitor.findFirst({
       where: { id: monitorId, organizationId: scope.organizationId },
       select: { id: true },
     });
     if (!existing) return false;
-    await deleteMonitorDispatch(tx, monitorId);
     await tx.monitor.delete({ where: { id: monitorId } });
     return true;
   });
+
+  if (deleted) {
+    try {
+      await deleteMonitorDispatch(getPrisma(), monitorId);
+    } catch (dispatchError) {
+      logger.warn("monitor_dispatch_delete_failed", {
+        monitorId,
+        error: dispatchError instanceof Error ? dispatchError.message : String(dispatchError),
+      });
+    }
+  }
+
+  return deleted;
 }

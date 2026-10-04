@@ -1,5 +1,6 @@
 import type { MonitorType } from "@prisma/client";
-import { ConflictError, NotFoundError } from "@/lib/errors";
+import { AppError, ConflictError, NotFoundError, ValidationError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
 import { parseMonitorConfig, parseMonitorUpdate } from "@/lib/monitor-config";
 import {
   createMonitor,
@@ -37,18 +38,52 @@ export async function configureMonitor(scope: TenantScope, input: unknown): Prom
       },
     );
   } catch (error: unknown) {
-    const isConflict =
-      (error instanceof Error &&
-        (error.message.toLowerCase().includes("unique constraint") ||
-          error.message.includes("P2002"))) ||
-      (typeof error === "object" &&
-        error !== null &&
-        "code" in error &&
-        (error as { code: unknown }).code === "P2002");
-    if (isConflict) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    const code =
+      typeof error === "object" && error !== null && "code" in error
+        ? String((error as { code: unknown }).code)
+        : "";
+
+    if (
+      message.toLowerCase().includes("unique constraint") ||
+      message.includes("23505") ||
+      code === "P2002"
+    ) {
       throw new ConflictError("A monitor of this type already exists for this website.");
     }
-    throw error;
+
+    if (
+      message.includes("Website not found") ||
+      message.includes("23503") ||
+      code === "P2003" ||
+      code === "P2025"
+    ) {
+      throw new NotFoundError("Website");
+    }
+
+    if (
+      message.includes("invalid input value for enum") ||
+      message.includes("23514") ||
+      code === "P2000"
+    ) {
+      throw new ValidationError(`Invalid monitor check settings: ${message}`);
+    }
+
+    logger.error("configure_monitor_unexpected_error", {
+      organizationId: scope.organizationId,
+      error: message,
+      code,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+
+    throw new AppError({
+      code: "BAD_REQUEST",
+      status: 400,
+      message: `Unable to configure monitor: ${message.replace(/^[\s\S]*?(?:PrismaClientKnownRequestError:\s*|\nInvalid `[\s\S]*?` invocation:?\s*)/, "").trim() || message}`,
+    });
   }
 }
 
