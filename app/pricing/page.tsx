@@ -220,7 +220,9 @@ export default function PricingPage() {
                   href={
                     isEnterprise
                       ? "/contact?plan=ENTERPRISE"
-                      : `/signup?plan=${plan.id}&interval=${annual ? "annual" : "monthly"}`
+                      : plan.id === "FREE"
+                        ? "/audit"
+                        : `/signup?plan=${plan.id}&interval=${annual ? "annual" : "monthly"}`
                   }
                   className={`w-full text-center py-3.5 rounded-2xl text-sm font-semibold tracking-wide transition-all active:scale-95 shadow-md ${
                     isPopular
@@ -230,9 +232,11 @@ export default function PricingPage() {
                 >
                   {isEnterprise
                     ? "Contact Sales"
-                    : plan.hasTrial
-                      ? "Start 14-day free trial"
-                      : "Get started"}
+                    : plan.id === "FREE"
+                      ? "Run free audit"
+                      : plan.hasTrial
+                        ? "Start 14-day free trial"
+                        : "Get started"}
                 </Link>
               </GlassCard>
             );

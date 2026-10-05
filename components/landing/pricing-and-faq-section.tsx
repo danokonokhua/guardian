@@ -357,12 +357,12 @@ export function PricingAndFaqSection() {
 
         <div className="text-center mt-12 p-6 rounded-2xl bg-white/5 border border-white/10 text-sm text-neutral-400">
           Have more questions or custom enterprise requirements?{" "}
-          <Link href="/audit" className="text-[#00F0FF] font-semibold hover:underline">
-            Run a free website audit
+          <Link href="/contact?plan=ENTERPRISE" className="text-[#00F0FF] font-semibold hover:underline">
+            Contact Sales
           </Link>{" "}
           or{" "}
-          <Link href="/signup" className="text-[#00F0FF] font-semibold hover:underline">
-            create your workspace
+          <Link href="/audit" className="text-[#00F0FF] font-semibold hover:underline">
+            run a free website audit
           </Link>{" "}
           to test Guardian live.
         </div>

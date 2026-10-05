@@ -72,6 +72,12 @@ export default function HomePage() {
               Free audit
             </Link>
             <Link
+              href="/contact"
+              className="hidden lg:inline-block text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-colors"
+            >
+              Contact Sales
+            </Link>
+            <Link
               href="/login"
               className="text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-white transition-colors"
             >
@@ -370,6 +376,9 @@ export default function HomePage() {
             </Link>
             <Link href="/pricing" className="hover:text-white transition-colors">
               Plans
+            </Link>
+            <Link href="/contact" className="hover:text-white transition-colors">
+              Contact Sales
             </Link>
             <Link href="/login" className="hover:text-white transition-colors">
               Sign In
