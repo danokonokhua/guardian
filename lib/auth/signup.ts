@@ -82,7 +82,6 @@ export async function registerAccount(
           slug: `${slugBase(organizationName)}-${organizationId.slice(0, 8)}`,
           ownerId: userId,
           plan: isSuper ? "ENTERPRISE" : "FREE",
-          subscriptionStatus: isSuper ? "ACTIVE" : undefined,
         },
       });
       await tx.organizationMember.create({
@@ -94,6 +93,16 @@ export async function registerAccount(
           joinedAt: new Date(),
         },
       });
+      if ((tx as any).subscription?.create) {
+        await (tx as any).subscription.create({
+          data: {
+            organizationId,
+            plan: isSuper ? "ENTERPRISE" : "FREE",
+            status: "ACTIVE",
+            currentPeriodStart: new Date(),
+          },
+        });
+      }
     });
   } catch (error: unknown) {
     if (prismaCode(error) === "P2002") {

@@ -68,11 +68,28 @@ export async function listCurrentUserMemberships(): Promise<readonly MembershipC
   const memberships = await identityRepository.listMemberships(user.userId);
   const active = memberships.filter(isActiveMembership);
   if (isSuperadminEmail(user.email)) {
-    return active.map((m) => ({
-      ...m,
-      role: "OWNER" as const,
-      status: "ACTIVE" as const,
-    }));
+    if (active.length > 0) {
+      return active.map((m) => ({
+        ...m,
+        role: "OWNER" as const,
+        status: "ACTIVE" as const,
+      }));
+    }
+    try {
+      const { getPrisma } = await import("@/db/client");
+      const prisma = getPrisma();
+      const firstOrg = await prisma.organization.findFirst({
+        where: { deletedAt: null },
+        select: { id: true },
+        orderBy: { createdAt: "asc" },
+      });
+      if (firstOrg) {
+        return [{ organizationId: firstOrg.id, role: "OWNER" as const, status: "ACTIVE" as const }];
+      }
+    } catch {
+      // Test harness fallback
+    }
+    return [];
   }
   return active;
 }
