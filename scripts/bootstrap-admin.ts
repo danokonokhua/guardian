@@ -62,7 +62,6 @@ async function main(): Promise<void> {
           slug: `${slugBase}-${organizationId.slice(0, 8)}`,
           ownerId: user.id,
           plan: "ENTERPRISE",
-          subscriptionStatus: "ACTIVE",
         },
       });
       await tx.organizationMember.create({
@@ -74,25 +73,53 @@ async function main(): Promise<void> {
           joinedAt: new Date(),
         },
       });
+      await tx.subscription.upsert({
+        where: { organizationId },
+        create: {
+          organizationId,
+          plan: "ENTERPRISE",
+          status: "ACTIVE",
+          currentPeriodStart: new Date(),
+        },
+        update: { plan: "ENTERPRISE", status: "ACTIVE" },
+      });
     });
   } else {
+    const userMemberships = await withGucContext({ userId: user.id }, (tx) =>
+      tx.organizationMember.findMany({
+        where: { userId: user.id },
+        select: { organizationId: true },
+      }),
+    );
+    const orgIds = userMemberships.map((m) => m.organizationId);
+    // Update memberships and orgs under user-scoped GUC.
     await withGucContext({ userId: user.id }, async (tx) => {
       await tx.organizationMember.updateMany({
         where: { userId: user.id },
         data: { role: "OWNER", status: "ACTIVE" },
       });
-      const userMemberships = await tx.organizationMember.findMany({
-        where: { userId: user.id },
-        select: { organizationId: true },
-      });
-      const orgIds = userMemberships.map((m) => m.organizationId);
       if (orgIds.length > 0) {
         await tx.organization.updateMany({
           where: { id: { in: orgIds } },
-          data: { plan: "ENTERPRISE", subscriptionStatus: "ACTIVE" },
+          data: { plan: "ENTERPRISE" },
         });
       }
     });
+    // Upsert subscription under org+user GUC so RLS allows the write.
+    for (const orgId of orgIds) {
+      await withGucContext({ organizationId: orgId, userId: user.id }, async (tx) => {
+        await tx.subscription.upsert({
+          where: { organizationId: orgId },
+          create: {
+            organizationId: orgId,
+            plan: "ENTERPRISE",
+            status: "ACTIVE",
+            currentPeriodStart: new Date(),
+          },
+          update: { plan: "ENTERPRISE", status: "ACTIVE" },
+        });
+      });
+    }
   }
 
   process.stdout.write(`Guardian owner account ready for ${email}.\n`);
