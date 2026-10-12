@@ -1,4 +1,8 @@
-import { EMAIL_PROTOCOLS, type EmailHealthConfig } from "@/lib/email-health/types";
+import {
+  EMAIL_PROTOCOLS,
+  calculateDeliverabilityScore,
+  type EmailHealthConfig,
+} from "@/lib/email-health/types";
 const colors = {
   HEALTHY: "text-emerald-300",
   MISSING: "text-amber-300",
@@ -8,6 +12,8 @@ const colors = {
 };
 export function EmailHealthEvidence({ config }: { config?: EmailHealthConfig }) {
   const snapshot = config?.emailHealth;
+  const deliverability = calculateDeliverabilityScore(snapshot?.checks);
+
   return (
     <section
       aria-label="Email-domain health evidence"
@@ -23,6 +29,26 @@ export function EmailHealthEvidence({ config }: { config?: EmailHealthConfig }) 
       </p>
       {snapshot ? (
         <>
+          <div className="my-3 flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
+            <div>
+              <p className="text-xs font-medium text-neutral-400">Deliverability & Spoofing Defense</p>
+              <p className="text-sm font-semibold text-neutral-200">{deliverability.label}</p>
+            </div>
+            <div className="text-right">
+              <span
+                className={`text-2xl font-bold ${
+                  deliverability.score >= 80
+                    ? "text-emerald-400"
+                    : deliverability.score >= 50
+                      ? "text-amber-400"
+                      : "text-red-400"
+                }`}
+              >
+                {deliverability.score}
+              </span>
+              <span className="text-xs text-neutral-400">/100</span>
+            </div>
+          </div>
           <p className="my-3 text-xs text-neutral-400">
             Last checked: {new Date(snapshot.checkedAt).toLocaleString()}
           </p>

@@ -45,6 +45,14 @@ export const WordpressTelemetrySchema = z.object({
   themes: z.array(WordpressThemeSchema).default([]),
   databaseSizeMb: z.number().optional(),
   lastBackupAt: z.string().nullable().optional(),
+  contentFreshness: z
+    .object({
+      lastPostDate: z.string().nullable().optional(),
+      lastPostTitle: z.string().nullable().optional(),
+      daysSinceLastPost: z.number().nullable().optional(),
+      isStale: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 export type WordpressPluginInfo = z.infer<typeof WordpressPluginSchema>;
@@ -237,6 +245,38 @@ export async function detectWordpressAnomalies(
       ruleId: "RULE_WP_VULNERABLE_PLUGIN",
       websiteId,
       subjectKey,
+    });
+    await resolveFindingScoped({ organizationId }, fp, prisma as any);
+  }
+
+  // 5. Check Content Freshness
+  if (telemetry.contentFreshness?.isStale && telemetry.contentFreshness.daysSinceLastPost) {
+    const finding = await recordFindingWithClient(
+      {
+        organizationId,
+        websiteId,
+        ruleId: "RULE_WP_STALE_CONTENT",
+        subjectKey: "wp-content-freshness",
+        severity: "LOW",
+        title: `Content Stagnation: No WordPress posts published in ${telemetry.contentFreshness.daysSinceLastPost} days`,
+        summary: `The last post "${telemetry.contentFreshness.lastPostTitle || "Untitled"}" was published ${telemetry.contentFreshness.daysSinceLastPost} days ago.`,
+        businessImpact:
+          "Websites with prolonged publication inactivity experience lower search engine crawl frequencies and organic discoverability drops.",
+        impactConfidence: 0.8,
+        recommendedAction: "Publish a fresh article or announcement to maintain organic search indexation cadence.",
+        technicalEvidence: {
+          contentFreshness: telemetry.contentFreshness,
+        },
+      },
+      prisma,
+    );
+    detectedCount++;
+    issueIds.push(finding.id);
+  } else if (telemetry.contentFreshness && !telemetry.contentFreshness.isStale) {
+    const fp = issueFingerprint({
+      ruleId: "RULE_WP_STALE_CONTENT",
+      websiteId,
+      subjectKey: "wp-content-freshness",
     });
     await resolveFindingScoped({ organizationId }, fp, prisma as any);
   }

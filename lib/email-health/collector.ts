@@ -5,11 +5,13 @@ import { registrationDomain } from "@/lib/domain-expiry/records";
 import { checkSpf } from "./spf";
 import { checkDmarc } from "./dmarc";
 import { checkMtaSts } from "./mta-sts";
+import { checkDkim } from "./dkim";
 import { type ReadDns, type EmailHealthSnapshot } from "./types";
 
 export async function collectEmailHealth(
   hostname: string,
   scope: "REGISTERED" | "HOSTNAME" = "REGISTERED",
+  customDkimSelectors: string[] = [],
 ): Promise<EmailHealthSnapshot> {
   const host = domainToASCII(hostname).toLowerCase().replace(/\.$/, "");
   const domain = scope === "REGISTERED" ? (registrationDomain(host) ?? host) : host;
@@ -50,12 +52,13 @@ export async function collectEmailHealth(
     return pending;
   };
   try {
-    const [SPF, DMARC, MTA_STS] = await Promise.all([
+    const [SPF, DMARC, DKIM, MTA_STS] = await Promise.all([
       checkSpf(domain, read),
       checkDmarc(domain, read),
+      checkDkim(domain, read, customDkimSelectors),
       checkMtaSts(domain, read),
     ]);
-    return { domain, checkedAt: new Date().toISOString(), checks: { SPF, DMARC, MTA_STS } };
+    return { domain, checkedAt: new Date().toISOString(), checks: { SPF, DMARC, DKIM, MTA_STS } };
   } finally {
     clearTimeout(timer);
   }

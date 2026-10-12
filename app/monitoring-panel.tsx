@@ -10,6 +10,10 @@ import {
   DomainExpiryEvidence,
   type ExpiryEvidence,
 } from "@/components/dashboard/domain-expiry-evidence";
+import {
+  DomainExpiryCard,
+  calculateDaysRemaining,
+} from "@/components/dashboard/domain-expiry-card";
 
 type Monitor = {
   id: string;
@@ -633,6 +637,20 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
         </div>
       </div>
 
+      {/* Domain Expiry Radar */}
+      {allMonitors.some((m) => m.type === "DOMAIN_EXPIRY" && m.config?.expiry) && (
+        <DomainExpiryCard
+          items={allMonitors
+            .filter((m) => m.type === "DOMAIN_EXPIRY" && m.config?.expiry)
+            .map((m) => ({
+              domain: m.config?.expiry?.domain || getWebsiteInfo(m.websiteId).displayName,
+              expiresAt: m.config?.expiry?.expiresAt,
+              checkedAt: m.config?.expiry?.checkedAt,
+              state: m.config?.expiry?.state,
+            }))}
+        />
+      )}
+
       {/* Website Verification Notice */}
       {availableWebsites.length > 0 &&
         availableWebsites.some((website) => website.verifyStatus !== "VERIFIED") && (
@@ -685,6 +703,15 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
               </button>
               {availableWebsites.map((site) => {
                 const count = allMonitors.filter((m) => m.websiteId === site.id).length;
+                const expiryMonitor = allMonitors.find(
+                  (m) => m.websiteId === site.id && m.type === "DOMAIN_EXPIRY",
+                );
+                const days = expiryMonitor?.config?.expiry?.expiresAt
+                  ? calculateDaysRemaining(
+                      expiryMonitor.config.expiry.expiresAt,
+                      expiryMonitor.config.expiry.checkedAt,
+                    )
+                  : null;
                 return (
                   <button
                     key={site.id}
@@ -699,6 +726,19 @@ export function MonitoringPanel({ organizationId }: { organizationId: string }) 
                     <span>🌐</span>
                     <span>{site.label || site.hostname}</span>
                     <span className="opacity-75 text-[11px]">({count})</span>
+                    {days !== null && (
+                      <span
+                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                          days <= 14
+                            ? "bg-red-500/30 text-red-300 border border-red-500/50"
+                            : days <= 30
+                              ? "bg-amber-500/30 text-amber-300 border border-amber-500/50"
+                              : "bg-neutral-700/50 text-neutral-400"
+                        }`}
+                      >
+                        {days}d
+                      </span>
+                    )}
                   </button>
                 );
               })}

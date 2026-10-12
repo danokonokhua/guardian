@@ -10,6 +10,13 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
     hasAdvancedSeo: boolean;
     plan: string;
     analysis: AdvancedSeoData | null;
+    searchConsole?: {
+      currentClicks: number;
+      impressions: number;
+      averageCtrPct: number;
+      averagePosition: number;
+      topQueries: Array<{ query: string; clicks: number; impressions: number; position: number }>;
+    } | null;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
@@ -217,6 +224,100 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
           </div>
         </div>
       </GlassCard>
+
+      {/* Google Search Console & Ranking Positions */}
+      {data?.searchConsole ? (
+        <GlassCard variant="elevated" className="p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔍</span>
+                <h3 className="text-base font-bold text-white">
+                  Google Organic Rankings & Search Visibility
+                </h3>
+              </div>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                Last 28 days performance from Google Search Console
+              </p>
+            </div>
+            <div className="flex items-center gap-5 text-right">
+              <div>
+                <p className="text-xs text-neutral-400">Avg. Position</p>
+                <p className="text-lg font-extrabold text-[#00F0FF]">
+                  #{data.searchConsole.averagePosition}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-neutral-400">Clicks</p>
+                <p className="text-lg font-extrabold text-white">
+                  {data.searchConsole.currentClicks?.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-neutral-400">CTR</p>
+                <p className="text-lg font-extrabold text-emerald-400">
+                  {data.searchConsole.averageCtrPct}%
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {Array.isArray(data.searchConsole.topQueries) && data.searchConsole.topQueries.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-neutral-800 text-neutral-400 uppercase font-semibold">
+                    <th className="pb-3">Search Query Keyword</th>
+                    <th className="pb-3">Google Rank Position</th>
+                    <th className="pb-3 text-right">Clicks</th>
+                    <th className="pb-3 text-right">Impressions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-800/60 text-neutral-300">
+                  {data.searchConsole.topQueries.map((q: any) => (
+                    <tr key={q.query} className="hover:bg-neutral-900/40">
+                      <td className="py-2.5 font-medium text-white">{q.query}</td>
+                      <td className="py-2.5">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
+                            q.position <= 3
+                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                              : q.position <= 10
+                                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                                : "bg-neutral-800 text-neutral-400"
+                          }`}
+                        >
+                          #{Math.round(q.position * 10) / 10}
+                        </span>
+                      </td>
+                      <td className="py-2.5 text-right font-mono text-neutral-200">{q.clicks}</td>
+                      <td className="py-2.5 text-right font-mono text-neutral-400">{q.impressions}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </GlassCard>
+      ) : (
+        <GlassCard variant="default" className="p-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🔗</span>
+            <div>
+              <p className="text-sm font-semibold text-white">Connect Google Search Console</p>
+              <p className="text-xs text-neutral-400">
+                Sync live keyword ranking positions, click-through rates, and Google SERP impressions.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/integrations"
+            className="px-3.5 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/30 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/30 transition whitespace-nowrap"
+          >
+            Connect GSC
+          </Link>
+        </GlassCard>
+      )}
 
       {analysis && (
         <>

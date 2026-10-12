@@ -248,6 +248,21 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
         </div>
       </div>
 
+      {/* Simulation / Integration Status Banner */}
+      <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/30 p-4 text-xs text-indigo-200 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-sm">ℹ️</span>
+          <span>
+            <strong>Simulated Multi-Channel Modeling:</strong> Metrics below illustrate blended ROAS,
+            cost-per-lead, and budget protection across ad networks. Connect live ad accounts in{" "}
+            <a href="/dashboard/integrations" className="underline text-indigo-300 font-semibold">
+              Integrations Hub
+            </a>{" "}
+            to stream real-time lead attribution.
+          </span>
+        </div>
+      </div>
+
       {/* KPI Overview Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <GlassCard className="p-5" glow="cyan">

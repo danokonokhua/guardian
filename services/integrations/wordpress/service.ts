@@ -97,6 +97,12 @@ const DEFAULT_SANDBOX_TELEMETRY: WordpressTelemetryPayload = {
   ],
   databaseSizeMb: 142.5,
   lastBackupAt: new Date(Date.now() - 3600000 * 12).toISOString(),
+  contentFreshness: {
+    lastPostDate: new Date(Date.now() - 74 * 86400000).toISOString(),
+    lastPostTitle: "Announcing Our Q2 Product Updates",
+    daysSinceLastPost: 74,
+    isStale: true,
+  },
 };
 
 const CLEAN_SANDBOX_TELEMETRY: WordpressTelemetryPayload = {
@@ -151,6 +157,12 @@ const CLEAN_SANDBOX_TELEMETRY: WordpressTelemetryPayload = {
   ],
   databaseSizeMb: 143.1,
   lastBackupAt: new Date().toISOString(),
+  contentFreshness: {
+    lastPostDate: new Date(Date.now() - 5 * 86400000).toISOString(),
+    lastPostTitle: "Weekly Platform Security Digest",
+    daysSinceLastPost: 5,
+    isStale: false,
+  },
 };
 
 export async function connectWordpressSite(

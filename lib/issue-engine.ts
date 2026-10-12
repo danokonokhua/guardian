@@ -5,6 +5,7 @@ import { getPrisma } from "@/db/client";
 import { withGucContext, type PrismaTransactionHost, type TenantScope } from "@/db/tenant";
 import { upsertSlaDispatch } from "@/lib/jobs/dispatch";
 import { dispatchIssueRecoveryNotifications } from "@/services/issues/recovery";
+import { checkActiveMaintenance } from "@/lib/maintenance/check";
 
 export interface Finding {
   organizationId: string;
@@ -49,6 +50,15 @@ export async function recordFindingWithClient(
   if (!website) throw new Error("Website does not belong to the organization.");
   const fingerprint = issueFingerprint(finding);
   const impactConfidence = normalizedImpactConfidence(finding.impactConfidence);
+  const maintenance = await checkActiveMaintenance(prisma, finding.organizationId, finding.websiteId);
+  const baseMetadata =
+    finding.recommendedAction === undefined
+      ? {}
+      : { recommendedAction: finding.recommendedAction };
+  const metadata = maintenance.inMaintenance
+    ? { ...baseMetadata, maintenanceSuppressed: true, maintenanceTitle: maintenance.title }
+    : (finding.recommendedAction === undefined ? undefined : baseMetadata);
+
   const issueData = {
     organizationId: finding.organizationId,
     websiteId: finding.websiteId,
@@ -59,10 +69,7 @@ export async function recordFindingWithClient(
     summary: finding.summary,
     businessImpact: finding.businessImpact,
     ...(impactConfidence === undefined ? {} : { impactConfidence }),
-    metadata:
-      finding.recommendedAction === undefined
-        ? undefined
-        : { recommendedAction: finding.recommendedAction },
+    metadata,
   };
   const existing = await prisma.issue.findUnique({ where: { fingerprint } });
   const issue = await prisma.issue.upsert({
@@ -78,10 +85,7 @@ export async function recordFindingWithClient(
       technicalEvidence: finding.technicalEvidence ?? {},
       businessImpact: finding.businessImpact,
       ...(impactConfidence === undefined ? {} : { impactConfidence }),
-      metadata:
-        finding.recommendedAction === undefined
-          ? undefined
-          : { recommendedAction: finding.recommendedAction },
+      metadata,
     },
   });
   if (existing?.status === "RESOLVED") {
@@ -96,10 +100,11 @@ export async function recordFindingWithClient(
       },
     });
   }
-  // Register SLA work in the same transaction as the finding. The scheduler
-  // only reads this system-owned dispatch row; all tenant issue reads remain
-  // inside the tenant GUC transaction in the worker.
-  await upsertSlaDispatch(prisma, finding.organizationId);
+  // Register SLA work in the same transaction as the finding, unless alerts
+  // and escalation are actively suppressed by a scheduled maintenance window.
+  if (!maintenance.inMaintenance) {
+    await upsertSlaDispatch(prisma, finding.organizationId);
+  }
   return { id: issue.id, created: existing === null };
 }
 

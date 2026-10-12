@@ -6,6 +6,7 @@ import { enqueueNotification, type NotificationEvent } from "@/lib/notifications
 import { readOrganizationSlaPolicy } from "@/services/organizations/settings";
 import { isChannelEnabled } from "@/services/notifications/repository";
 import { queueDestinationAlerts } from "@/lib/notification-destinations/queue";
+import { checkActiveMaintenance } from "@/lib/maintenance/check";
 
 export interface SlaEscalationResult {
   checkedIssues: number;
@@ -43,6 +44,8 @@ export async function enqueueSlaEscalations(
           title: true,
           severity: true,
           firstSeenAt: true,
+          metadata: true,
+          websiteId: true,
           activities: {
             where: { action: { in: ["ACKNOWLEDGED", "RESOLVED"] } },
             orderBy: { createdAt: "asc" },
@@ -59,10 +62,13 @@ export async function enqueueSlaEscalations(
         select: { userId: true },
       }),
     ]);
-    return { issues, members };
+    const maintenance = await checkActiveMaintenance(tx, scope.organizationId, null, new Date());
+    return { issues, members, maintenance };
   });
   const now = Date.now();
   const breached = data.issues.filter((issue) => {
+    if (data.maintenance.inMaintenance) return false;
+    if ((issue.metadata as any)?.maintenanceSuppressed) return false;
     const acknowledged = issue.activities.find((activity) => activity.action === "ACKNOWLEDGED");
     const ageMinutes = (now - issue.firstSeenAt.getTime()) / 60_000;
     const ackBreach = !acknowledged && ageMinutes > policy.acknowledgeMinutes;

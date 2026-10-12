@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { HealthData } from "@/app/health-panel";
+import { WebVitalsTrend } from "./web-vitals-trend";
 export const viewConfig = {
   health: {
     title: "Digital Health Vitals",
@@ -150,7 +151,27 @@ export function MonitoringViewPanel({
             Open incident queue
           </Link>
         </section>
+        {view === "reputation" && data.reputationSummary && (
+          <section className="setup-card">
+            <span className="eyebrow">REVIEW HEALTH</span>
+            <div className="view-score">
+              {data.reputationSummary.averageRating !== null
+                ? `★ ${data.reputationSummary.averageRating.toFixed(1)}`
+                : "No reviews"}
+            </div>
+            <p>
+              {data.reputationSummary.totalReviewCount} verified reviews
+              {data.reputationSummary.unansweredCount > 0
+                ? ` · ${data.reputationSummary.unansweredCount} unanswered`
+                : ""}
+            </p>
+            <Link href="/reputation" className="quiet-link">
+              Open Reputation Dashboard →
+            </Link>
+          </section>
+        )}
       </div>
+      {view === "health" && results.length > 0 && <WebVitalsTrend results={results} />}
       <section className="setup-card">
         <h2>Recent check results</h2>
         <p>

@@ -34,17 +34,21 @@ async function main(): Promise<void> {
     await import("@/lib/notification-destinations/worker");
   const { registerRetentionPruneWorker, enqueueRetentionPruneJob } =
     await import("@/lib/jobs/retention-prune");
+  const { registerCompetitorSyncWorker, scheduleDueCompetitorSync } =
+    await import("@/services/competitors/worker");
   await registerExternalNotificationWorker(boss);
   await registerSystemPingWorker(boss);
   await registerMonitorCheckWorker(boss);
   await registerNotificationWorker(boss, productionNotificationProvider);
   await registerSlaEscalationWorker(boss);
   await registerRetentionPruneWorker(boss);
+  await registerCompetitorSyncWorker(boss);
 
   const runSchedulers = async (): Promise<void> => {
     await scheduleDueMonitors(boss);
     await scheduleDueSlaEscalations(boss);
     await enqueueRetentionPruneJob(boss, { triggeredBy: "worker_scheduler" });
+    await scheduleDueCompetitorSync(boss);
   };
   const schedulerTimer = setInterval(() => {
     void runSchedulers().catch((error: unknown) =>

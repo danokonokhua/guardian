@@ -50,7 +50,7 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [newUrl, setNewUrl] = useState("");
-  const [addSandbox, setAddSandbox] = useState(true);
+  const [addSandbox, setAddSandbox] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
 
@@ -306,6 +306,20 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
           </p>
         </GlassCard>
       </div>
+
+      {/* Competitive Gap Alerts */}
+      {avgCompetitorSpeed && avgCompetitorSpeed < yourSpeed ? (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-950/30 p-4 text-xs text-amber-200">
+          <div className="flex items-center gap-2 font-medium text-sm text-amber-300">
+            <span>⚡</span>
+            <span>Speed Gap Detected: Monitored competitors load faster</span>
+          </div>
+          <p className="mt-1 text-neutral-300">
+            Competitor domains respond in {avgCompetitorSpeed}ms on average vs {yourSpeed}ms for your site.
+            Enable edge caching or CDN distribution to prevent conversion leakage to faster competitors.
+          </p>
+        </div>
+      ) : null}
 
       {/* Head-to-Head Comparison Table */}
       <GlassCard className="p-6">

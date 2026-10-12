@@ -12,6 +12,7 @@ import {
   generateGroundedRecommendations,
   type GroundedRecommendation,
 } from "@/lib/recommendations";
+import { checkActiveMaintenance, type MaintenanceStatus } from "@/lib/maintenance/check";
 
 function extractReputationObservations(
   integrations: Array<{
@@ -90,6 +91,12 @@ export interface HealthOverview {
     activeIssues: number;
     recoveredIssues: number;
   };
+  activeMaintenance?: MaintenanceStatus;
+  reputationSummary?: {
+    averageRating: number | null;
+    totalReviewCount: number;
+    unansweredCount: number;
+  };
   recentResults: Array<{
     id: string;
     status: string;
@@ -137,7 +144,15 @@ export interface HealthOverview {
 
 export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> {
   return withTenantTransaction(scope, async (tx) => {
-    const [monitors, results, issues, scoreHistory, gbpIntegrations] = await Promise.all([
+    const [
+      monitors,
+      results,
+      issues,
+      scoreHistory,
+      gbpIntegrations,
+      activeMaintenance,
+      businessReviews,
+    ] = await Promise.all([
       tx.monitor.findMany({
         where: { organizationId: scope.organizationId, enabled: true },
         select: {
@@ -228,9 +243,46 @@ export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> 
             },
           })
         : Promise.resolve([]),
+      checkActiveMaintenance(tx, scope.organizationId),
+      (tx as any).businessReview?.findMany
+        ? (tx as any).businessReview.findMany({
+            where: { organizationId: scope.organizationId },
+            select: { rating: true, hasReply: true, websiteId: true, reviewDate: true },
+          })
+        : Promise.resolve([]),
     ]);
 
+    const totalReviewCount = (businessReviews ?? []).length;
+    const averageRating =
+      totalReviewCount > 0
+        ? Math.round(
+            ((businessReviews as any[]).reduce((sum: number, r: any) => sum + r.rating, 0) /
+              totalReviewCount) *
+              10,
+          ) / 10
+        : null;
+    const unansweredCount = (businessReviews ?? []).filter((r: any) => !r.hasReply).length;
+    const reputationSummary = {
+      averageRating,
+      totalReviewCount,
+      unansweredCount,
+    };
+
     const gbpObservations = extractReputationObservations(gbpIntegrations);
+    const reviewObservations: HealthScoreObservation[] =
+      gbpObservations.length === 0 && totalReviewCount > 0
+        ? [
+            {
+              id: "reviews-aggregate",
+              monitorId: "reputation-composite",
+              monitorType: "REPUTATION",
+              status: averageRating !== null && averageRating < 3.0 ? "DOWN" : "UP",
+              score: averageRating !== null ? Math.round((averageRating / 5) * 100) : 100,
+              checkedAt: (businessReviews as any[])[0]?.reviewDate ?? new Date(),
+            },
+          ]
+        : [];
+
     const latestStatuses = monitors.map((monitor) => monitor.results[0]?.status);
     const activeStatuses = new Set(["OPEN", "ACKNOWLEDGED", "IN_PROGRESS"]);
     const healthScore = calculateDigitalHealthScore(
@@ -243,6 +295,7 @@ export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> 
           checkedAt: monitor.results[0]?.checkedAt,
         })),
         ...gbpObservations,
+        ...reviewObservations,
       ],
       issues.map((issue) => ({
         id: issue.id,
@@ -274,6 +327,8 @@ export function readHealthOverview(scope: TenantScope): Promise<HealthOverview> 
       healthScore,
       recommendations,
       healthScoreHistory: scoreHistory,
+      activeMaintenance,
+      reputationSummary,
       summary: {
         monitors: monitors.length + gbpObservations.length,
         up:

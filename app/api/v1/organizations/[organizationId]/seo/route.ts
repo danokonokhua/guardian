@@ -1,5 +1,5 @@
 import { requirePermission } from "@/lib/auth/context";
-import { createTenantScope } from "@/db/tenant";
+import { createTenantScope, withTenantTransaction } from "@/db/tenant";
 import { apiSuccess, withApiRoute } from "@/lib/api";
 import { assertCanUseAdvancedSeo } from "@/lib/billing/entitlements";
 import { getPlanFeatures } from "@/config/billing-plans";
@@ -39,11 +39,20 @@ export const GET = withApiRoute(async (request, { params, requestId }) => {
 
   const analysis = await performAdvancedSeoAnalysis(tenantScope, websiteId);
 
+  const gscIntegration = await withTenantTransaction(tenantScope, async (tx) => {
+    if (!(tx as any).googleIntegration?.findFirst) return null;
+    return (tx as any).googleIntegration.findFirst({
+      where: { organizationId: tenantScope.organizationId, provider: "SEARCH_CONSOLE" },
+      select: { syncSummary: true, lastSyncAt: true, status: true },
+    });
+  });
+
   return apiSuccess(
     {
       hasAdvancedSeo: true,
       plan,
       analysis,
+      searchConsole: gscIntegration?.syncSummary ?? null,
     },
     requestId,
   );

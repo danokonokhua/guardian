@@ -61,6 +61,17 @@ export type HealthData = {
     activeIssues: number;
     recoveredIssues: number;
   };
+  activeMaintenance?: {
+    inMaintenance: boolean;
+    title?: string;
+    summary?: string;
+    endsAt?: string;
+  };
+  reputationSummary?: {
+    averageRating: number | null;
+    totalReviewCount: number;
+    unansweredCount: number;
+  };
   recentResults: Array<{
     id: string;
     status: string;
@@ -388,6 +399,21 @@ export function HealthPanel({
   };
   return (
     <div className="space-y-5 command-health">
+      {result?.data?.activeMaintenance?.inMaintenance && (
+        <div role="status" className="rounded-lg border border-amber-500/30 bg-amber-950/40 p-4 text-amber-200">
+          <div className="flex items-center gap-2 font-medium">
+            <span>🔧</span>
+            <span>Scheduled Maintenance Active: {result.data.activeMaintenance.title}</span>
+          </div>
+          <p className="mt-1 text-xs text-amber-300/80">
+            Alert notifications and SLA escalations are currently suppressed
+            {result.data.activeMaintenance.endsAt
+              ? ` until ${new Date(result.data.activeMaintenance.endsAt).toLocaleString()}`
+              : ""}
+            .
+          </p>
+        </div>
+      )}
       <dl className="command-metrics">
         {[
           ["Healthy monitors", summary.up, "text-emerald-300"],

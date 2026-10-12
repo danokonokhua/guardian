@@ -42,6 +42,12 @@ interface WordpressConnectionData {
   lastSyncAt: string | null;
   lastError: string | null;
   isSandbox: boolean;
+  contentFreshness?: {
+    lastPostDate: string | null;
+    lastPostTitle: string | null;
+    daysSinceLastPost: number | null;
+    isStale: boolean;
+  };
 }
 
 export function WordpressIntegrationView({ organizationId }: { organizationId: string }) {
@@ -451,6 +457,49 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
               </div>
             </div>
           </GlassCard>
+
+          {/* Content Freshness Card */}
+          {connection.contentFreshness && (
+            <GlassCard className="p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">📝</span>
+                  <div>
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
+                      Content Freshness & Editorial Cadence
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Latest published post:{" "}
+                      <strong className="text-slate-200">
+                        {connection.contentFreshness.lastPostTitle || "Latest Post"}
+                      </strong>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-xs text-slate-400 font-medium">Last Publication</p>
+                    <p className="text-sm font-bold text-white">
+                      {connection.contentFreshness.daysSinceLastPost !== null
+                        ? `${connection.contentFreshness.daysSinceLastPost} days ago`
+                        : "Unknown"}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`px-2.5 py-1 rounded text-xs font-semibold ${
+                      connection.contentFreshness.isStale
+                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    }`}
+                  >
+                    {connection.contentFreshness.isStale ? "⚠ Stagnant (>60d)" : "✓ Active"}
+                  </span>
+                </div>
+              </div>
+            </GlassCard>
+          )}
 
           {/* Installed Plugins Table */}
           {connection.plugins && connection.plugins.length > 0 && (

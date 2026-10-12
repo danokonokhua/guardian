@@ -31,6 +31,9 @@ const emailEvidence: EmailHealthSnapshot = {
     DMARC: evidence("WEAK", "DMARC is monitoring-only.", "dns:_dmarc.example.com:TXT", [
       "v=DMARC1; p=none",
     ]),
+    DKIM: evidence("HEALTHY", "DKIM selector verified.", "dns:default._domainkey.example.com:TXT", [
+      "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC12345",
+    ]),
     MTA_STS: evidence(
       "MISSING",
       "No MTA-STS policy identifier is published.",
