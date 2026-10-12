@@ -3,6 +3,7 @@ import React from "react";
 export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "elevated" | "interactive";
   glow?: "cyan" | "violet" | "emerald" | "rose" | "none";
+  overflow?: "hidden" | "visible";
   className?: string;
   children: React.ReactNode;
 }
@@ -10,11 +11,16 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function GlassCard({
   variant = "default",
   glow = "none",
+  overflow,
   className = "",
   children,
   ...props
 }: GlassCardProps) {
-  const baseClasses = "relative overflow-hidden rounded-2xl border transition-all duration-200";
+  const isOverflowVisible =
+    overflow === "visible" || className.includes("overflow-visible");
+
+  const overflowClass = isOverflowVisible ? "overflow-visible" : "overflow-hidden";
+  const baseClasses = `relative ${overflowClass} rounded-2xl border transition-all duration-200`;
 
   const variantClasses = {
     default:
@@ -36,7 +42,18 @@ export function GlassCard({
   }[glow];
 
   return (
-    <div className={`${baseClasses} ${variantClasses} ${glowOverlays} ${className}`} {...props}>
+    <div
+      className={`${baseClasses} ${variantClasses} ${
+        isOverflowVisible ? "" : glowOverlays
+      } ${className}`}
+      {...props}
+    >
+      {isOverflowVisible && glow !== "none" && (
+        <div
+          className={`absolute inset-0 overflow-hidden rounded-2xl pointer-events-none ${glowOverlays}`}
+          aria-hidden="true"
+        />
+      )}
       {children}
     </div>
   );

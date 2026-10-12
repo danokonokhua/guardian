@@ -117,14 +117,15 @@ export default function PricingPage() {
                 key={plan.id}
                 variant={isPopular ? "elevated" : "default"}
                 glow={isPopular ? "cyan" : "none"}
+                overflow={isPopular ? "visible" : "hidden"}
                 className={`relative flex flex-col justify-between p-8 transition-all duration-300 ${
                   isPopular
-                    ? "ring-2 ring-primary/40 shadow-2xl shadow-primary/10 -translate-y-1.5"
+                    ? "ring-2 ring-primary/40 shadow-2xl shadow-primary/10 -translate-y-1.5 z-10"
                     : "hover:-translate-y-1"
                 }`}
               >
                 {isPopular && (
-                  <span className="absolute -top-3.5 left-8 text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-primary to-accent-violet text-neutral-950 px-4 py-1 rounded-full shadow-lg shadow-primary/30">
+                  <span className="absolute -top-3.5 left-8 text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-primary to-accent-violet text-neutral-950 px-4 py-1 rounded-full shadow-lg shadow-primary/30 z-20">
                     Most Popular
                   </span>
                 )}

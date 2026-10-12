@@ -195,14 +195,15 @@ export function PricingAndFaqSection() {
                 key={plan.id}
                 variant={plan.isPopular ? "elevated" : "default"}
                 glow={plan.isPopular ? "cyan" : "none"}
+                overflow={plan.isPopular ? "visible" : "hidden"}
                 className={`relative flex flex-col justify-between p-8 transition-all duration-300 ${
                   plan.isPopular
-                    ? "ring-2 ring-[#00F0FF]/60 shadow-[0_0_40px_rgba(0,240,255,0.2)] md:-translate-y-2"
+                    ? "ring-2 ring-[#00F0FF]/60 shadow-[0_0_40px_rgba(0,240,255,0.2)] md:-translate-y-2 z-10"
                     : "hover:-translate-y-1"
                 }`}
               >
                 {plan.isPopular && (
-                  <span className="absolute -top-3.5 left-8 text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-[#00F0FF] to-[#6807ba] text-[#0A0D14] px-4 py-1 rounded-full shadow-[0_0_20px_rgba(0,240,255,0.5)]">
+                  <span className="absolute -top-3.5 left-8 text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-[#00F0FF] to-[#6807ba] text-[#0A0D14] px-4 py-1 rounded-full shadow-[0_0_20px_rgba(0,240,255,0.5)] z-20">
                     Most Popular
                   </span>
                 )}
