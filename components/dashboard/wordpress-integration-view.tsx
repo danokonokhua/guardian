@@ -459,19 +459,30 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
           </GlassCard>
 
           {/* Content Freshness Card */}
-          {connection.contentFreshness && (
+          {connection.contentFreshness ? (
             <GlassCard className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">📝</span>
                   <div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
-                      Content Freshness & Editorial Cadence
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Latest published post:{" "}
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
+                        Content Freshness & Editorial Cadence
+                      </h4>
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                          connection.contentFreshness.isStale
+                            ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                            : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                        }`}
+                      >
+                        {connection.contentFreshness.isStale ? "⚠ Stagnant (>60d)" : "✓ Active"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Latest post:{" "}
                       <strong className="text-slate-200">
-                        {connection.contentFreshness.lastPostTitle || "Latest Post"}
+                        "{connection.contentFreshness.lastPostTitle || "Latest Post"}"
                       </strong>
                     </p>
                   </div>
@@ -479,7 +490,7 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
 
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <p className="text-xs text-slate-400 font-medium">Last Publication</p>
+                    <p className="text-xs text-slate-400 font-medium">Published</p>
                     <p className="text-sm font-bold text-white">
                       {connection.contentFreshness.daysSinceLastPost !== null
                         ? `${connection.contentFreshness.daysSinceLastPost} days ago`
@@ -487,17 +498,78 @@ export function WordpressIntegrationView({ organizationId }: { organizationId: s
                     </p>
                   </div>
 
-                  <span
-                    className={`px-2.5 py-1 rounded text-xs font-semibold ${
-                      connection.contentFreshness.isStale
-                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                    }`}
-                  >
-                    {connection.contentFreshness.isStale ? "⚠ Stagnant (>60d)" : "✓ Active"}
-                  </span>
+                  {connection.siteUrl && (
+                    <a
+                      href={`${connection.siteUrl.replace(/\/+$/, "")}/wp-admin/post-new.php`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#00F0FF]/15 text-[#00F0FF] border border-[#00F0FF]/30 hover:bg-[#00F0FF]/25 transition whitespace-nowrap"
+                    >
+                      + Draft Post ↗
+                    </a>
+                  )}
                 </div>
               </div>
+
+              {/* 60-day Cadence Progress Bar */}
+              {connection.contentFreshness.daysSinceLastPost !== null && (
+                <div className="space-y-1.5 pt-3 border-t border-white/5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-400">
+                      Freshness Window:{" "}
+                      <strong className="text-white">
+                        {connection.contentFreshness.daysSinceLastPost} of 60 days
+                      </strong>
+                    </span>
+                    <span
+                      className={`font-semibold ${
+                        connection.contentFreshness.isStale ? "text-amber-400" : "text-emerald-400"
+                      }`}
+                    >
+                      {connection.contentFreshness.isStale
+                        ? `Exceeded cadence by ${connection.contentFreshness.daysSinceLastPost - 60}d`
+                        : `${60 - connection.contentFreshness.daysSinceLastPost} days remaining until alert`}
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-white/5">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        connection.contentFreshness.daysSinceLastPost <= 30
+                          ? "bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.4)]"
+                          : connection.contentFreshness.daysSinceLastPost <= 60
+                            ? "bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)]"
+                            : "bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.4)]"
+                      }`}
+                      style={{
+                        width: `${Math.min(100, Math.max(5, Math.round((connection.contentFreshness.daysSinceLastPost / 60) * 100)))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+          ) : (
+            <GlassCard className="p-5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">📝</span>
+                <div>
+                  <h4 className="text-sm font-semibold text-white">Editorial Cadence Tracking</h4>
+                  <p className="text-xs text-slate-400">
+                    WordPress REST API endpoint (/wp-json/wp/v2/posts) was not reachable or has no public posts yet.
+                  </p>
+                </div>
+              </div>
+              {connection.siteUrl && (
+                <a
+                  href={`${connection.siteUrl.replace(/\/+$/, "")}/wp-admin/edit.php`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition whitespace-nowrap"
+                >
+                  Open WP Admin ↗
+                </a>
+              )}
             </GlassCard>
           )}
 
