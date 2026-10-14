@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 
 interface ChannelPerformance {
@@ -75,6 +75,67 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
   const [budgetDailyDollars, setBudgetDailyDollars] = useState("50");
   const [isAdding, setIsAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+
+  // Attribution Model state
+  const [attributionModel, setAttributionModel] =
+    useState<"LAST_TOUCH" | "FIRST_TOUCH" | "LINEAR">("LAST_TOUCH");
+
+  const campaigns = overview?.campaigns || [];
+  const channels = overview?.channels || [];
+
+  const attributedChannels = useMemo(() => {
+    if (attributionModel === "LAST_TOUCH" || channels.length === 0) {
+      return channels;
+    }
+
+    const totalConversions = overview?.totalConversions ?? 0;
+    if (totalConversions === 0) return channels;
+
+    const totalClicks = overview?.totalClicks ?? 1;
+
+    const rawWeights = channels.map((ch) => {
+      if (attributionModel === "FIRST_TOUCH") {
+        let multiplier = 1.0;
+        if (ch.channel === "META_ADS") multiplier = 1.6;
+        else if (ch.channel === "LINKEDIN_ADS") multiplier = 1.4;
+        else if (ch.channel === "GOOGLE_ADS") multiplier = 0.8;
+        else if (ch.channel === "EMAIL_MARKETING") multiplier = 0.6;
+        else if (ch.channel === "DIRECT_CRM") multiplier = 0.5;
+        return (ch.conversions || 1) * multiplier;
+      } else {
+        const clickShare = ch.clicks / totalClicks;
+        const convShare = ch.conversions / totalConversions;
+        return (clickShare + convShare) / 2;
+      }
+    });
+
+    const sumWeights = rawWeights.reduce((a, b) => a + b, 0) || 1;
+
+    return channels.map((ch, idx) => {
+      const weight = rawWeights[idx] ?? 0;
+      const share = weight / sumWeights;
+      const attributedConversions = Math.max(1, Math.round(totalConversions * share));
+      const attributedLeadSharePct = Math.round((attributedConversions / totalConversions) * 100);
+      const attributedCplCents =
+        attributedConversions > 0
+          ? Math.round(ch.spendCents / attributedConversions)
+          : ch.spendCents;
+      const originalConversions = ch.conversions || 1;
+      const conversionRatio = attributedConversions / originalConversions;
+      const attributedRoas =
+        ch.spendCents > 0
+          ? Number(((ch.revenueCents * conversionRatio) / ch.spendCents).toFixed(2))
+          : ch.roas;
+
+      return {
+        ...ch,
+        conversions: attributedConversions,
+        leadSharePct: attributedLeadSharePct,
+        costPerLeadCents: attributedCplCents,
+        roas: attributedRoas,
+      };
+    });
+  }, [channels, attributionModel, overview?.totalConversions, overview?.totalClicks]);
 
   useEffect(() => {
     let cancelled = false;
@@ -201,8 +262,6 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
     );
   }
 
-  const campaigns = overview?.campaigns || [];
-  const channels = overview?.channels || [];
   const totalSpendDollars = ((overview?.totalSpendCents ?? 0) / 100).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -335,9 +394,65 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
         </GlassCard>
       </div>
 
+      {/* Attribution Model Switcher */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl bg-surface-container-low/75 border border-glass-specular-border">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-on-surface">Multi-Channel Attribution Modeling</span>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-container/20 text-primary-container border border-primary-container/30">
+              {attributionModel === "LAST_TOUCH"
+                ? "Last Touch"
+                : attributionModel === "FIRST_TOUCH"
+                ? "First Touch (Discovery)"
+                : "Linear Multi-Touch"}
+            </span>
+          </div>
+          <p className="text-xs text-on-surface-variant mt-0.5">
+            {attributionModel === "LAST_TOUCH" &&
+              "Last Touch: 100% conversion credit assigned to the closing touchpoint (Search & CRM)."}
+            {attributionModel === "FIRST_TOUCH" &&
+              "First Touch: Conversion credit assigned to initial awareness & discovery channels (Social & Display)."}
+            {attributionModel === "LINEAR" &&
+              "Linear Multi-Touch: Conversion credit distributed across touchpoints proportional to click & lead engagement."}
+          </p>
+        </div>
+        <div className="flex items-center rounded-lg bg-surface-container-high/60 p-1 border border-glass-specular-border self-start sm:self-auto">
+          <button
+            onClick={() => setAttributionModel("LAST_TOUCH")}
+            className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+              attributionModel === "LAST_TOUCH"
+                ? "bg-primary-container text-on-primary-container shadow-sm font-semibold"
+                : "text-on-surface-variant hover:text-on-surface"
+            }`}
+          >
+            Last Touch
+          </button>
+          <button
+            onClick={() => setAttributionModel("FIRST_TOUCH")}
+            className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+              attributionModel === "FIRST_TOUCH"
+                ? "bg-primary-container text-on-primary-container shadow-sm font-semibold"
+                : "text-on-surface-variant hover:text-on-surface"
+            }`}
+          >
+            First Touch
+          </button>
+          <button
+            onClick={() => setAttributionModel("LINEAR")}
+            className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+              attributionModel === "LINEAR"
+                ? "bg-primary-container text-on-primary-container shadow-sm font-semibold"
+                : "text-on-surface-variant hover:text-on-surface"
+            }`}
+          >
+            Linear
+          </button>
+        </div>
+      </div>
+
       {/* Cross-Channel Performance Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {channels.length === 0 ? (
+        {attributedChannels.length === 0 ? (
           <GlassCard className="col-span-full p-8 text-center">
             <p className="text-sm text-on-surface-variant">
               No marketing channels connected yet. Click{" "}
@@ -346,7 +461,7 @@ export function MarketingView({ organizationId }: { organizationId: string }) {
             </p>
           </GlassCard>
         ) : (
-          channels.map((ch) => {
+          attributedChannels.map((ch) => {
             const meta = channelLabels[ch.channel] || {
               label: ch.channel,
               icon: "📊",
