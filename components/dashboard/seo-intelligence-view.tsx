@@ -22,6 +22,10 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [querySearch, setQuerySearch] = useState("");
+  const [rankFilter, setRankFilter] = useState<"ALL" | "TOP_3" | "TOP_10" | "PAGE_2">("ALL");
+  const [sortField, setSortField] = useState<"position" | "clicks" | "impressions" | "query">("clicks");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     let cancelled = false;
@@ -254,6 +258,12 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
                 </p>
               </div>
               <div>
+                <p className="text-xs text-neutral-400">Impressions</p>
+                <p className="text-lg font-extrabold text-neutral-200">
+                  {data.searchConsole.impressions?.toLocaleString() ?? "—"}
+                </p>
+              </div>
+              <div>
                 <p className="text-xs text-neutral-400">CTR</p>
                 <p className="text-lg font-extrabold text-emerald-400">
                   {data.searchConsole.averageCtrPct}%
@@ -262,60 +272,205 @@ export function SeoIntelligenceView({ organizationId }: { organizationId: string
             </div>
           </div>
 
+          {/* Interactive Search & Filter Controls */}
           {Array.isArray(data.searchConsole.topQueries) && data.searchConsole.topQueries.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-neutral-800 text-neutral-400 uppercase font-semibold">
-                    <th className="pb-3">Search Query Keyword</th>
-                    <th className="pb-3">Google Rank Position</th>
-                    <th className="pb-3 text-right">Clicks</th>
-                    <th className="pb-3 text-right">Impressions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-800/60 text-neutral-300">
-                  {data.searchConsole.topQueries.map((q: any) => (
-                    <tr key={q.query} className="hover:bg-neutral-900/40">
-                      <td className="py-2.5 font-medium text-white">{q.query}</td>
-                      <td className="py-2.5">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
-                            q.position <= 3
-                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                              : q.position <= 10
-                                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                                : "bg-neutral-800 text-neutral-400"
-                          }`}
-                        >
-                          #{Math.round(q.position * 10) / 10}
-                        </span>
-                      </td>
-                      <td className="py-2.5 text-right font-mono text-neutral-200">{q.clicks}</td>
-                      <td className="py-2.5 text-right font-mono text-neutral-400">{q.impressions}</td>
-                    </tr>
+            <>
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-y border-neutral-800/80 py-3">
+                <div className="flex items-center gap-2 flex-1 min-w-[200px] max-w-sm">
+                  <div className="relative w-full">
+                    <span className="absolute inset-y-0 left-2.5 flex items-center text-xs text-neutral-400 pointer-events-none">
+                      🔎
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Filter queries..."
+                      value={querySearch}
+                      onChange={(e) => setQuerySearch(e.target.value)}
+                      className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#00F0FF]/60"
+                    />
+                    {querySearch && (
+                      <button
+                        onClick={() => setQuerySearch("")}
+                        className="absolute inset-y-0 right-2 flex items-center text-xs text-neutral-400 hover:text-white"
+                        title="Clear search"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs">
+                  <span className="text-neutral-500 mr-1 text-[11px] uppercase tracking-wider font-semibold">Tier:</span>
+                  {(
+                    [
+                      { id: "ALL", label: "All" },
+                      { id: "TOP_3", label: "Top 3 (Prime)" },
+                      { id: "TOP_10", label: "Top 10 (Page 1)" },
+                      { id: "PAGE_2", label: "Page 2+" },
+                    ] as const
+                  ).map((tier) => (
+                    <button
+                      key={tier.id}
+                      onClick={() => setRankFilter(tier.id)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition ${
+                        rankFilter === tier.id
+                          ? "bg-[#00F0FF]/15 text-[#00F0FF] border border-[#00F0FF]/30 font-bold"
+                          : "bg-neutral-900/60 text-neutral-400 hover:text-white border border-transparent"
+                      }`}
+                    >
+                      {tier.label}
+                    </button>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </div>
+              </div>
+
+              {/* Top Queries Table */}
+              {(() => {
+                const queries = (data.searchConsole.topQueries || [])
+                  .filter((q: any) => {
+                    if (querySearch.trim() && !q.query.toLowerCase().includes(querySearch.toLowerCase())) {
+                      return false;
+                    }
+                    if (rankFilter === "TOP_3") return q.position <= 3;
+                    if (rankFilter === "TOP_10") return q.position > 3 && q.position <= 10;
+                    if (rankFilter === "PAGE_2") return q.position > 10;
+                    return true;
+                  })
+                  .sort((a: any, b: any) => {
+                    let diff = 0;
+                    if (sortField === "query") {
+                      diff = a.query.localeCompare(b.query);
+                    } else {
+                      diff = (a[sortField] ?? 0) - (b[sortField] ?? 0);
+                    }
+                    return sortDirection === "asc" ? diff : -diff;
+                  });
+
+                const handleSortClick = (field: "position" | "clicks" | "impressions" | "query") => {
+                  if (sortField === field) {
+                    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+                  } else {
+                    setSortField(field);
+                    setSortDirection(field === "position" ? "asc" : "desc");
+                  }
+                };
+
+                const sortIcon = (field: string) => {
+                  if (sortField !== field) return "↕";
+                  return sortDirection === "asc" ? "▲" : "▼";
+                };
+
+                if (queries.length === 0) {
+                  return (
+                    <div className="py-8 text-center text-neutral-400 text-xs">
+                      No query keywords match your search or filter.{" "}
+                      <button
+                        onClick={() => {
+                          setQuerySearch("");
+                          setRankFilter("ALL");
+                        }}
+                        className="text-[#00F0FF] underline ml-1"
+                      >
+                        Reset filters
+                      </button>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-neutral-800 text-neutral-400 uppercase font-semibold select-none">
+                          <th
+                            className="pb-3 cursor-pointer hover:text-white transition"
+                            onClick={() => handleSortClick("query")}
+                          >
+                            Search Query Keyword {sortIcon("query")}
+                          </th>
+                          <th
+                            className="pb-3 cursor-pointer hover:text-white transition"
+                            onClick={() => handleSortClick("position")}
+                          >
+                            Google Rank Position {sortIcon("position")}
+                          </th>
+                          <th
+                            className="pb-3 text-right cursor-pointer hover:text-white transition"
+                            onClick={() => handleSortClick("clicks")}
+                          >
+                            Clicks {sortIcon("clicks")}
+                          </th>
+                          <th
+                            className="pb-3 text-right cursor-pointer hover:text-white transition"
+                            onClick={() => handleSortClick("impressions")}
+                          >
+                            Impressions {sortIcon("impressions")}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-800/60 text-neutral-300">
+                        {queries.map((q: any) => (
+                          <tr key={q.query} className="hover:bg-neutral-900/40">
+                            <td className="py-2.5 font-medium text-white">{q.query}</td>
+                            <td className="py-2.5">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
+                                  q.position <= 3
+                                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                    : q.position <= 10
+                                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                                      : "bg-neutral-800 text-neutral-400"
+                                }`}
+                              >
+                                #{Math.round(q.position * 10) / 10}
+                              </span>
+                            </td>
+                            <td className="py-2.5 text-right font-mono text-neutral-200">{q.clicks}</td>
+                            <td className="py-2.5 text-right font-mono text-neutral-400">{q.impressions}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })()}
+            </>
           )}
         </GlassCard>
       ) : (
-        <GlassCard variant="default" className="p-5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🔗</span>
-            <div>
-              <p className="text-sm font-semibold text-white">Connect Google Search Console</p>
-              <p className="text-xs text-neutral-400">
-                Sync live keyword ranking positions, click-through rates, and Google SERP impressions.
+        <GlassCard variant="default" className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔍</span>
+                <h3 className="text-base font-bold text-white">Google Search Console Integration</h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400">
+                  Not Connected
+                </span>
+              </div>
+              <p className="text-xs text-neutral-300 max-w-xl leading-relaxed">
+                Sync actual organic search queries, keyword rank positions (Top 3, Top 10), impressions, and click-through rates directly alongside Guardian’s technical SEO scans.
               </p>
+              <div className="flex flex-wrap gap-2 pt-1 text-[11px] text-neutral-400">
+                <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300">
+                  ✦ Live Keyword Rankings
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300">
+                  ✦ Click & Impression Trends
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300">
+                  ✦ SERP CTR Benchmarks
+                </span>
+              </div>
             </div>
+            <Link
+              href="/dashboard/integrations"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-[#00F0FF] text-[#0A0D14] font-bold text-xs hover:bg-[#38F4FF] transition shadow-[0_0_20px_rgba(0,240,255,0.3)] whitespace-nowrap"
+            >
+              Connect Search Console ↗
+            </Link>
           </div>
-          <Link
-            href="/dashboard/integrations"
-            className="px-3.5 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/30 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/30 transition whitespace-nowrap"
-          >
-            Connect GSC
-          </Link>
         </GlassCard>
       )}
 
