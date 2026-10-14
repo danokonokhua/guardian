@@ -311,4 +311,49 @@ describe("HealthPanel", () => {
       screen.getByText("Review the affected path and restore the failing check."),
     ).toBeInTheDocument();
   });
+
+  it("renders active maintenance window banner with live countdown and status page link", async () => {
+    // Set future date 1 hour ahead
+    const futureEndsAt = new Date(Date.now() + 65 * 60 * 1000).toISOString();
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        !url.endsWith("/health")
+          ? new Response("{}", { status: 404 })
+          : new Response(
+              JSON.stringify({
+                data: {
+                  summary: {
+                    monitors: 1,
+                    up: 1,
+                    down: 0,
+                    error: 0,
+                    pending: 0,
+                    activeIssues: 0,
+                    recoveredIssues: 0,
+                  },
+                  activeMaintenance: {
+                    inMaintenance: true,
+                    title: "Core Database Migration",
+                    endsAt: futureEndsAt,
+                  },
+                  recentResults: [],
+                  issues: [],
+                  responseHistory: [],
+                },
+              }),
+            ),
+      ),
+    );
+
+    render(<HealthPanel organizationId={ORG} />);
+
+    expect(await screen.findByRole("status")).toBeInTheDocument();
+    expect(screen.getByText(/Scheduled Maintenance Active: Core Database Migration/)).toBeInTheDocument();
+    expect(screen.getByText("Alerts Suppressed")).toBeInTheDocument();
+    expect(screen.getByText(/Ends in 01:/)).toBeInTheDocument();
+    expect(screen.getByText("Status Page Notice ↗")).toBeInTheDocument();
+  });
 });
+

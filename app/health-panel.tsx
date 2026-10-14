@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { GroundedRecommendation } from "@/lib/recommendations";
 
@@ -126,6 +127,53 @@ type IssueAnalytics = {
   volumeTrend: Array<{ date: string; total: number; active: number; resolved: number }>;
   policy: { acknowledgeMinutes: number; resolveMinutes: number };
 };
+
+function MaintenanceCountdown({ endsAt }: { endsAt: string }) {
+  const computeTimeLeft = () => {
+    const diff = new Date(endsAt).getTime() - Date.now();
+    if (diff <= 0) {
+      return { hours: 0, minutes: 0, seconds: 0, expired: true };
+    }
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    return { hours, minutes, seconds, expired: false };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(computeTimeLeft);
+
+  useEffect(() => {
+    setTimeLeft(computeTimeLeft());
+    const interval = setInterval(() => {
+      setTimeLeft(computeTimeLeft());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [endsAt]);
+
+  if (!timeLeft) return null;
+
+  if (timeLeft.expired) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
+        <span>⏱</span>
+        <span>Concluding now...</span>
+      </span>
+    );
+  }
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const formatted = `${timeLeft.hours > 0 ? `${pad(timeLeft.hours)}:` : ""}${pad(timeLeft.minutes)}:${pad(timeLeft.seconds)}`;
+
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-sm"
+      aria-label={`Time remaining: ${formatted}`}
+    >
+      <span className="text-amber-400 animate-pulse">⏱</span>
+      <span>Ends in {formatted}</span>
+    </span>
+  );
+}
 
 export function HealthPanel({
   organizationId,
@@ -400,18 +448,42 @@ export function HealthPanel({
   return (
     <div className="space-y-5 command-health">
       {result?.data?.activeMaintenance?.inMaintenance && (
-        <div role="status" className="rounded-lg border border-amber-500/30 bg-amber-950/40 p-4 text-amber-200">
-          <div className="flex items-center gap-2 font-medium">
-            <span>🔧</span>
-            <span>Scheduled Maintenance Active: {result.data.activeMaintenance.title}</span>
+        <div
+          role="status"
+          className="rounded-xl border border-amber-500/40 bg-amber-950/40 p-4 text-amber-200 shadow-lg shadow-amber-950/20 backdrop-blur-sm"
+        >
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2 font-medium">
+                <span className="text-base">🔧</span>
+                <span className="font-semibold text-amber-100">
+                  Scheduled Maintenance Active: {result.data.activeMaintenance.title || "Routine System Maintenance"}
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Alerts Suppressed
+                </span>
+              </div>
+              <p className="text-xs text-amber-300/80">
+                Alert notifications, monitor paging, and SLA breach escalations are temporarily paused
+                {result.data.activeMaintenance.endsAt
+                  ? ` until ${new Date(result.data.activeMaintenance.endsAt).toLocaleString()}`
+                  : ""}
+                .
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              {result.data.activeMaintenance.endsAt && (
+                <MaintenanceCountdown endsAt={result.data.activeMaintenance.endsAt} />
+              )}
+              <Link
+                href="/status"
+                className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-lg bg-surface-container-high/80 hover:bg-surface-container-highest border border-glass-specular-border text-on-surface transition-colors"
+                title="Preview public status page notice"
+              >
+                <span>Status Page Notice ↗</span>
+              </Link>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-amber-300/80">
-            Alert notifications and SLA escalations are currently suppressed
-            {result.data.activeMaintenance.endsAt
-              ? ` until ${new Date(result.data.activeMaintenance.endsAt).toLocaleString()}`
-              : ""}
-            .
-          </p>
         </div>
       )}
       <dl className="command-metrics">
