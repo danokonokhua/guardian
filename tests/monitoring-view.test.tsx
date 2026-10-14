@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { afterEach, it, expect, vi } from "vitest";
@@ -64,3 +64,78 @@ it("shows absent evidence without claiming a healthy site", async () => {
   expect(await screen.findByText("No results available yet")).toBeInTheDocument();
   expect(screen.getByText(/Missing results do not imply/)).toBeInTheDocument();
 });
+
+it("renders 5-star rating and unanswered review warning for reputation view", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            recentResults: [],
+            issues: [],
+            reputationSummary: {
+              averageRating: 4.8,
+              totalReviewCount: 24,
+              unansweredCount: 3,
+            },
+          },
+        }),
+      ),
+    ),
+  );
+  render(<MonitoringViewPanel organizationId="org-1" view="reputation" />);
+  expect(await screen.findByText("REVIEW HEALTH")).toBeInTheDocument();
+  expect(screen.getByLabelText("Rating: 4.8 out of 5 stars")).toBeInTheDocument();
+  expect(screen.getByText("4.8")).toBeInTheDocument();
+  expect(screen.getByText("/ 5.0")).toBeInTheDocument();
+  expect(screen.getByText(/24 verified Google Business reviews/)).toBeInTheDocument();
+  expect(screen.getByText(/3 unanswered reviews/)).toBeInTheDocument();
+  expect(screen.getByText("Open Reputation Dashboard →")).toBeInTheDocument();
+});
+
+it("renders all reviews answered when unansweredCount is 0", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            recentResults: [],
+            issues: [],
+            reputationSummary: {
+              averageRating: 5.0,
+              totalReviewCount: 10,
+              unansweredCount: 0,
+            },
+          },
+        }),
+      ),
+    ),
+  );
+  render(<MonitoringViewPanel organizationId="org-1" view="reputation" />);
+  expect(await screen.findByText("REVIEW HEALTH")).toBeInTheDocument();
+  expect(screen.getByText("✓ All reviews answered")).toBeInTheDocument();
+});
+
+it("renders empty state call to action when no reviews are synced", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            recentResults: [],
+            issues: [],
+            reputationSummary: null,
+          },
+        }),
+      ),
+    ),
+  );
+  render(<MonitoringViewPanel organizationId="org-1" view="reputation" />);
+  expect(await screen.findByText("REVIEW HEALTH")).toBeInTheDocument();
+  expect(screen.getByText("No reviews synced")).toBeInTheDocument();
+  expect(screen.getByText("Connect Reputation Profile →")).toBeInTheDocument();
+});
+

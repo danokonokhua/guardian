@@ -56,7 +56,44 @@ export const viewConfig = {
       "Reputation signals are synchronized from verified Google Business Profiles. Automatic reply publishing is not performed without operator review.",
   },
 };
+
 export type MonitoringView = keyof typeof viewConfig;
+
+function StarRating({ rating }: { rating: number | null }) {
+  if (rating === null) {
+    return <span className="text-sm text-on-surface-variant italic">No ratings yet</span>;
+  }
+
+  const rounded = Math.round(rating * 10) / 10;
+
+  return (
+    <div className="flex items-center gap-2" aria-label={`Rating: ${rounded} out of 5 stars`}>
+      <div className="flex items-center text-amber-400 text-lg tracking-tight select-none">
+        {[1, 2, 3, 4, 5].map((star) => {
+          const filled = rating >= star;
+          const half = !filled && rating >= star - 0.5;
+          return (
+            <span
+              key={star}
+              className={
+                filled
+                  ? "text-amber-400"
+                  : half
+                  ? "text-amber-300"
+                  : "text-neutral-600"
+              }
+            >
+              {filled ? "★" : half ? "★" : "☆"}
+            </span>
+          );
+        })}
+      </div>
+      <span className="font-bold text-lg text-on-surface">{rounded.toFixed(1)}</span>
+      <span className="text-xs text-on-surface-variant">/ 5.0</span>
+    </div>
+  );
+}
+
 export function MonitoringViewPanel({
   organizationId,
   view,
@@ -151,23 +188,53 @@ export function MonitoringViewPanel({
             Open incident queue
           </Link>
         </section>
-        {view === "reputation" && data.reputationSummary && (
+        {view === "reputation" && (
           <section className="setup-card">
             <span className="eyebrow">REVIEW HEALTH</span>
-            <div className="view-score">
-              {data.reputationSummary.averageRating !== null
-                ? `★ ${data.reputationSummary.averageRating.toFixed(1)}`
-                : "No reviews"}
-            </div>
-            <p>
-              {data.reputationSummary.totalReviewCount} verified reviews
-              {data.reputationSummary.unansweredCount > 0
-                ? ` · ${data.reputationSummary.unansweredCount} unanswered`
-                : ""}
-            </p>
-            <Link href="/reputation" className="quiet-link">
-              Open Reputation Dashboard →
-            </Link>
+            {data.reputationSummary && data.reputationSummary.totalReviewCount > 0 ? (
+              <div className="space-y-3 mt-1">
+                <StarRating rating={data.reputationSummary.averageRating} />
+                <p className="text-xs text-on-surface-variant">
+                  {data.reputationSummary.totalReviewCount} verified Google Business{" "}
+                  {data.reputationSummary.totalReviewCount === 1 ? "review" : "reviews"}
+                </p>
+                {data.reputationSummary.unansweredCount > 0 ? (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/25 w-fit">
+                    <span className="animate-pulse">⚠</span>
+                    <span>
+                      {data.reputationSummary.unansweredCount} unanswered{" "}
+                      {data.reputationSummary.unansweredCount === 1 ? "review" : "reviews"}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 w-fit">
+                    <span>✓ All reviews answered</span>
+                  </div>
+                )}
+                <div className="pt-1">
+                  <Link href="/reputation" className="quiet-link">
+                    Open Reputation Dashboard →
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-2 space-y-2">
+                <div className="view-score text-sm font-normal text-on-surface-variant">
+                  No reviews synced
+                </div>
+                <p className="text-xs text-on-surface-variant">
+                  Connect your Google Business Profile to monitor ratings, reviews, and unanswered inquiries.
+                </p>
+                <div className="pt-2">
+                  <Link
+                    href="/reputation"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-xs font-semibold text-on-primary-container hover:opacity-90 transition-opacity"
+                  >
+                    Connect Reputation Profile →
+                  </Link>
+                </div>
+              </div>
+            )}
           </section>
         )}
       </div>
