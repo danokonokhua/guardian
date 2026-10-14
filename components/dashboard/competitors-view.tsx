@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 
 interface CompetitorSnapshot {
@@ -38,6 +38,85 @@ interface ComparisonData {
   competitors: CompetitorItem[];
 }
 
+function exportCompetitorsToCsv(
+  websiteHostname: string,
+  yourSpeed: number,
+  yourSeoScore: number,
+  competitorsList: CompetitorItem[]
+) {
+  const headers = [
+    "Type",
+    "Domain",
+    "Name",
+    "Response Time (ms)",
+    "SEO Score",
+    "Headline (H1)",
+    "Detected Offer",
+    "Speed vs Baseline",
+  ];
+
+  const escapeCsv = (str: string | number | null | undefined) => {
+    if (str === null || str === undefined) return '""';
+    const s = String(str).replace(/"/g, '""');
+    return `"${s}"`;
+  };
+
+  const rows = [
+    [
+      "Your Site (Baseline)",
+      websiteHostname || "Registered Domain",
+      "Your Website",
+      yourSpeed,
+      yourSeoScore,
+      "Primary Brand Positioning",
+      "Standard pricing",
+      "Baseline",
+    ]
+      .map(escapeCsv)
+      .join(","),
+  ];
+
+  for (const c of competitorsList) {
+    const s = c.latestSnapshot;
+    const speed = s?.responseTimeMs ?? "";
+    const isFaster =
+      s?.responseTimeMs !== null && s?.responseTimeMs !== undefined
+        ? s.responseTimeMs < yourSpeed
+          ? "Faster"
+          : "Slower"
+        : "N/A";
+
+    rows.push(
+      [
+        "Competitor",
+        c.domain || "",
+        c.name || "",
+        speed,
+        s?.seoScore ?? 70,
+        s?.h1 || "None",
+        s?.detectedOffer || "None",
+        isFaster,
+      ]
+        .map(escapeCsv)
+        .join(",")
+    );
+  }
+
+  const csvContent = [headers.map(escapeCsv).join(","), ...rows].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute(
+    "download",
+    `competitor_intelligence_${new Date().toISOString().slice(0, 10)}.csv`
+  );
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export function CompetitorsView({ organizationId }: { organizationId: string }) {
   const [data, setData] = useState<ComparisonData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +132,64 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
   const [addSandbox, setAddSandbox] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+
+  // Table Filtering, Sorting, and Export state
+  const [filterMode, setFilterMode] = useState<"ALL" | "FASTER" | "OFFERS">("ALL");
+  const [sortField, setSortField] = useState<"name" | "speed" | "seo">("speed");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const competitors = data?.competitors || [];
+  const yourSpeed = data?.websiteSpeedMs ?? 280;
+  const avgCompetitorSpeed = data?.avgCompetitorSpeedMs;
+
+  const filteredCompetitors = useMemo(() => {
+    let result = [...competitors];
+
+    if (filterMode === "FASTER") {
+      result = result.filter((c) => {
+        const speed = c.latestSnapshot?.responseTimeMs;
+        return speed !== null && speed !== undefined && speed < yourSpeed;
+      });
+    } else if (filterMode === "OFFERS") {
+      result = result.filter((c) => Boolean(c.latestSnapshot?.detectedOffer));
+    }
+
+    result.sort((a, b) => {
+      let valA: string | number = 0;
+      let valB: string | number = 0;
+
+      if (sortField === "name") {
+        valA = a.name.toLowerCase();
+        valB = b.name.toLowerCase();
+      } else if (sortField === "speed") {
+        valA = a.latestSnapshot?.responseTimeMs ?? 999999;
+        valB = b.latestSnapshot?.responseTimeMs ?? 999999;
+      } else if (sortField === "seo") {
+        valA = a.latestSnapshot?.seoScore ?? 0;
+        valB = b.latestSnapshot?.seoScore ?? 0;
+      }
+
+      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [competitors, filterMode, sortField, sortOrder, yourSpeed]);
+
+  const handleSort = (field: "name" | "speed" | "seo") => {
+    if (sortField === field) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortOrder(field === "name" ? "asc" : "desc");
+    }
+  };
+
+  const getSortIndicator = (field: "name" | "speed" | "seo") => {
+    if (sortField !== field) return " ↕";
+    return sortOrder === "asc" ? " ▲" : " ▼";
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -196,10 +333,6 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
     );
   }
 
-  const competitors = data?.competitors || [];
-  const yourSpeed = data?.websiteSpeedMs ?? 280;
-  const avgCompetitorSpeed = data?.avgCompetitorSpeedMs;
-
   return (
     <div className="space-y-8">
       {/* Header Bar */}
@@ -323,7 +456,7 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
 
       {/* Head-to-Head Comparison Table */}
       <GlassCard className="p-6">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
           <div>
             <h3 className="text-base font-semibold text-on-surface">
               Head-to-Head Digital Posture
@@ -332,18 +465,81 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
               Direct positioning comparison against monitored competitors
             </p>
           </div>
-          <span className="text-xs px-2.5 py-1 rounded-full bg-surface-container-high border border-glass-specular-border text-on-surface-variant">
-            {competitors.length} Monitored
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Filter pills */}
+            <div className="flex items-center rounded-lg bg-surface-container-high/60 p-1 border border-glass-specular-border">
+              <button
+                onClick={() => setFilterMode("ALL")}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                  filterMode === "ALL"
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                All ({competitors.length})
+              </button>
+              <button
+                onClick={() => setFilterMode("FASTER")}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                  filterMode === "FASTER"
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                ⚡ Faster
+              </button>
+              <button
+                onClick={() => setFilterMode("OFFERS")}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                  filterMode === "OFFERS"
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                🏷️ Offers
+              </button>
+            </div>
+
+            {/* Export CSV Button */}
+            <button
+              onClick={() =>
+                exportCompetitorsToCsv(
+                  data?.websiteHostname || "",
+                  yourSpeed,
+                  data?.websiteSeoScore ?? 88,
+                  competitors
+                )
+              }
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-glass-specular-border bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-colors"
+              title="Export competitor intelligence to CSV"
+            >
+              <span>📥 Export CSV</span>
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-glass-specular-border text-on-surface-variant">
-                <th className="pb-3 font-semibold uppercase tracking-wider">Business / Domain</th>
-                <th className="pb-3 font-semibold uppercase tracking-wider">Response Speed</th>
-                <th className="pb-3 font-semibold uppercase tracking-wider">SEO Score</th>
+                <th
+                  onClick={() => handleSort("name")}
+                  className="pb-3 font-semibold uppercase tracking-wider cursor-pointer hover:text-on-surface select-none"
+                >
+                  Business / Domain{getSortIndicator("name")}
+                </th>
+                <th
+                  onClick={() => handleSort("speed")}
+                  className="pb-3 font-semibold uppercase tracking-wider cursor-pointer hover:text-on-surface select-none"
+                >
+                  Response Speed{getSortIndicator("speed")}
+                </th>
+                <th
+                  onClick={() => handleSort("seo")}
+                  className="pb-3 font-semibold uppercase tracking-wider cursor-pointer hover:text-on-surface select-none"
+                >
+                  SEO Score{getSortIndicator("seo")}
+                </th>
                 <th className="pb-3 font-semibold uppercase tracking-wider">
                   Landing Page Headline (H1)
                 </th>
@@ -397,8 +593,20 @@ export function CompetitorsView({ organizationId }: { organizationId: string }) 
                     </p>
                   </td>
                 </tr>
+              ) : filteredCompetitors.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-12 text-center text-on-surface-variant">
+                    <p className="text-sm">No competitors match the active filter ({filterMode}).</p>
+                    <button
+                      onClick={() => setFilterMode("ALL")}
+                      className="mt-2 text-xs text-cyan-400 underline"
+                    >
+                      Clear filter
+                    </button>
+                  </td>
+                </tr>
               ) : (
-                competitors.map((c) => {
+                filteredCompetitors.map((c) => {
                   const s = c.latestSnapshot;
                   const speed = s?.responseTimeMs ?? null;
                   const isFaster = speed !== null && speed < yourSpeed;
